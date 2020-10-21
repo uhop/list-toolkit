@@ -1,0 +1,24 @@
+{
+  "name": "list-toolkit",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/uhop/list-toolkit.git"
+  },
+  "keywords": [
+    "list",
+    "lists",
+    "data structures"
+  ],
+  "author": "Eugene Lazutkin <eugene.lazutkin@gmail.com> (http://www.lazutkin.com/)",
+  "license": "BSD-3-Clause",
+  "bugs": {
+    "url": "https://github.com/uhop/list-toolkit/issues"
+  },
+  "homepage": "https://github.com/uhop/list-toolkit#readme"
+}
