@@ -68,7 +68,7 @@ class SListValueNode extends SListNode {
 
 class SList extends SListNode {
   get isEmpty() {
-    return this.prev === this;
+    return this.next === this;
   }
 
   get front() {
@@ -90,8 +90,15 @@ class SList extends SListNode {
   }
 
   popFront() {
-    if (this.prev !== this) {
+    if (this.next !== this) {
       return this.next.pop();
+    }
+  }
+
+  popBack() {
+    if (this.next !== this) {
+      const last = getPrev(this);
+      return last.pop();
     }
   }
 
@@ -101,11 +108,27 @@ class SList extends SListNode {
     return this;
   }
 
+  pushBack(value) {
+    const node = new SListValueNode(value),
+      last = getPrev(this);
+    splice(last, {prev: node, node});
+    return this;
+  }
+
   appendFront(list) {
     if (list.next === list) return this;
     let prevFrom = list,
       nodeTo = getPrev(list);
     splice(this, extract(prevFrom, nodeTo));
+    return this;
+  }
+
+  appendBack(list) {
+    if (list.next === list) return this;
+    let prevFrom = list,
+      nodeTo = getPrev(list),
+      last = getPrev(this);
+    splice(last, extract(prevFrom, nodeTo));
     return this;
   }
 
@@ -120,6 +143,21 @@ class SList extends SListNode {
       prev = SListHead.getPrev(this, this.head, node);
     }
     splice(this, extract(prev, node));
+    return this;
+  }
+
+  moveToBack(node) {
+    let prev;
+    if (node instanceof SList.SListPtr) {
+      prev = node.prev;
+      node = node.node;
+      if (this.next === node) return this;
+    } else {
+      if (this.next === node) return this;
+      prev = SListHead.getPrev(this, this.head, node);
+    }
+    const last = getPrev(this);
+    splice(last, extract(prev, node));
     return this;
   }
 
@@ -237,6 +275,14 @@ class SList extends SListNode {
     return list;
   }
 }
+
+SList.pop = pop;
+SList.extract = extract;
+SList.splice = splice;
+SList.getPrev = getPrev;
+
+SList.Node = SListNode;
+SList.ValueNode = SListValueNode;
 
 SList.SListPtr = class SListPtr {
   constructor(list, prev) {

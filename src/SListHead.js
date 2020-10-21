@@ -45,9 +45,23 @@ class SListHead {
     }
   }
 
+  popBack() {
+    if (this.head[this.nextName] !== this.head) {
+      const last = SListHead.getPrev(this, this.head);
+      return SListHead.pop(this, last).node;
+    }
+  }
+
   pushFront(node) {
     this.adopt(node);
     SListHead.splice(this, this.head, {prev: node, node});
+    return this;
+  }
+
+  pushBack(node) {
+    this.adopt(node);
+    const last = SListHead.getPrev(this, this.head);
+    SListHead.splice(this, last, {prev: node, node});
     return this;
   }
 
@@ -65,6 +79,21 @@ class SListHead {
     return this;
   }
 
+  appendBack(list) {
+    let prevFrom, nodeTo;
+    if (list instanceof SListHead) {
+      if (list.head[this.nextName] === list.head) return this;
+      prevFrom = list.head;
+      nodeTo = SListHead.getPrev(this, list.head);
+    } else {
+      if (list[this.nextName] === list) return this;
+      prevFrom = nodeTo = SListHead.getPrev(this, list);
+    }
+    const last = SListHead.getPrev(this, this.head);
+    SListHead.splice(this, last, SListHead.extract(this, prevFrom, nodeTo));
+    return this;
+  }
+
   moveToFront(node) {
     let prev;
     if (node instanceof SListHead.SListPtr) {
@@ -76,6 +105,21 @@ class SListHead {
       prev = SListHead.getPrev(this, this.head, node);
     }
     SListHead.splice(this, this.head, SListHead.extract(this, prev, node));
+    return this;
+  }
+
+  moveToBack(node) {
+    let prev;
+    if (node instanceof SListHead.SListPtr) {
+      prev = node.prev;
+      node = node.node;
+      if (this.head[this.nextName] === node) return this;
+    } else {
+      if (this.head[this.nextName] === node) return this;
+      prev = SListHead.getPrev(this, this.head, node);
+    }
+    const last = SListHead.getPrev(this, this.head);
+    SListHead.splice(this, list, SListHead.extract(this, prev, node));
     return this;
   }
 
