@@ -258,4 +258,11 @@ class List extends ListNode {
   }
 }
 
+List.pop = pop;
+List.extract = extract;
+List.splice = splice;
+
+List.Node = ListNode;
+List.ValueNode = ListValueNode;
+
 module.exports = List;
