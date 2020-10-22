@@ -11,7 +11,7 @@ const pop = head => {
   head.prev.next = head.next;
   head.next.prev = head.prev;
   head.prev = head.next = head;
-  return {node: head, head: rest};
+  return {node: head, list: rest};
 };
 
 const extract = (from, to) => {
@@ -55,12 +55,12 @@ class ListValueNode extends ListNode {
   }
 
   insertBefore(list) {
-    splice(this, pop(list).head);
+    splice(this, pop(list).list);
     return this;
   }
 
   insertAfter(list) {
-    splice(this.next, pop(list).head);
+    splice(this.next, pop(list).list);
     return this;
   }
 }
@@ -265,4 +265,8 @@ List.splice = splice;
 List.Node = ListNode;
 List.ValueNode = ListValueNode;
 
-module.exports = List;
+List.prototype.pop = List.prototype.popFront;
+List.prototype.push = List.prototype.pushFront;
+List.prototype.append = List.prototype.appendBack;
+
+export default List;

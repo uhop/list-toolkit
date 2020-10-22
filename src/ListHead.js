@@ -284,10 +284,14 @@ class ListHead {
   }
 }
 
+ListHead.prototype.pop = ListHead.prototype.popFront;
+ListHead.prototype.push = ListHead.prototype.pushFront;
+ListHead.prototype.append = ListHead.prototype.appendBack;
+
 ListHead.Unsafe = class {
   constructor(head) {
     this.head = head;
   }
 };
 
-module.exports = ListHead;
+export default ListHead;

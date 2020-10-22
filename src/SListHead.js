@@ -29,6 +29,10 @@ class SListHead {
     return this.head[this.nextName];
   }
 
+  getBack() {
+    return SListHead.getPrev(this, this.head);
+  }
+
   getLength() {
     let n = 0;
     for (let p = this.head[this.nextName]; p !== this.head; ++n, p = p[this.nextName]);
@@ -301,6 +305,10 @@ class SListHead {
   }
 }
 
+SListHead.prototype.pop = SListHead.prototype.popFront;
+SListHead.prototype.push = SListHead.prototype.pushFront;
+SListHead.prototype.append = SListHead.prototype.appendBack;
+
 SListHead.Unsafe = class Unsafe {
   constructor(head) {
     this.head = head;
@@ -327,4 +335,4 @@ SListHead.SListPtr = class SListPtr {
   }
 };
 
-module.exports = SListHead;
+export default SListHead;

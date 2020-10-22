@@ -60,8 +60,8 @@ class SListValueNode extends SListNode {
   }
 
   insertAfter(list) {
-    const prev
-    splice(this, );
+    const node = getPrev(pop(list).list);
+    splice(this, {prev: node, node});
     return this;
   }
 }
@@ -75,8 +75,8 @@ class SList extends SListNode {
     return this.next;
   }
 
-  get back() {
-    return this.prev;
+  getBack() {
+    return getPrev(this);
   }
 
   getLength() {
@@ -284,6 +284,10 @@ SList.getPrev = getPrev;
 SList.Node = SListNode;
 SList.ValueNode = SListValueNode;
 
+SList.prototype.pop = SList.prototype.popFront;
+SList.prototype.push = SList.prototype.pushFront;
+SList.prototype.append = SList.prototype.appendBack;
+
 SList.SListPtr = class SListPtr {
   constructor(list, prev) {
     this.list = list;
@@ -307,4 +311,4 @@ SList.SListPtr = class SListPtr {
   }
 };
 
-module.exports = SList;
+export default SList;
