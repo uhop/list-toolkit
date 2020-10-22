@@ -8,8 +8,9 @@
     "default": "./cjs/*"
   },
   "scripts": {
+    "prepareDist": "node scripts/prepareDist.js",
     "build": "babel src --out-dir cjs",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run prepareDist && npm run build"
   },
   "repository": {
     "type": "git",
@@ -18,6 +19,8 @@
   "keywords": [
     "list",
     "lists",
+    "cache",
+    "heap",
     "data structures"
   ],
   "author": "Eugene Lazutkin <eugene.lazutkin@gmail.com> (http://www.lazutkin.com/)",
