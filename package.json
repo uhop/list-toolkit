@@ -2,9 +2,14 @@
   "name": "list-toolkit",
   "version": "1.0.0",
   "description": "List-based data structures to organize your objects.",
-  "type": "commonjs",
+  "type": "module",
+  "exports": {
+    "import": "./src/*",
+    "default": "./cjs/*"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "babel src --out-dir cjs",
+    "prepublishOnly": "npm run build"
   },
   "repository": {
     "type": "git",
@@ -20,5 +25,26 @@
   "bugs": {
     "url": "https://github.com/uhop/list-toolkit/issues"
   },
-  "homepage": "https://github.com/uhop/list-toolkit#readme"
+  "homepage": "https://github.com/uhop/list-toolkit#readme",
+  "devDependencies": {
+    "@babel/cli": "^7.12.1",
+    "@babel/core": "^7.12.3",
+    "@babel/preset-env": "^7.12.1"
+  },
+  "files": [
+    "/src",
+    "/cjs"
+  ],
+  "babel": {
+    "presets": [
+      [
+        "@babel/preset-env",
+        {
+          "targets": {
+            "node": "current"
+          }
+        }
+      ]
+    ]
+  }
 }
