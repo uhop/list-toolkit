@@ -1,7 +1,3 @@
-'use strict';
-
-// using heap implementation from https://github.com/heya/ctr under the BSD-3 license
-
 class Heap {
   constructor(less = (a, b) => a < b, arrayLike) {
     this.less = less;

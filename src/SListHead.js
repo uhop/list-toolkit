@@ -1,5 +1,3 @@
-'use strict';
-
 class SListHead {
   constructor(head = null, next = 'next') {
     if (head instanceof SListHead) {
