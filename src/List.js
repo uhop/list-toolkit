@@ -1,5 +1,3 @@
-'use strict';
-
 class ListNode {
   constructor() {
     this.prev = this.next = this;
@@ -162,16 +160,14 @@ class List extends ListNode {
   }
 
   sort(compareFn) {
-    let prev = this;
-    for (const node of Array.from(this).sort(compareFn)) {
-      prev.next = node;
-      node.prev = prev;
-      prev = node;
+    let current = this.next;
+    for (const value of Array.from(this).sort(compareFn)) {
+      current.value = value;
+      current = current.next;
     }
-    this.prev = prev;
-    prev.next = this;
     return this;
   }
+
 
   // iterators
 
@@ -180,14 +176,31 @@ class List extends ListNode {
     return {
       next: () => {
         if (current === this) return {done: true};
-        const node = current;
+        const value = current.value;
         current = current.next;
-        return {value: node.value};
+        return {value};
       }
     };
   }
 
   getIterable(from, to) {
+    return {
+      [Symbol.iterator]: () => {
+        let current = from || this.next;
+        const stop = to ? to.next : this;
+        return {
+          next: () => {
+            if (current === stop) return {done: true};
+            const value = current.value;
+            current = current.next;
+            return {value};
+          }
+        };
+      }
+    };
+  }
+
+  getNodeIterable(from, to) {
     return {
       [Symbol.iterator]: () => {
         let current = from || this.next;
@@ -205,6 +218,23 @@ class List extends ListNode {
   }
 
   getReverseIterable(from, to) {
+    return {
+      [Symbol.iterator]: () => {
+        let current = to || this.prev;
+        const stop = from ? from.prev : this;
+        return {
+          next: () => {
+            if (current === stop) return {done: true};
+            const value = current.value;
+            current = current.prev;
+            return {value};
+          }
+        };
+      }
+    };
+  }
+
+  getReverseNodeIterable(from, to) {
     return {
       [Symbol.iterator]: () => {
         let current = to || this.prev;

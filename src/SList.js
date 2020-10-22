@@ -1,5 +1,3 @@
-'use strict';
-
 class SListNode {
   constructor() {
     this.next = this;
@@ -195,6 +193,7 @@ class SList extends SListNode {
     let current = this.next;
     for (const value of Array.from(this).sort(compareFn)) {
       current.value = value;
+      current = current.next;
     }
     return this;
   }
