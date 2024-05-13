@@ -403,3 +403,11 @@ The main operations are:
 | `Heap.pop(heapArray, less = (a, b) => a < b)` | remove and return the top element | *O(log(n))* |
 | `Heap.push(heapArray, value, less = (a, b) => a < b)` | add new element | *O(log(n))* |
 | `Heap.sort(heapArray, less = (a, b) => a < b)` | sort an array in place | *O(n * log(n))* |
+
+## License
+
+BSD 3-Clause "New" or "Revised" License. See the LICENSE file for details.
+
+## Release History
+
+* 1.0.1 *Initial release.*
