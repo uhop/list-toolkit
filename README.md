@@ -90,6 +90,7 @@ Helper methods:
 
 | Method | Description | Complexity |
 |------|-----------|-----|
+| `makeFrom(values)` | (a meta helper) create a new List from an iterable or an array | *O(n)* |
 | `pushValuesFront(values)` | add values at the beginning | *O(n)* |
 | `pushValuesBack(values)` | add values at the end | *O(n)* |
 | `appendValuesFront(values)` | add values as a list at the beginning | *O(n)* |
