@@ -12,13 +12,13 @@ class Heap {
     return !this.array.length;
   }
 
+  get top() {
+    return this.array[0];
+  }
+
   clear() {
     this.array = [];
     return this;
-  }
-
-  top() {
-    return this.array[0];
   }
 
   pop() {
