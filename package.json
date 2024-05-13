@@ -1,6 +1,6 @@
 {
   "name": "list-toolkit",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "List-based data structures to organize your objects.",
   "type": "module",
   "exports": {
@@ -31,9 +31,9 @@
   },
   "homepage": "https://github.com/uhop/list-toolkit#readme",
   "devDependencies": {
-    "@babel/cli": "^7.12.1",
-    "@babel/core": "^7.12.3",
-    "@babel/preset-env": "^7.12.1",
+    "@babel/cli": "^7.24.5",
+    "@babel/core": "^7.24.5",
+    "@babel/preset-env": "^7.24.5",
     "heya-unit": "^0.3.0"
   },
   "files": [
