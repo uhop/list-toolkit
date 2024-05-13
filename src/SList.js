@@ -295,9 +295,6 @@ SList.SListPtr = class SListPtr {
   get node() {
     return this.prev.next;
   }
-  get value() {
-    return this.prev.value;
-  }
   get isHead() {
     return this.prev.next === this.list;
   }
