@@ -2,7 +2,7 @@
 
 const unit = require('heya-unit');
 
-const List = require('../cjs/List').default;
+const List = require('../cjs/List.js').default;
 
 const listToArray = list => Array.from(list);
 
