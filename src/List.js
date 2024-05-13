@@ -253,10 +253,6 @@ class List extends ListNode {
 
   // helpers
 
-  makeFrom(values) {
-    return List.from(values);
-  }
-
   pushValuesFront(values) {
     for (const value of values) {
       this.pushFront(value);
