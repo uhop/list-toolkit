@@ -172,3 +172,48 @@ test('SList helpers', t => {
   list.appendValuesFront([5, 6]);
   t.deepEqual(Array.from(list), [5, 6, 2, 1]);
 });
+
+test('SList.SListPtr', t => {
+  const list = SList.from([1, 2, 3, 4, 5]);
+
+  {
+    const array = [];
+    for (const ptr of list.getPtrIterable()) array.push(ptr.node.value);
+    t.deepEqual(array, [1, 2, 3, 4, 5]);
+  }
+
+  const getPtrByValue = (list, value) => {
+    for (const ptr of list.getPtrIterable()) if (ptr.node.value === value) return ptr;
+    return null;
+  };
+
+  list.moveToFront(getPtrByValue(list, 4));
+  t.deepEqual(Array.from(list), [4, 1, 2, 3, 5]);
+
+  list.moveToBack(getPtrByValue(list, 2));
+  t.deepEqual(Array.from(list), [4, 1, 3, 5, 2]);
+
+  list.sort((a, b) => a - b);
+  list.remove(getPtrByValue(list, 2), getPtrByValue(list, 4));
+  t.deepEqual(Array.from(list), [1, 5]);
+
+  list.pushValuesFront([2, 3, 4]);
+  list.sort((a, b) => a - b);
+  const extract = list.extract(getPtrByValue(list, 2), getPtrByValue(list, 4));
+  t.deepEqual(Array.from(list), [1, 5]);
+  t.deepEqual(Array.from(extract), [2, 3, 4]);
+
+  {
+    list.pushValuesFront([2, 3, 4]);
+    list.sort((a, b) => a - b);
+    const array = [];
+    for (const value of list.getIterable(getPtrByValue(list, 2), getPtrByValue(list, 4))) array.push(value);
+    t.deepEqual(array, [2, 3, 4]);
+  }
+
+  {
+    const array = [];
+    for (const ptr = list.getPtr(); !ptr.isHead; ptr.next()) array.push(ptr.node.value);
+    t.deepEqual(array, [1, 2, 3, 4, 5]);
+  }
+});
