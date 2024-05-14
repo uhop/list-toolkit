@@ -1,12 +1,12 @@
 'use strict';
 
 import test from 'tape-six';
-import Heap from '../src/Heap.js';
+import MinHeap from '../src/MinHeap.js';
 
-test('Heap', t => {
-  t.equal(typeof Heap, 'function');
+test('MinHeap', t => {
+  t.equal(typeof MinHeap, 'function');
 
-  const heap = new Heap();
+  const heap = new MinHeap();
 
   t.ok(heap.isEmpty);
   t.equal(heap.length, 0);
@@ -24,8 +24,8 @@ test('Heap', t => {
       tops.push(heap.top);
       pops.push(heap.pop());
     }
-    t.deepEqual(tops, [5, 4, 3, 2, 1]);
-    t.deepEqual(pops, [5, 4, 3, 2, 1]);
+    t.deepEqual(tops, [1, 2, 3, 4, 5]);
+    t.deepEqual(pops, [1, 2, 3, 4, 5]);
   }
   t.equal(heap.top, undefined);
   t.equal(heap.pop(), undefined);
@@ -33,15 +33,15 @@ test('Heap', t => {
   t.ok(heap.isEmpty);
 
   {
-    const heap = new Heap((a, b) => a < b, [3, 2, 5, 1, 4]);
+    const heap = new MinHeap((a, b) => a < b, [3, 2, 5, 1, 4]);
     const array = heap.releaseSorted();
-    t.deepEqual(array, [1, 2, 3, 4, 5]);
+    t.deepEqual(array, [5, 4, 3, 2, 1]);
   }
 
   {
-    const heap = new Heap().push(3).push(2).push(5).push(1).push(4);
+    const heap = new MinHeap().push(3).push(2).push(5).push(1).push(4);
     const array = heap.releaseSorted();
-    t.deepEqual(array, [1, 2, 3, 4, 5]);
+    t.deepEqual(array, [5, 4, 3, 2, 1]);
   }
 
   heap.clear();
