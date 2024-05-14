@@ -1,4 +1,4 @@
-import List from './List';
+import List from './List.js';
 
 class Cache {
   constructor(capacity = 10) {
@@ -26,7 +26,7 @@ class Cache {
     const node = this.dict[key];
     if (typeof node == 'object') {
       this.list.moveToFront(node);
-      node.value = value;
+      node.value.value = value;
       return this;
     }
     if (this.size >= this.capacity) {
