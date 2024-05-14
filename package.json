@@ -8,8 +8,7 @@
     "default": "./cjs/*"
   },
   "scripts": {
-    "test": "tape6",
-    "testx": "tape6 --flags FO",
+    "test": "tape6 --flags FO",
     "prepareDist": "node scripts/prepareDist.js",
     "build": "babel src --out-dir cjs",
     "prepublishOnly": "npm run prepareDist && npm run build"
