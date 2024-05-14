@@ -1,8 +1,13 @@
+'use strict';
+
+// the following functions are inlined:
+
 // const left = i => (i << 1) + 1;
 // const right = i => (i + 1) << 1;
 // const parent = i => (i - 1) >> 1;
 
 const defaultLess = (a, b) => a < b;
+const defaultEqual = (a, b) => a === b;
 
 const up = (array, i, less = defaultLess) => {
   for (let p = (i - 1) >> 1; i > 0; i = p, p = (i - 1) >> 1) {
@@ -14,6 +19,7 @@ const up = (array, i, less = defaultLess) => {
   }
   return array;
 };
+
 const down = (array, i, less = defaultLess, n = array.length) => {
   for (;;) {
     const l = (i << 1) + 1;
@@ -38,8 +44,9 @@ const down = (array, i, less = defaultLess, n = array.length) => {
 };
 
 class MinHeap {
-  constructor(less = MinHeap.defaultLess, ...args) {
-    this.less = less;
+  constructor({less, equal} = MinHeap.defaults, ...args) {
+    this.less = less || MinHeap.defaults.less;
+    this.equal = equal || MinHeap.defaults.equal;
     this.array = [];
     this.merge(...args);
   }
@@ -112,7 +119,7 @@ class MinHeap {
 
   pushPop(value) {
     // return MinHeap.pushPop(this.array, value, this.less); // inlined
-    if (!this.array.length || this.less(item, this.array[0])) return value;
+    if (!this.array.length || this.less(value, this.array[0])) return value;
     const top = this.array[0];
     this.array[0] = value;
     // down(this.array, 0, this.less); // inlined
@@ -190,16 +197,16 @@ class MinHeap {
   }
 
   make(...args) {
-    return new MinHeap(this.less, ...args);
+    return new MinHeap(this, ...args);
   }
 
   clone() {
-    const heap = new MinHeap(this.less);
+    const heap = new MinHeap(this);
     heap.array = this.array.slice(0);
     return heap;
   }
 
-  static build(array, less = MinHeap.defaultLess) {
+  static build(array, less = MinHeap.defaults.less) {
     if (array.length <= 1) return array;
     for (let n = array.length, j = (n >> 1) - 1; j >= 0; --j) {
       // down(array, j, less, n); // inlined
@@ -226,7 +233,7 @@ class MinHeap {
     return array;
   }
 
-  static pop(heapArray, less = MinHeap.defaultLess) {
+  static pop(heapArray, less = MinHeap.defaults.less) {
     switch (heapArray.length) {
       case 0:
         return;
@@ -239,13 +246,13 @@ class MinHeap {
     return top;
   }
 
-  static push(heapArray, item, less = MinHeap.defaultLess) {
+  static push(heapArray, item, less = MinHeap.defaults.less) {
     const i = heapArray.length;
     heapArray.push(item);
     return up(heapArray, i, less);
   }
 
-  static pushPop(heapArray, item, less = MinHeap.defaultLess) {
+  static pushPop(heapArray, item, less = MinHeap.defaults.less) {
     if (!heapArray.length || less(item, heapArray[0])) return item;
     const top = heapArray[0];
     heapArray[0] = item;
@@ -253,14 +260,14 @@ class MinHeap {
     return top;
   }
 
-  static replaceTop(heapArray, item, less = MinHeap.defaultLess) {
+  static replaceTop(heapArray, item, less = MinHeap.defaults.less) {
     const top = heapArray[0];
     heapArray[0] = item;
     down(heapArray, 0, less);
     return top;
   }
 
-  static sort(heapArray, less = MinHeap.defaultLess) {
+  static sort(heapArray, less = MinHeap.defaults.less) {
     if (heapArray.length <= 1) return heapArray;
     for (let n = heapArray.length - 1; n; --n) {
       [heapArray[0], heapArray[n]] = [heapArray[n], heapArray[0]];
@@ -270,6 +277,6 @@ class MinHeap {
   }
 }
 
-MinHeap.defaultLess = defaultLess;
+MinHeap.defaults = {less: defaultLess, equal: defaultEqual};
 
 export default MinHeap;
