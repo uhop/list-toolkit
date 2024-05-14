@@ -25,11 +25,11 @@ const splice = (prev1, {prev, node}) => {
   return prev1;
 };
 
-const getPrev = (list, node) => {
+const getPrevPrev = (list, node) => {
   let prev = list,
     current = prev.next;
-  while (current !== list) {
-    if (node && current === node) return prev;
+  while (current.next !== list) {
+    if (node && current.next === node) return prev;
     prev = current;
     current = prev.next;
   }
@@ -37,18 +37,14 @@ const getPrev = (list, node) => {
   return prev;
 };
 
+const getPrev = (list, node) => {
+  return getPrevPrev(list, node).next;
+};
+
 class SListValueNode extends SListNode {
   constructor(value) {
     super();
     this.value = value;
-  }
-
-  pop() {
-    return pop(this).node.value;
-  }
-
-  popNode() {
-    return pop(this).node;
   }
 
   addAfter(value) {
@@ -89,14 +85,14 @@ class SList extends SListNode {
 
   popFront() {
     if (this.next !== this) {
-      return this.next.pop();
+      return pop(this).node.value;
     }
   }
 
   popBack() {
     if (this.next !== this) {
-      const last = getPrev(this);
-      return last.pop();
+      const prevLast = getPrevPrev(this);
+      return pop(prevLast).node.value;
     }
   }
 
@@ -138,7 +134,7 @@ class SList extends SListNode {
       if (this.next === node) return this;
     } else {
       if (this.next === node) return this;
-      prev = SListHead.getPrev(this, this.head, node);
+      prev = getPrev(this, node);
     }
     splice(this, extract(prev, node));
     return this;
@@ -152,7 +148,7 @@ class SList extends SListNode {
       if (this.next === node) return this;
     } else {
       if (this.next === node) return this;
-      prev = SListHead.getPrev(this, this.head, node);
+      prev = getPrev(this, node);
     }
     const last = getPrev(this);
     splice(last, extract(prev, node));
@@ -221,9 +217,26 @@ class SList extends SListNode {
         return {
           next: () => {
             if (current === stop) return {done: true};
-            const value = current;
+            const node = current;
             current = current.next;
-            return {value};
+            return {value: node.value};
+          }
+        };
+      }
+    };
+  }
+
+  getNodeIterable(from, to) {
+    return {
+      [Symbol.iterator]: () => {
+        let current = (from instanceof SList.SListPtr && from.node) || from || this.next;
+        const stop = to ? ((to instanceof SList.SListPtr && to.node) || to).next : this;
+        return {
+          next: () => {
+            if (current === stop) return {done: true};
+            const node = current;
+            current = current.next;
+            return {value: node};
           }
         };
       }
@@ -281,6 +294,7 @@ SList.pop = pop;
 SList.extract = extract;
 SList.splice = splice;
 SList.getPrev = getPrev;
+SList.getPrevPrev = getPrevPrev;
 
 SList.Node = SListNode;
 SList.ValueNode = SListValueNode;
