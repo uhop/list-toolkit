@@ -43,7 +43,7 @@ Main operations are:
 | Method | Description | Complexity |
 |------|-----------|-----|
 | `new List()` | create a new List | *O(1)* |
-| `List.from(values)` | create a new List from an iterable or an array | *O(n)* |
+| `List.from(values)` | create a new List from an iterable or an array | *O(k)* |
 | `isEmpty` | check if the list is empty | *O(1)* |
 | `front` | get the first element | *O(1)* |
 | `back` | get the last element | *O(1)* |
@@ -61,6 +61,8 @@ Main operations are:
 | `extract(from, to)` | remove and return a range of elements as a new List | *O(1)* |
 | `reverse()` | reverse the list inline | *O(n)* |
 | `sort(compareFn)` | sort the list inline | *O(n * log(n))* |
+
+Here and everywhere `n` is a number of elements in the list, while `k` is the size of an argument.
 
 Useful aliases are:
 
@@ -93,11 +95,11 @@ Helper methods are:
 
 | Method | Description | Complexity |
 |------|-----------|-----|
-| `makeFrom(values)` | (a meta helper) create a new List from an iterable or an array | *O(n)* |
-| `pushValuesFront(values)` | add values at the beginning | *O(n)* |
-| `pushValuesBack(values)` | add values at the end | *O(n)* |
-| `appendValuesFront(values)` | add values as a list at the beginning | *O(n)* |
-| `appendValuesBack(values)` | add values as a list at the end | *O(n)* |
+| `makeFrom(values)` | (a meta helper) create a new List from an iterable or an array | *O(k)* |
+| `pushValuesFront(values)` | add values at the beginning | *O(k)* |
+| `pushValuesBack(values)` | add values at the end | *O(k)* |
+| `appendValuesFront(values)` | add values as a list at the beginning | *O(k)* |
+| `appendValuesBack(values)` | add values as a list at the end | *O(k)* |
 
 Value node (`List.ValueNode`) methods are:
 
@@ -136,6 +138,13 @@ Because lists are circular structures, we can have multiple `ListHead` instances
 different nodes of the same list. In fact, creating a new `ListHead` instance is cheap and can be done
 when needed using any node/value.
 
+An empty `ListHead` instance is created with an empty node that plays the role of a head of the list.
+Alternatively a `ListHead` can be created by pointing to an existing node. In this case,
+any valid node can be used as a head.
+
+Some methods use nodes to manipulate the list. In `List`, they are usually found by iterations.
+`ListHead` methods can use named objects for that.
+
 ```js
 import ListHead from 'list-toolkit/ListHead.js';
 // or
@@ -158,8 +167,8 @@ The differences are:
 
 | Method | Description | Complexity |
 |------|-----------|-----|
-| `new ListHead(head = null, next = 'next', prev = 'prev')` | create a new List optionally adopting a list by `head` | *O(1)* |
-| `ListHead.from(values, next, prev)` | create a new List from an iterable | *O(n)* |
+| `new ListHead(head = null, {nextName = 'next', prevName = 'prev'})` | create a new List optionally adopting a list by `head` | *O(1)* |
+| `ListHead.from(values, next, prev)` | create a new List from an iterable | *O(k)* |
 | `ListHead.pop({nextName, prevName}, node)` | remove the node from its list and return `{node, list}` | *O(1)* |
 | `ListHead.extract({nextName, prevName}, from, to)` | remove nodes from their list and return the first node of the extracted list | *O(1)* |
 | `ListHead.splice({nextName, prevName}, head1, head2)` | combine two lists and return the first node of the combined list | *O(1)* |

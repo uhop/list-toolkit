@@ -1,11 +1,10 @@
 class ListHead {
-  constructor(head = null, next = 'next', prev = 'prev') {
+  constructor(head = null, options) {
     if (head instanceof ListHead) {
       ({nextName: this.nextName, prevName: this.prevName, head: this.head} = head);
       return;
     }
-    this.nextName = next;
-    this.prevName = prev;
+    Object.assign(this, ListHead.defaults, options);
     if (head instanceof ListHead.Unsafe) {
       this.head = head.head;
       return;
@@ -248,11 +247,11 @@ class ListHead {
   }
 
   make(newHead = null) {
-    return new ListHead(newHead, this.nextName, this.prevName);
+    return new ListHead(newHead, this);
   }
 
   makeFrom(values) {
-    return ListHead.from(values, this.nextName, this.prevName);
+    return ListHead.from(values, this);
   }
 
   pushValuesFront(values) {
@@ -270,21 +269,23 @@ class ListHead {
   }
 
   appendValuesFront(values) {
-    return this.appendFront(ListHead.from(values, this.nextName, this.prevName));
+    return this.appendFront(ListHead.from(values, this));
   }
 
   appendValuesBack(values) {
-    return this.appendBack(ListHead.from(values, this.nextName, this.prevName));
+    return this.appendBack(ListHead.from(values, this));
   }
 
-  static from(values, next = 'next', prev = 'prev') {
-    const list = new ListHead(null, next, prev);
+  static from(values, options) {
+    const list = new ListHead(null, options);
     for (const value of values) {
       list.pushBack(value);
     }
     return list;
   }
 }
+
+ListHead.defaults = {nextName: 'next', prevName: 'prev'};
 
 ListHead.prototype.pop = ListHead.prototype.popFront;
 ListHead.prototype.push = ListHead.prototype.pushFront;

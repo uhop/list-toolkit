@@ -133,7 +133,7 @@ test('ListHead helpers', t => {
 
 test('ListHead with custom next/prev', t => {
   const a = {x: 1}, b = {x: 2}, c = {x: 3};
-  const list = new ListHead(null, Symbol(), Symbol());
+  const list = new ListHead(null, {nextName: Symbol(), prevName: Symbol()});
   list.pushValuesFront([a, b, c]);
   t.deepEqual(Array.from(list).map(value => value.x), [3, 2, 1]);
 
