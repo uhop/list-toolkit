@@ -103,8 +103,12 @@ class ListHead {
     return this;
   }
 
-  clear() {
-    this.head[this.prevName] = this.head[this.nextName] = this.head;
+  clear(drop) {
+    if (drop) {
+      while (!this.isEmpty) this.popFront();
+    } else {
+      this.head[this.prevName] = this.head[this.nextName] = this.head;
+    }
     return this;
   }
 
