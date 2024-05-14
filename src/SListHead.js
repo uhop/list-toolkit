@@ -49,8 +49,8 @@ class SListHead {
 
   popBack() {
     if (this.head[this.nextName] !== this.head) {
-      const last = SListHead.getPrev(this, this.head);
-      return SListHead.pop(this, last).node;
+      const prevLast = SListHead.getPrevPrev(this, this.head);
+      return SListHead.pop(this, prevLast).node;
     }
   }
 
@@ -115,18 +115,20 @@ class SListHead {
     if (node instanceof SListHead.SListPtr) {
       prev = node.prev;
       node = node.node;
-      if (this.head[this.nextName] === node) return this;
     } else {
-      if (this.head[this.nextName] === node) return this;
       prev = SListHead.getPrev(this, this.head, node);
     }
     const last = SListHead.getPrev(this, this.head);
-    SListHead.splice(this, list, SListHead.extract(this, prev, node));
+    SListHead.splice(this, last, SListHead.extract(this, prev, node));
     return this;
   }
 
-  clear() {
-    this.head[this.nextName] = this.head;
+  clear(drop) {
+    if (drop) {
+      while (!this.isEmpty) this.popFront();
+    } else {
+      this.head[this.nextName] = this.head;
+    }
     return this;
   }
 
@@ -237,16 +239,23 @@ class SListHead {
     return prev1;
   }
 
-  static getPrev({nextName}, list, node) {
+  static getPrevPrev({nextName}, list, node) {
     let prev = list,
       current = prev[nextName];
-    while (current !== list) {
-      if (node && current === node) return prev;
+    while (current[nextName] !== list) {
+      if (node && current[nextName] === node) return prev;
       prev = current;
       current = prev[nextName];
     }
-    if (node) throw new Error('node does not belong to the list');
+    if (node) {
+      if (list[nextName] === node) return current;
+      throw new Error('node does not belong to the list');
+    }
     return prev;
+  }
+
+  static getPrev(names, list, node) {
+    return SListHead.getPrevPrev(names, list, node)[names.nextName];
   }
 
   // node helpers
@@ -291,11 +300,11 @@ class SListHead {
     return this.appendFront(SListHead.from(values, this.nextName));
   }
 
-  static from(values, next) {
+  static from(values, next = 'next') {
     const list = new SListHead(null, next);
     let prev = list.head;
     for (const value of values) {
-      this.adopt(value);
+      list.adopt(value);
       prev[next] = value;
       prev = value;
     }

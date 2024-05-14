@@ -277,7 +277,7 @@ class ListHead {
     return this.appendBack(ListHead.from(values, this.nextName, this.prevName));
   }
 
-  static from(values, next, prev) {
+  static from(values, next = 'next', prev = 'prev') {
     const list = new ListHead(null, next, prev);
     for (const value of values) {
       list.pushBack(value);

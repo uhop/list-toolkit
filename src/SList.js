@@ -33,7 +33,10 @@ const getPrevPrev = (list, node) => {
     prev = current;
     current = prev.next;
   }
-  if (node) throw new Error('node does not belong to the list');
+  if (node) {
+    if (list.next === node) return current;
+    throw new Error('node does not belong to the list');
+  }
   return prev;
 };
 
@@ -145,9 +148,7 @@ class SList extends SListNode {
     if (node instanceof SList.SListPtr) {
       prev = node.prev;
       node = node.node;
-      if (this.next === node) return this;
     } else {
-      if (this.next === node) return this;
       prev = getPrev(this, node);
     }
     const last = getPrev(this);
