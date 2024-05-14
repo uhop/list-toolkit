@@ -1,4 +1,5 @@
 'use strict';
+
 import test from 'tape-six';
 import List from '../src/List.js';
 

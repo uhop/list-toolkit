@@ -1,4 +1,5 @@
 'use strict';
+
 import test from 'tape-six';
 import SList from '../src/SList.js';
 
@@ -36,6 +37,8 @@ test('General SList tests', t => {
 test('Elementary SList operations', t => {
   const list = new SList();
   t.ok(list.isEmpty);
+
+  t.throws(() => SList.getPrevPrev(list, {}));
 
   list.pushBack(1);
   t.notOk(list.isEmpty);
