@@ -147,9 +147,10 @@ class SListHead {
     let prev = this.head,
       current = prev[this.nextName];
     while (current !== this.head) {
+      const next = current[this.nextName];
       current[this.nextName] = prev;
       prev = current;
-      current = prev[this.nextName];
+      current = next;
     }
     this.head[this.nextName] = prev;
     return this;

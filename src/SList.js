@@ -181,9 +181,10 @@ class SList extends SListNode {
     let prev = this,
       current = prev.next;
     while (current !== this) {
+      const next = current.next;
       current.next = prev;
       prev = current;
-      current = prev.next;
+      current = next;
     }
     this.next = prev;
     return this;
@@ -267,8 +268,9 @@ class SList extends SListNode {
     const list = new SList();
     let prev = list;
     for (const value of values) {
-      prev.next = value;
-      prev = value;
+      const node = new SListValueNode(value);
+      prev.next = node;
+      prev = node;
     }
     prev.next = list;
     return list;
