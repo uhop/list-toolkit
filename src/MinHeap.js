@@ -1,5 +1,7 @@
 'use strict';
 
+import {copyOptions} from './utils.js';
+
 // the following functions are inlined:
 
 // const left = i => (i << 1) + 1;
@@ -44,9 +46,8 @@ const down = (array, i, less = defaultLess, n = array.length) => {
 };
 
 class MinHeap {
-  constructor({less, equal} = MinHeap.defaults, ...args) {
-    this.less = less || MinHeap.defaults.less;
-    this.equal = equal || MinHeap.defaults.equal;
+  constructor(options, ...args) {
+    copyOptions(this, MinHeap.defaults, options);
     this.array = [];
     this.merge(...args);
   }

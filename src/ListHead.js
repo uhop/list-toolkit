@@ -1,10 +1,14 @@
+'use strict';
+
+import {copyOptions} from './utils.js';
+
 class ListHead {
   constructor(head = null, options) {
     if (head instanceof ListHead) {
       ({nextName: this.nextName, prevName: this.prevName, head: this.head} = head);
       return;
     }
-    Object.assign(this, ListHead.defaults, options);
+    copyOptions(this, ListHead.defaults, options);
     if (head instanceof ListHead.Unsafe) {
       this.head = head.head;
       return;

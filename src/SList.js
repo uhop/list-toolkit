@@ -1,3 +1,5 @@
+'use strict';
+
 class SListNode {
   constructor() {
     this.next = this;

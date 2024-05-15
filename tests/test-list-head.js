@@ -6,7 +6,9 @@ import ListHead from '../src/ListHead.js';
 test('Elementary ListHead operations', t => {
   t.equal(typeof ListHead, 'function');
 
-  const a = {x: 1}, b = {x: 2}, c = {x: 3};
+  const a = {x: 1},
+    b = {x: 2},
+    c = {x: 3};
   const list = new ListHead();
 
   t.ok(list.isEmpty);
@@ -23,37 +25,67 @@ test('Elementary ListHead operations', t => {
   t.equal(list.getLength(), 2);
   t.ok(list.front === b);
   t.ok(list.back === a);
-  t.deepEqual(Array.from(list).map(value => value.x), [2, 1]);
+  t.deepEqual(
+    Array.from(list).map(value => value.x),
+    [2, 1]
+  );
 
   list.pushBack(c);
   t.equal(list.getLength(), 3);
   t.ok(list.front === b);
   t.ok(list.back === c);
-  t.deepEqual(Array.from(list).map(value => value.x), [2, 1, 3]);
+  t.deepEqual(
+    Array.from(list).map(value => value.x),
+    [2, 1, 3]
+  );
 
   t.ok(list.popFront() === b);
-  t.deepEqual(Array.from(list).map(value => value.x), [1, 3]);
+  t.deepEqual(
+    Array.from(list).map(value => value.x),
+    [1, 3]
+  );
 
   t.ok(list.popBack() === c);
-  t.deepEqual(Array.from(list).map(value => value.x), [1]);
+  t.deepEqual(
+    Array.from(list).map(value => value.x),
+    [1]
+  );
 
   list.appendFront(ListHead.from([b, c]));
-  t.deepEqual(Array.from(list).map(value => value.x), [2, 3, 1]);
+  t.deepEqual(
+    Array.from(list).map(value => value.x),
+    [2, 3, 1]
+  );
 
   list.popFront();
   list.popFront();
   list.appendBack(ListHead.from([b, c]));
-  t.deepEqual(Array.from(list).map(value => value.x), [1, 2, 3]);
+  t.deepEqual(
+    Array.from(list).map(value => value.x),
+    [1, 2, 3]
+  );
 
   list.moveToFront(b);
-  t.deepEqual(Array.from(list).map(value => value.x), [2, 1, 3]);
+  t.deepEqual(
+    Array.from(list).map(value => value.x),
+    [2, 1, 3]
+  );
 
   list.moveToBack(b);
-  t.deepEqual(Array.from(list).map(value => value.x), [1, 3, 2]);
+  t.deepEqual(
+    Array.from(list).map(value => value.x),
+    [1, 3, 2]
+  );
 
   const extract = list.extract(a, c);
-  t.deepEqual(Array.from(list).map(value => value.x), [2]);
-  t.deepEqual(Array.from(extract).map(value => value.x), [1, 3]);
+  t.deepEqual(
+    Array.from(list).map(value => value.x),
+    [2]
+  );
+  t.deepEqual(
+    Array.from(extract).map(value => value.x),
+    [1, 3]
+  );
   extract.clear(true);
 
   list.clear(true);
@@ -66,14 +98,22 @@ test('Elementary ListHead operations', t => {
   new ListHead(a).clear(true);
 
   list.appendFront(ListHead.from([a, b, c])).reverse();
-  t.deepEqual(Array.from(list).map(value => value.x), [3, 2, 1]);
+  t.deepEqual(
+    Array.from(list).map(value => value.x),
+    [3, 2, 1]
+  );
 
   list.sort((a, b) => a.x - b.x);
-  t.deepEqual(Array.from(list).map(value => value.x), [1, 2, 3]);
+  t.deepEqual(
+    Array.from(list).map(value => value.x),
+    [1, 2, 3]
+  );
 });
 
 test('ListHead iterators', t => {
-  const a = {x: 1}, b = {x: 2}, c = {x: 3};
+  const a = {x: 1},
+    b = {x: 2},
+    c = {x: 3};
   const list = ListHead.from([a, b, c]);
 
   {
@@ -108,34 +148,56 @@ test('ListHead iterators', t => {
 });
 
 test('ListHead helpers', t => {
-  const a = {x: 1}, b = {x: 2}, c = {x: 3};
+  const a = {x: 1},
+    b = {x: 2},
+    c = {x: 3};
   const list = new ListHead();
 
   {
     const other = list.makeFrom([b, a, c]);
-    t.deepEqual(Array.from(other).map(value => value.x), [2, 1, 3]);
+    t.deepEqual(
+      Array.from(other).map(value => value.x),
+      [2, 1, 3]
+    );
     other.clear(true);
   }
 
   list.pushValuesFront([a, b]);
-  t.deepEqual(Array.from(list).map(value => value.x), [2, 1]);
+  t.deepEqual(
+    Array.from(list).map(value => value.x),
+    [2, 1]
+  );
 
   list.pushValuesBack([c]);
-  t.deepEqual(Array.from(list).map(value => value.x), [2, 1, 3]);
+  t.deepEqual(
+    Array.from(list).map(value => value.x),
+    [2, 1, 3]
+  );
   list.clear(true);
 
   list.appendValuesFront([c, b]);
-  t.deepEqual(Array.from(list).map(value => value.x), [3, 2]);
+  t.deepEqual(
+    Array.from(list).map(value => value.x),
+    [3, 2]
+  );
 
   list.appendValuesBack([a]);
-  t.deepEqual(Array.from(list).map(value => value.x), [3, 2, 1]);
+  t.deepEqual(
+    Array.from(list).map(value => value.x),
+    [3, 2, 1]
+  );
 });
 
 test('ListHead with custom next/prev', t => {
-  const a = {x: 1}, b = {x: 2}, c = {x: 3};
+  const a = {x: 1},
+    b = {x: 2},
+    c = {x: 3};
   const list = new ListHead(null, {nextName: Symbol(), prevName: Symbol()});
   list.pushValuesFront([a, b, c]);
-  t.deepEqual(Array.from(list).map(value => value.x), [3, 2, 1]);
+  t.deepEqual(
+    Array.from(list).map(value => value.x),
+    [3, 2, 1]
+  );
 
   t.throws(() => list.adopt(a));
 });

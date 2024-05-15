@@ -1,10 +1,14 @@
+'use strict';
+
+import {copyOptions} from './utils.js';
+
 class SListHead {
-  constructor(head = null, next = 'next') {
+  constructor(head = null, options) {
     if (head instanceof SListHead) {
       ({nextName: this.nextName, head: this.head} = head);
       return;
     }
-    this.nextName = next;
+    copyOptions(this, SListHead.defaults, options);
     if (head instanceof SListHead.Unsafe) {
       this.head = head.head;
       return;
@@ -282,11 +286,11 @@ class SListHead {
   }
 
   make(newHead = null) {
-    return new SListHead(newHead, this.nextName);
+    return new SListHead(newHead, this);
   }
 
   makeFrom(values) {
-    return SListHead.from(values, this.nextName);
+    return SListHead.from(values, this);
   }
 
   pushValuesFront(values) {
@@ -297,21 +301,24 @@ class SListHead {
   }
 
   appendValuesFront(values) {
-    return this.appendFront(SListHead.from(values, this.nextName));
+    return this.appendFront(SListHead.from(values, this));
   }
 
-  static from(values, next = 'next') {
-    const list = new SListHead(null, next);
+  static from(values, options) {
+    const list = new SListHead(null, options),
+      nextName = list.nextName;
     let prev = list.head;
     for (const value of values) {
       list.adopt(value);
-      prev[next] = value;
+      prev[nextName] = value;
       prev = value;
     }
-    prev[next] = list.head;
+    prev[nextName] = list.head;
     return list;
   }
 }
+
+SListHead.defaults = {nextName: 'next'};
 
 SListHead.prototype.pop = SListHead.prototype.popFront;
 SListHead.prototype.push = SListHead.prototype.pushFront;

@@ -1,3 +1,5 @@
+'use strict';
+
 class ListNode {
   constructor() {
     this.prev = this.next = this;
@@ -167,7 +169,6 @@ class List extends ListNode {
     }
     return this;
   }
-
 
   // iterators
 

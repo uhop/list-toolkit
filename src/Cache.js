@@ -1,3 +1,5 @@
+'use strict';
+
 import List from './List.js';
 
 class Cache {
