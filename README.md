@@ -440,7 +440,7 @@ The main operations are:
 | `push(value)` | add new element | *O(log(n))* |
 | `pushPop(value)` | add new element and then return the top element | *O(log(n))* |
 | `replaceTop(value)` | return the top element and then add new element | *O(log(n))* |
-| `releaseSorted()` | remove all elements and return them as an array in sorted order (the heap will be cleared) | *O(n)* |
+| `releaseSorted()` | remove all elements and return them as an array in the reverse sorted order (the heap will be cleared) | *O(n)* |
 | `merge(...args)` | add elements from iterables or other heaps | *O(k)* |
 | `make(...args)` | return a new heap with the same options | *O(1)* |
 | `clone()` | return a copy of the heap | *O(n)* |
