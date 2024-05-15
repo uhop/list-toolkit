@@ -1,4 +1,7 @@
-# List toolkit
+# List toolkit [![NPM version][npm-img]][npm-url]
+
+[npm-img]: https://img.shields.io/npm/v/list-toolkit.svg
+[npm-url]: https://npmjs.org/package/list-toolkit
 
 List-based **efficient** data structures to organize your objects.
 This is a pure JavaScript module with no dependencies
