@@ -12,7 +12,7 @@ The toolkit provides the following data structures with a full set of efficientl
 * **SList**: a singly linked list implemented as a container.
   * Using different custom properties the same object can be linked in different ways.
 * **Cache**: a List-based container with a limited capacity and an LRU policy of evicting old entries.
-* **Heap**: a classic heap data structure.
+* **MinHeap**: a classic heap data structure (a priority queue).
 
 ## Installation
 
@@ -151,7 +151,7 @@ import ListHead from 'list-toolkit/ListHead.js';
 // const ListHead = require('list-toolkit/ListHead.js').default; // CJS
 
 const list1 = new ListHead();
-const list2 = new ListHead(null, Symbol('next'), Symbol('prev'));
+const list2 = new ListHead(null, {nextName: Symbol('next'), prevName:Symbol('prev')});
 
 const value = {a: 1};
 
@@ -175,6 +175,8 @@ The differences are:
 | `makeNode()` | return an otherwise empty object with proper `next` and `prev` properties as circular doubly linked list node | *O(1)* |
 | `adopt(node)` | make sure that a node is already a circular doubly linked list or make it so | *O(1)* |
 | `makeList(head)` | return a new list pointing to `head` with the same `nextName` and `prevName` properties as this list | *O(1)* |
+| `clear(true)` | remove all elements and breaks circular references | *O(n)* |
+| `clear()` | remove all elements | *O(1)* |
 
 `ListHead` defines a helper class `ListHead.Unsafe` that can be used to create lists without checking
 their `nextName` and `prevName` properties:
@@ -215,7 +217,7 @@ Main operations are:
 | Method | Description | Complexity |
 |------|-----------|-----|
 | `new SList()` | create a new List | *O(1)* |
-| `SList.from(values)` | create a new List from an iterable or an array | *O(n)* |
+| `SList.from(values)` | create a new List from an iterable or an array | *O(k)* |
 | `isEmpty` | check if the list is empty | *O(1)* |
 | `front` | get the first element | *O(1)* |
 | `getBack()` | get the last element | *O(n)* |
@@ -225,8 +227,8 @@ Main operations are:
 | `popBack()` | remove and return the last element | *O(n)* |
 | `pushFront(value)` | add a new element at the beginning | *O(1)* |
 | `pushBack(value)` | add a new element at the end | *O(n)* |
-| `appendFront(list)` | add a list at the beginning | *O(n)* |
-| `appendBack(list)` | add a list at the end | *O(n)* |
+| `appendFront(list)` | add a list at the beginning | *O(nk* |
+| `appendBack(list)` | add a list at the end | *O(n + k)* |
 | `moveToFront(node)` | move a node to the front | *O(n)* |
 | `moveToFront(ptr)` | move a node by pointer (see below) to the front | *O(1)* |
 | `moveToBack(node)` | move a node to the back | *O(n)* |
@@ -269,18 +271,16 @@ Helper methods are:
 
 | Method | Description | Complexity |
 |------|-----------|-----|
-| `makeFrom(values)` | (a meta helper) create a new list from an iterable or an array | *O(n)* |
-| `pushValuesFront(values)` | add values at the beginning | *O(n)* |
-| `appendValuesFront(values)` | add values as a list at the beginning | *O(n)* |
+| `makeFrom(values)` | (a meta helper) create a new list from an iterable or an array | *O(k)* |
+| `pushValuesFront(values)` | add values at the beginning | *O(k)* |
+| `appendValuesFront(values)` | add values as a list at the beginning | *O(k)* |
 
 Value node (`SList.ValueNode`) methods are:
 
 | Method | Description | Complexity |
 |------|-----------|-----|
-| `pop()` | remove and return the value | *O(1)* |
-| `popNode()` | remove and return the node | *O(1)* |
 | `addAfter(value)` | add a new value after the current node | *O(1)* |
-| `insertAfter(list)` | insert a list after the current node | *O(n)* |
+| `insertAfter(list)` | insert a list after the current node | *O(k)* |
 
 Stand-alone methods for nodes (`SList.Node`) are:
 
@@ -298,13 +298,13 @@ Its methods are:
 | Method | Description | Complexity |
 |------|-----------|-----|
 | `new SList.SListPtr(list, prev = list)` | create a new pointer | *O(1)* |
-| `prev` | get the previous node | *O(1)* |
-| `node` | get the current node | *O(1)* |
+| `list` | the head node | *O(1)* |
+| `prev` | the previous node | *O(1)* |
 | `isHead` | check if the pointer is at the head of the list | *O(1)* |
 | `next()` | move the pointer to the next node | *O(1)* |
 | `clone()` | make a copy of the pointer | *O(1)* |
 
-Every method of `SList` that accept a node can accept a pointer too.
+Every method of `SList` that accepts a node can accept a pointer too.
 Using pointers is frequently more efficient than using nodes directly.
 
 ### SListHead
@@ -325,7 +325,7 @@ import SListHead from 'list-toolkit/SListHead.js';
 // const SListHead = require('list-toolkit/SListHead.js').default; // CJS
 
 const list1 = new SListHead();
-const list2 = new SListHead(null, Symbol('next'));
+const list2 = new SListHead(null, {nextName: Symbol('next')});
 
 const value = {a: 1};
 
@@ -342,13 +342,15 @@ The differences are:
 | Method | Description | Complexity |
 |------|-----------|-----|
 | `new SListHead(head = null, next = 'next')` | create a new `SListHead` optionally adopting a list by `head` | *O(1)* |
-| `SListHead.from(values, next)` | create a new `SListHead` from an iterable | *O(n)* |
+| `SListHead.from(values, next)` | create a new `SListHead` from an iterable | *O(k)* |
 | `SListHead.pop({nextName}, prev)` | remove the node by its previous node from its list and return `{node, list}` | *O(1)* |
 | `SListHead.extract({nextName}, prevFrom, nodeTo)` | remove nodes from its list and return `{prev, node}` | *O(1)* |
 | `SListHead.splice({nextName}, prev1, {prev, node})` | combine two lists and return the first node of the combined list | *O(1)* |
 | `SListHead.getPrev({nextName}, list, node)` | get a previous node of the given node | *O(n)* |
 | `make(newHead = null)` | return a new `SListHead` pointing to `newHead` with the same `nextName` property as this list | *O(1)* |
-| `makeFrom(values)` | (a meta helper) create a new `SListHead` from an iterable with the same `nextName` property as this list | *O(n)* |
+| `makeFrom(values)` | (a meta helper) create a new `SListHead` from an iterable with the same `nextName` property as this list | *O(k)* |
+| `clear(true)` | remove all elements and breaks circular references | *O(n)* |
+| `clear()` | remove all elements | *O(1)* |
 
 `SListHead.SListPtr` is a pointer-like class similar to `SList.SListPtr`
 but specialized for `SListHead` instances. It has the same API and the same semantics.
@@ -359,6 +361,23 @@ This is the class that is used for caching values using simple unique keys (numb
 It defines a capacity and when it is full, it removes the least recently used value.
 
 Internally it is based on `List`.
+
+```js
+import Cache from 'list-toolkit/Cache.js';
+// or
+// const Cache = require('list-toolkit/Cache.js').default; // CJS
+
+const cache = new Cache(1000);
+
+const processRequest = key => {
+  let data = cache.get(key);
+  if (!data) {
+    data = new DataObject();
+    cache.register(key, data);
+  }
+  // continue processing
+};
+```
 
 The main operations are:
 
@@ -383,35 +402,59 @@ for (const value of cache) {
 
 It iterates from the most recently used to the least recently used.
 
-### Heap
+### MinHeap
 
-`Heap` is a classic data structure: a very efficient priority queue. From the [Wikipedia article](https://en.wikipedia.org/wiki/Heap_(data_structure)):
+`MinHeap` is a classic data structure: a priority queue. From the [Wikipedia article](https://en.wikipedia.org/wiki/Heap_(data_structure)):
 
 > The heap is one maximally efficient implementation of an abstract data type called a priority queue, and in fact, priority queues are often referred to as "heaps", regardless of how they may be implemented. In a heap, the highest (or lowest) priority element is always stored at the root. However, a heap is not a sorted structure; it can be regarded as being partially ordered. A heap is a useful data structure when it is necessary to repeatedly remove the object with the highest (or lowest) priority, or when insertions need to be interspersed with removals of the root node.
+
+```js
+import MinHeap from 'list-toolkit/MinHeap.js';
+// or
+// const MinHeap = require('list-toolkit/MinHeap.js').default; // CJS
+
+const heap = new MinHeap({less: (a, b) => a.priority > b.priority});
+
+const enqueueTask = (priority, task) => {
+  heap.push({priority, task});
+};
+
+const processTasks = () => {
+  while (!heap.isEmpty) {
+    const {priority, task} = heap.pop();
+    // process the highest priority task
+  }
+}
+```
 
 The main operations are:
 
 | Method | Description | Complexity |
 |------|-----------|-----|
-| `new Heap(less = (a, b) => a < b, arrayLike = [])` | create a new heap from an iterable | *O(n)* |
+| `new MinHeap({less = (a, b) => a < b, equal: (a, b) => a === b}, ...args)` | create a new heap optionally from iterables or other heaps | *O(k)* |
 | `length` | get the number of elements in the heap | *O(1)* |
 | `isEmpty` | check if the heap is empty | *O(1)* |
 | `top` | get the top element | *O(1)* |
 | `clear()` | clear the heap | *O(1)* |
 | `pop()` | remove and return the top element | *O(log(n))* |
 | `push(value)` | add new element | *O(log(n))* |
-| `releaseSorted()` | remove all elements and return them as an array in sorted order (the heap will be cleared) | *O(n * log(n))* |
-| `make()` | return a new heap with the same `less` function | *O(1)* |
+| `pushPop(value)` | add new element and then return the top element | *O(log(n))* |
+| `replaceTop(value)` | return the top element and then add new element | *O(log(n))* |
+| `releaseSorted()` | remove all elements and return them as an array in sorted order (the heap will be cleared) | *O(n)* |
+| `merge(...args)` | add elements from iterables or other heaps | *O(k)* |
+| `make(...args)` | return a new heap with the same options | *O(1)* |
 | `clone()` | return a copy of the heap | *O(n)* |
 
-`Heap` provides a number of static methods to create heaps on arrays (used internally):
+`MinHeap` provides a number of static methods to create heaps on arrays (used internally):
 
 | Method | Description | Complexity |
 |------|-----------|-----|
-| `Heap.make(array, less = (a, b) => a < b)` | create a new heap from an array | *O(n)* |
-| `Heap.pop(heapArray, less = (a, b) => a < b)` | remove and return the top element | *O(log(n))* |
-| `Heap.push(heapArray, value, less = (a, b) => a < b)` | add new element | *O(log(n))* |
-| `Heap.sort(heapArray, less = (a, b) => a < b)` | sort an array in place | *O(n * log(n))* |
+| `MinHeap.build(array, less = (a, b) => a < b)` | create a new heap from an array | *O(n)* |
+| `MinHeap.pop(heapArray, less = (a, b) => a < b)` | remove and return the top element | *O(log(n))* |
+| `MinHeap.push(heapArray, value, less = (a, b) => a < b)` | add new element | *O(log(n))* |
+| `MinHeap.pushPop(heapArray, value, less = (a, b) => a < b)` | add new element and then return the top element | *O(log(n))* |
+| `MinHeap.replaceTop(heapArray, value, less = (a, b) => a < b)` | return the top element and then add new element | *O(log(n))* |
+| `MinHeap.sort(heapArray, less = (a, b) => a < b)` | sort an array in place | *O(n * log(n))* |
 
 ## License
 
