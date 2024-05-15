@@ -10,6 +10,7 @@ The toolkit provides the following data structures with a full set of efficientl
 * **ListHead**: a doubly linked list that uses custom properties on external objects to link them around.
   * Using different custom properties the same object can be linked in different ways.
 * **SList**: a singly linked list implemented as a container.
+* **SListHead**: a singly linked list that uses custom properties on external objects to link them around.
   * Using different custom properties the same object can be linked in different ways.
 * **Cache**: a List-based container with a limited capacity and an LRU policy of evicting old entries.
 * **MinHeap**: a classic heap data structure (a priority queue).
