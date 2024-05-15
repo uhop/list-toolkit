@@ -45,7 +45,7 @@ const down = (array, i, less = defaultLess, n = array.length) => {
   return array;
 };
 
-class MinHeap {
+export class MinHeap {
   constructor(options, ...args) {
     copyOptions(this, MinHeap.defaults, options);
     this.array = [];

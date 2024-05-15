@@ -2,7 +2,7 @@
 
 import List from './List.js';
 
-class Cache {
+export class Cache {
   constructor(capacity = 10) {
     this.capacity = capacity;
     this.size = 0;

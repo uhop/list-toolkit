@@ -1,6 +1,6 @@
 'use strict';
 
-class ListNode {
+export class ListNode {
   constructor() {
     this.prev = this.next = this;
   }
@@ -34,7 +34,7 @@ const splice = (head1, head2) => {
   return head1;
 };
 
-class ListValueNode extends ListNode {
+export class ListValueNode extends ListNode {
   constructor(value) {
     super();
     this.value = value;
@@ -65,7 +65,7 @@ class ListValueNode extends ListNode {
   }
 }
 
-class List extends ListNode {
+export class List extends ListNode {
   get isEmpty() {
     return this.next === this;
   }

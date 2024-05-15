@@ -2,7 +2,7 @@
 
 import {copyOptions} from './utils.js';
 
-class SListHead {
+export class SListHead {
   constructor(head = null, options) {
     if (head instanceof SListHead) {
       ({nextName: this.nextName, head: this.head} = head);
@@ -330,7 +330,7 @@ SListHead.Unsafe = class Unsafe {
   }
 };
 
-SListHead.SListPtr = class SListPtr {
+export class SListPtr {
   constructor(list, prev) {
     this.list = list;
     this.prev = prev || list.head;
@@ -349,5 +349,6 @@ SListHead.SListPtr = class SListPtr {
     return new SListHead.SListPtr(this.list, this.prev);
   }
 };
+SListHead.SListPtr = SListPtr;
 
 export default SListHead;

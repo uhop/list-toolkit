@@ -1,6 +1,6 @@
 'use strict';
 
-class SListNode {
+export class SListNode {
   constructor() {
     this.next = this;
   }
@@ -46,7 +46,7 @@ const getPrev = (list, node) => {
   return getPrevPrev(list, node).next;
 };
 
-class SListValueNode extends SListNode {
+export class SListValueNode extends SListNode {
   constructor(value) {
     super();
     this.value = value;
@@ -65,7 +65,7 @@ class SListValueNode extends SListNode {
   }
 }
 
-class SList extends SListNode {
+export class SList extends SListNode {
   get isEmpty() {
     return this.next === this;
   }
@@ -306,7 +306,7 @@ SList.prototype.pop = SList.prototype.popFront;
 SList.prototype.push = SList.prototype.pushFront;
 SList.prototype.append = SList.prototype.appendBack;
 
-SList.SListPtr = class SListPtr {
+export class SListPtr {
   constructor(list, prev) {
     this.list = list;
     this.prev = prev || list;
@@ -325,5 +325,6 @@ SList.SListPtr = class SListPtr {
     return new SList.SListPtr(this.list, this.prev);
   }
 };
+SList.SListPtr = SListPtr;
 
 export default SList;

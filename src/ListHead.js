@@ -2,7 +2,7 @@
 
 import {copyOptions} from './utils.js';
 
-class ListHead {
+export class ListHead {
   constructor(head = null, options) {
     if (head instanceof ListHead) {
       ({nextName: this.nextName, prevName: this.prevName, head: this.head} = head);
