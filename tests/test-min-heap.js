@@ -1,7 +1,7 @@
 'use strict';
 
 import test from 'tape-six';
-import MinHeap from '../src/MinHeap.js';
+import MinHeap from 'list-toolkit/MinHeap.js';
 
 test('MinHeap', t => {
   t.equal(typeof MinHeap, 'function');
@@ -75,4 +75,82 @@ test('MinHeap', t => {
   t.equal(heap.length, 3);
   t.equal(heap.top, 3);
   t.deepEqual(heap.releaseSorted(), [5, 4, 3]);
+
+  // has()
+
+  t.notOk(heap.has(3));
+  heap.merge([1, 2, 3, 4, 5]);
+  t.ok(heap.has(3));
+  t.notOk(heap.has(6));
+
+  // clone()
+
+  const heap2 = heap.clone();
+  t.equal(heap2.length, 5);
+  t.equal(heap2.top, 1);
+  t.deepEqual(heap2.releaseSorted(), [5, 4, 3, 2, 1]);
+  t.notEqual(heap, heap2);
+  heap2.clear();
+
+  // remove()
+
+  {
+    heap.clear().merge([1, 2, 3, 4, 5]).remove(1);
+    t.deepEqual(heap.releaseSorted(), [5, 4, 3, 2]);
+
+    heap.clear().merge([1, 2, 3, 4, 5]).remove(2);
+    t.deepEqual(heap.releaseSorted(), [5, 4, 3, 1]);
+
+    heap.clear().merge([1, 2, 3, 4, 5]).remove(3);
+    t.deepEqual(heap.releaseSorted(), [5, 4, 2, 1]);
+
+    heap.clear().merge([1, 2, 3, 4, 5]).remove(4);
+    t.deepEqual(heap.releaseSorted(), [5, 3, 2, 1]);
+
+    heap.clear().merge([1, 2, 3, 4, 5]).remove(5);
+    t.deepEqual(heap.releaseSorted(), [4, 3, 2, 1]);
+
+    heap.clear().merge([1, 2, 3, 4, 5]).remove(6);
+    t.deepEqual(heap.releaseSorted(), [5, 4, 3, 2, 1]);
+
+    heap.clear().merge([1, 2, 3, 4, 5]).remove(0);
+    t.deepEqual(heap.releaseSorted(), [5, 4, 3, 2, 1]);
+  }
+
+  // replace()
+
+  {
+    heap.clear().merge([1, 2, 3, 4, 5]).replace(1, 6);
+    t.deepEqual(heap.releaseSorted(), [6, 5, 4, 3, 2]);
+
+    heap.clear().merge([1, 2, 3, 4, 5]).replace(1, 0);
+    t.deepEqual(heap.releaseSorted(), [5, 4, 3, 2, 0]);
+
+    heap.clear().merge([1, 2, 3, 4, 5]).replace(2, 6);
+    t.deepEqual(heap.releaseSorted(), [6, 5, 4, 3, 1]);
+
+    heap.clear().merge([1, 2, 3, 4, 5]).replace(2, 0);
+    t.deepEqual(heap.releaseSorted(), [5, 4, 3, 1, 0]);
+
+    heap.clear().merge([1, 2, 3, 4, 5]).replace(3, 6);
+    t.deepEqual(heap.releaseSorted(), [6, 5, 4, 2, 1]);
+
+    heap.clear().merge([1, 2, 3, 4, 5]).replace(3, 0);
+    t.deepEqual(heap.releaseSorted(), [5, 4, 2, 1, 0]);
+
+    heap.clear().merge([1, 2, 3, 4, 5]).replace(4, 6);
+    t.deepEqual(heap.releaseSorted(), [6, 5, 3, 2, 1]);
+
+    heap.clear().merge([1, 2, 3, 4, 5]).replace(4, 0);
+    t.deepEqual(heap.releaseSorted(), [5, 3, 2, 1, 0]);
+
+    heap.clear().merge([1, 2, 3, 4, 5]).replace(5, 6);
+    t.deepEqual(heap.releaseSorted(), [6, 4, 3, 2, 1]);
+
+    heap.clear().merge([1, 2, 3, 4, 5]).replace(5, 0);
+    t.deepEqual(heap.releaseSorted(), [4, 3, 2, 1, 0]);
+
+    heap.clear().merge([1, 2, 3, 4, 5]).replace(6, 0);
+    t.deepEqual(heap.releaseSorted(), [5, 4, 3, 2, 1]);
+  }
 });

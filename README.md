@@ -435,7 +435,10 @@ The main operations are:
 
 | Method | Description | Complexity |
 |------|-----------|-----|
-| `new MinHeap({less = (a, b) => a < b, equal: (a, b) => a === b}, ...args)` | create a new heap optionally from iterables or other heaps | *O(k)* |
+| `new MinHeap({less = (a, b) => a < b, equal: (a, b) => a === b}, ...args)` | create a new heap and optionally populate it from iterables or other heaps | *O(k)* |
+| `array` | get the underlying array organized as min heap | *O(1)* |
+| `less` | get the comparison function | *O(1)* |
+| `equal` | get the equality function | *O(1)* |
 | `length` | get the number of elements in the heap | *O(1)* |
 | `isEmpty` | check if the heap is empty | *O(1)* |
 | `top` | get the top element | *O(1)* |
@@ -444,6 +447,9 @@ The main operations are:
 | `push(value)` | add new element | *O(log(n))* |
 | `pushPop(value)` | add new element and then return the top element | *O(log(n))* |
 | `replaceTop(value)` | return the top element and then add new element | *O(log(n))* |
+| `has(value)` | check if the heap contains an element | *O(n)* |
+| `remove(value)` | remove an element | *O(n)* |
+| `replace(value, newValue)` | replace an element | *O(n)* |
 | `releaseSorted()` | remove all elements and return them as an array in the reverse sorted order (the heap will be cleared) | *O(n)* |
 | `merge(...args)` | add elements from iterables or other heaps | *O(k)* |
 | `make(...args)` | return a new heap with the same options | *O(1)* |
@@ -458,6 +464,12 @@ The main operations are:
 | `MinHeap.push(heapArray, value, less = (a, b) => a < b)` | add new element | *O(log(n))* |
 | `MinHeap.pushPop(heapArray, value, less = (a, b) => a < b)` | add new element and then return the top element | *O(log(n))* |
 | `MinHeap.replaceTop(heapArray, value, less = (a, b) => a < b)` | return the top element and then add new element | *O(log(n))* |
+| `MinHeap.findIndex(heapArray, item, equal = (a, b) => a === b)` | return the index of an element or -1| *O(n)* |
+| `MinHead.removeByIndex(heapArray, index, less = (a, b) => a < b, equal = (a, b) => a === b)` | remove an element by index | *O(log(n))* |
+| `MinHeap.replaceByIndex(heapArray, index, value, less = (a, b) => a < b, equal = (a, b) => a === b)` | replace an element by index | *O(log(n))* |
+| `MinHead.has(heapArray, item, equal = (a, b) => a === b)` | check if the heap contains an element | *O(n)* |
+| `MinHeap.remove(heapArray, item, less = (a, b) => a < b, equal = (a, b) => a === b)` | remove an element | *O(n)* |
+| `MinHeap.replace(heapArray, item, newItem, less = (a, b) => a < b, equal = (a, b) => a === b)` | replace an element | *O(n)* |
 | `MinHeap.sort(heapArray, less = (a, b) => a < b)` | sort an array in place | *O(n * log(n))* |
 
 ## License

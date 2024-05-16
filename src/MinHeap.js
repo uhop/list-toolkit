@@ -175,6 +175,19 @@ export class MinHeap {
     return top;
   }
 
+  has(value) {
+    // return MinHeap.has(this.array, value, this.equal); // inlined
+    return this.array.findIndex(element => this.equal(element, value)) >= 0;
+  }
+
+  remove(value) {
+    return MinHeap.remove(this.array, value, this.less, this.equal);
+  }
+
+  replace(value, newValue) {
+    return MinHeap.replace(this.array, value, newValue, this.less, this.equal);
+  }
+
   releaseSorted() {
     MinHeap.sort(this.array, this.less);
     const array = this.array;
@@ -266,6 +279,56 @@ export class MinHeap {
     heapArray[0] = item;
     down(heapArray, 0, less);
     return top;
+  }
+
+  static has(heapArray, item, equal = MinHeap.defaults.equal) {
+    return heapArray.findIndex(element => equal(element, item)) >= 0;
+  }
+
+  static findIndex(heapArray, item, equal = MinHeap.defaults.equal) {
+    return heapArray.findIndex(element => equal(element, item));
+  }
+
+  static removeByIndex(heapArray, index, less = MinHeap.defaults.less, equal = MinHeap.defaults.equal) {
+    if (index < 0 || index >= heapArray.length) return this;
+    const last = heapArray.length - 1;
+    if (index !== last) {
+      const item = heapArray[index];
+      heapArray[index] = heapArray.pop();
+      if (less(heapArray[index], item)) up(heapArray, index, less);
+      else down(heapArray, index, less);
+    } else heapArray.pop();
+    return this;
+  }
+
+  static remove(heapArray, item, less = MinHeap.defaults.less, equal = MinHeap.defaults.equal) {
+    const index = heapArray.findIndex(element => equal(element, item));
+    if (index < 0) return this;
+    const last = heapArray.length - 1;
+    if (index !== last) {
+      heapArray[index] = heapArray.pop();
+      if (less(heapArray[index], item)) up(heapArray, index, less);
+      else down(heapArray, index, less);
+    } else heapArray.pop();
+    return this;
+  }
+
+  static replaceByIndex(heapArray, index, newItem, less = MinHeap.defaults.less, equal = MinHeap.defaults.equal) {
+    if (index < 0 || index >= heapArray.length) return this;
+    const item = heapArray[index];
+    heapArray[index] = newItem;
+    if (less(newItem, item)) up(heapArray, index, less);
+    else down(heapArray, index, less);
+    return this;
+  }
+
+  static replace(heapArray, item, newItem, less = MinHeap.defaults.less, equal = MinHeap.defaults.equal) {
+    const index = heapArray.findIndex(element => equal(element, item));
+    if (index < 0) return this;
+    heapArray[index] = newItem;
+    if (less(newItem, item)) up(heapArray, index, less);
+    else down(heapArray, index, less);
+    return this;
   }
 
   static sort(heapArray, less = MinHeap.defaults.less) {
