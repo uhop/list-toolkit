@@ -478,4 +478,5 @@ BSD 3-Clause "New" or "Revised" License. See the LICENSE file for details.
 
 ## Release History
 
+* 1.0.1 *Fixed exports. Added more methods to `MinHeap`.*
 * 1.0.1 *Initial release.*
