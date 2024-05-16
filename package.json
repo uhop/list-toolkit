@@ -4,8 +4,10 @@
   "description": "List-based data structures to organize your objects.",
   "type": "module",
   "exports": {
-    "import": "./src/*",
-    "default": "./cjs/*"
+    "./*": {
+      "require": "./cjs/*",
+      "default": "./src/*"
+    }
   },
   "scripts": {
     "test": "tape6 --flags FO",
