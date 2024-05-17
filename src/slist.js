@@ -16,8 +16,8 @@ const pop = prev => {
 const extract = (prevFrom, nodeTo) => {
   const node = prevFrom.next;
   if (prevFrom === nodeTo) return {prev: prevFrom, node};
-  prevFrom.next = nodeTo.next;
-  nodeTo.next = node;
+  prevFrom.next = nodeTo.next; // exclude the range
+  nodeTo.next = node; // circle the range making node a list head
   return {prev: nodeTo, node};
 };
 
@@ -26,6 +26,15 @@ const splice = (prev1, {prev, node}) => {
   prev1.next = node;
   return prev1;
 };
+
+const move = (target, prevFrom, nodeTo) => {
+  const head = prevFrom.next, next = target.next;
+  prevFrom.next = nodeTo.next; // exclude the range
+  // include the range
+  target.next = head;
+  nodeTo.next = next;
+  return target;
+}
 
 const getPrevPrev = (list, node) => {
   let prev = list,
@@ -265,6 +274,14 @@ export class SList extends SListNode {
 
   // helpers
 
+  clone() {
+    return SList.from(this);
+  }
+
+  make() {
+    return new SList();
+  }
+
   makeFrom(values) {
     return SList.from(values);
   }
@@ -278,6 +295,42 @@ export class SList extends SListNode {
 
   appendValuesFront(values) {
     return this.appendFront(SList.from(values));
+  }
+
+  findPtrBy(condition) {
+    for (let prev = this, current = prev.next; current !== this; prev = current, current = current.next) {
+      if (condition(current.value)) return new SList.SListPtr(this, prev);
+    }
+    return null;
+  }
+
+  removeNodeBy(condition) {
+    for (let prev = this, current = prev.next; current !== this; prev = current, current = current.next) {
+      if (condition(current.value)) {
+        prev.next = current.next;
+        current.next = current;
+        return current;
+      }
+    }
+    return null;
+  }
+
+  extractBy(condition) {
+    const extracted = this.make();
+    let tail = extracted;
+    for (let prev = this, current = prev.next; current !== this;) {
+      if (condition(current.value)) {
+        prev.next = current.next;
+        tail.next = current;
+        tail = current;
+        current = prev.next;
+      } else {
+        prev = current;
+        current = current.next;
+      }
+    }
+    tail.next = extracted;
+    return extracted;
   }
 
   static from(values) {
@@ -296,6 +349,7 @@ export class SList extends SListNode {
 SList.pop = pop;
 SList.extract = extract;
 SList.splice = splice;
+SList.move = move;
 SList.getPrev = getPrev;
 SList.getPrevPrev = getPrevPrev;
 

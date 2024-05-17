@@ -14,7 +14,7 @@ const pop = head => {
   return {node: head, list: rest};
 };
 
-const extract = (from, to) => {
+const extract = (from, to = from) => {
   const prev = from.prev,
     next = to.next;
   prev.next = next;
@@ -32,6 +32,21 @@ const splice = (head1, head2) => {
   tail2.next = head1;
   head1.prev = tail2;
   return head1;
+};
+
+const move = (target, from, to = from) => {
+  // extract
+  from.prev.next = to.next;
+  to.next.prev = from.prev;
+
+  // insert
+  const next = target.next;
+  target.next = from;
+  from.prev = target;
+  to.next = next;
+  next.prev = to;
+
+  return target;
 };
 
 export class ListValueNode extends ListNode {
@@ -254,6 +269,14 @@ export class List extends ListNode {
 
   // helpers
 
+  clone() {
+    return List.from(this);
+  }
+
+  make() {
+    return new List();
+  }
+
   makeFrom(values) {
     return List.from(values);
   }
@@ -273,11 +296,42 @@ export class List extends ListNode {
   }
 
   appendValuesFront(values) {
-    return this.appendFront(List.from(values));
+    return this.appendFront(this.makeFrom(values));
   }
 
   appendValuesBack(values) {
-    return this.appendBack(List.from(values));
+    return this.appendBack(this.makeFrom(values));
+  }
+
+  findNodeBy(condition) {
+    for (const current of this.getNodeIterable()) {
+      if (condition(current.value)) return current;
+    }
+    return null;
+  }
+
+  removeNodeBy(condition) {
+    for (const current of this.getNodeIterable()) {
+      if (condition(current.value)) {
+        List.pop(current);
+        return current;
+      }
+    }
+    return null;
+  }
+
+  extractBy(condition) {
+    const extracted = this.make();
+    for (let node = this.next; node !== this; ) {
+      if (condition(node.value)) {
+        const current = node;
+        node = node.next;
+        List.move(extracted, current);
+      } else {
+        node = node.next;
+      }
+    }
+    return extracted;
   }
 
   static from(values) {
@@ -292,6 +346,7 @@ export class List extends ListNode {
 List.pop = pop;
 List.extract = extract;
 List.splice = splice;
+List.move = move;
 
 List.Node = ListNode;
 List.ValueNode = ListValueNode;

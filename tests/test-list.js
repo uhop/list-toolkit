@@ -192,7 +192,14 @@ test('List helpers', t => {
   const list = new List();
 
   {
+    const other = list.make();
+    t.ok(other instanceof List);
+    t.ok(other.isEmpty);
+  }
+
+  {
     const other = list.makeFrom([1, 2, 3, 4, 5]);
+    t.ok(other instanceof List);
     t.deepEqual(Array.from(other), [1, 2, 3, 4, 5]);
   }
 
@@ -207,4 +214,32 @@ test('List helpers', t => {
 
   list.appendValuesBack([7, 8]);
   t.deepEqual(Array.from(list), [5, 6, 2, 1, 3, 4, 7, 8]);
+
+  {
+    const other = list.clone();
+    t.ok(other instanceof List);
+    t.ok(other !== list);
+    t.deepEqual(Array.from(other), Array.from(list));
+  }
+
+  {
+    const list = List.from([1, 2, 3, 2, 5]),
+      node = list.findNodeBy(value => value === 2);
+    t.deepEqual(Array.from(list), [1, 2, 3, 2, 5]);
+    t.equal(node.value, 2);
+  }
+
+  {
+    const list = List.from([1, 2, 3, 2, 5]),
+      node = list.removeNodeBy(value => value === 2);
+    t.deepEqual(Array.from(list), [1, 3, 2, 5]);
+    t.equal(node.value, 2);
+  }
+
+  {
+    const list = List.from([1, 2, 3, 2, 5]),
+      extracted = list.extractBy(value => value === 2);
+    t.deepEqual(Array.from(list), [1, 3, 5]);
+    t.deepEqual(Array.from(extracted), [2, 2]);
+  }
 });

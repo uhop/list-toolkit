@@ -61,8 +61,11 @@ Main operations are:
 | `moveToFront(node)` | move a node to the front | *O(1)* |
 | `moveToBack(node)` | move a node to the back | *O(1)* |
 | `clear()` | remove all elements | *O(1)* |
+| `findNodeBy(condition)` | find the first node that satisfies the condition | *O(n)* |
 | `remove(from, to = from)` | remove a range of elements | *O(1)* |
+| `removeNodeBy(condition)` | remove and return the first node that satisfies the condition | *O(n)* |
 | `extract(from, to)` | remove and return a range of elements as a new List | *O(1)* |
+| `extractBy(condition)` | remove and return elements as a new List that satisfy the condition | *O(n)* |
 | `reverse()` | reverse the list inline | *O(n)* |
 | `sort(compareFn)` | sort the list inline | *O(n * log(n))* |
 
@@ -99,7 +102,9 @@ Helper methods are:
 
 | Method | Description | Complexity |
 |------|-----------|-----|
-| `makeFrom(values)` | (a meta helper) create a new List from an iterable or an array | *O(k)* |
+| `make()` | (a meta helper) create a new List | *O(1)* |
+| `makeFrom(values)` | (a meta helper) create a new list from an iterable or an array | *O(k)* |
+| `clone()` | (a meta helper) clone the list | *O(n)* |
 | `pushValuesFront(values)` | add values at the beginning | *O(k)* |
 | `pushValuesBack(values)` | add values at the end | *O(k)* |
 | `appendValuesFront(values)` | add values as a list at the beginning | *O(k)* |
@@ -120,8 +125,9 @@ Stand-alone methods for nodes (`List.Node`) are:
 | Method | Description | Complexity |
 |------|-----------|-----|
 | `List.pop(node)` | remove the node from its list and return `{node, list}` | *O(1)* |
-| `List.extract(from, to)` | remove nodes from their list and return the first node of the extracted list | *O(1)* |
+| `List.extract(from, to = from)` | remove nodes from their list and return the first node of the extracted list | *O(1)* |
 | `List.splice(head1, head2)` | combine two lists and return the first node of the combined list | *O(1)* |
+| `List.move(target, from, to = from)` | move a range of nodes to another list after a target node | *O(1)* |
 
 ### ListHead
 
@@ -238,10 +244,13 @@ Main operations are:
 | `moveToBack(node)` | move a node to the back | *O(n)* |
 | `moveToBack(ptr)` | move a node by pointer (see below) to the back | *O(1)* |
 | `clear()` | remove all elements | *O(1)* |
+| `findPtrBy(condition)` | find a pointer to the first node that satisfies the condition | *O(n)* |
 | `remove(from, to = from)` | remove a range of elements | *O(n)* |
 | `remove(fromPtr, to = from)` | remove a range of elements using a pointer (see below) | *O(1)* |
+| `removeNodeBy(condition)` | remove the first node that satisfies the condition | *O(n)* |
 | `extract(from, to)` | remove and return a range of elements as a new list | *O(n)* |
 | `extract(fromPtr, to)` | remove and return a range of elements as a new list using a pointer (see below) | *O(1)* |
+| `extractBy(condition)` | remove and return elements as a new List that satisfy the condition | *O(n)* |
 | `reverse()` | reverse the list inline | *O(n)* |
 | `sort(compareFn)` | sort the list inline | *O(n * log(n))* |
 
@@ -275,7 +284,9 @@ Helper methods are:
 
 | Method | Description | Complexity |
 |------|-----------|-----|
+| `make()` | (a meta helper) create a new list | *O(1)* |
 | `makeFrom(values)` | (a meta helper) create a new list from an iterable or an array | *O(k)* |
+| `clone()` | (a meta helper) clone a list | *O(n)* |
 | `pushValuesFront(values)` | add values at the beginning | *O(k)* |
 | `appendValuesFront(values)` | add values as a list at the beginning | *O(k)* |
 
@@ -293,6 +304,7 @@ Stand-alone methods for nodes (`SList.Node`) are:
 | `SList.pop(prev)` | remove the node from its list and return `{node, list}` | *O(1)* |
 | `SList.extract(prevFrom, nodeTo)` | remove nodes from their list and return `{prev, node}`, where `node` is the first node of the extracted list, and `prev` is the previous node | *O(1)* |
 | `SList.splice(prev1, {prev, node})` | combine two lists and return the first node of the combined list | *O(1)* |
+| `SList.move(target, prevFrom, nodeTo)` | move a range of nodes to another list after a target node | *O(1)* |
 | `SList.getPrev(list, node)` | get a previous node of the given node | *O(n)* |
 
 `SList` provides a special pointer: `SList.SListPtr`. It can be used to create a pointer to a node in a list. It is constructed using a previous node, which makes some operations more efficient.

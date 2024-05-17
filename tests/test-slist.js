@@ -165,6 +165,12 @@ test('SList helpers', t => {
   const list = new SList();
 
   {
+    const other = list.make();
+    t.ok(other instanceof SList);
+    t.ok(other.isEmpty);
+  }
+
+  {
     const other = list.makeFrom([1, 2, 3, 4, 5]);
     t.deepEqual(Array.from(other), [1, 2, 3, 4, 5]);
   }
@@ -174,6 +180,34 @@ test('SList helpers', t => {
 
   list.appendValuesFront([5, 6]);
   t.deepEqual(Array.from(list), [5, 6, 2, 1]);
+
+  {
+    const other = list.clone();
+    t.ok(other instanceof SList);
+    t.ok(other !== list);
+    t.deepEqual(Array.from(other), Array.from(list));
+  }
+
+  {
+    const list = SList.from([1, 2, 3, 2, 5]),
+      ptr = list.findPtrBy(value => value === 2);
+    t.deepEqual(Array.from(list), [1, 2, 3, 2, 5]);
+    t.equal(ptr.node.value, 2);
+  }
+
+  {
+    const list = SList.from([1, 2, 3, 2, 5]),
+      node = list.removeNodeBy(value => value === 2);
+    t.deepEqual(Array.from(list), [1, 3, 2, 5]);
+    t.equal(node.value, 2);
+  }
+
+  {
+    const list = SList.from([1, 2, 3, 2, 5]),
+      extracted = list.extractBy(value => value === 2);
+    t.deepEqual(Array.from(list), [1, 3, 5]);
+    t.deepEqual(Array.from(extracted), [2, 2]);
+  }
 });
 
 test('SList.SListPtr', t => {
