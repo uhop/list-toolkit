@@ -1,7 +1,7 @@
 'use strict';
 
 import test from 'tape-six';
-import Cache from '../src/Cache.js';
+import Cache from 'list-toolkit/cache.js';
 
 test('Cache', t => {
   const cache = new Cache(3);

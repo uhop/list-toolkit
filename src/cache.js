@@ -1,6 +1,6 @@
 'use strict';
 
-import List from './List.js';
+import List from './list.js';
 
 export class Cache {
   constructor(capacity = 10) {

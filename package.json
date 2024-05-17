@@ -11,9 +11,9 @@
   },
   "scripts": {
     "test": "tape6 --flags FO",
-    "prepareDist": "node scripts/prepareDist.js",
+    "prepare-dist": "node scripts/prepare-dist.js",
     "build": "babel src --out-dir cjs",
-    "prepublishOnly": "npm run prepareDist && npm run build"
+    "prepublishOnly": "npm run prepare-dist && npm run build"
   },
   "repository": {
     "type": "git",

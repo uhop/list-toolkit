@@ -1,7 +1,7 @@
 'use strict';
 
 import test from 'tape-six';
-import MinHeap from 'list-toolkit/MinHeap.js';
+import MinHeap from 'list-toolkit/min-heap.js';
 
 test('MinHeap', t => {
   t.equal(typeof MinHeap, 'function');

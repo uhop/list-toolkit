@@ -1,7 +1,7 @@
 'use strict';
 
 import test from 'tape-six';
-import ListHead from '../src/ListHead.js';
+import ListHead from 'list-toolkit/list-head.js';
 
 test('Elementary ListHead operations', t => {
   t.equal(typeof ListHead, 'function');

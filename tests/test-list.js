@@ -1,7 +1,7 @@
 'use strict';
 
 import test from 'tape-six';
-import List from '../src/List.js';
+import List from 'list-toolkit/list.js';
 
 test('General List tests', t => {
   const numbers = List.from([1, 2, 3, 4, 5, 6, 7, 8, 9]),

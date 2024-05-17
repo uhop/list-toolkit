@@ -1,7 +1,7 @@
 'use strict';
 
 import test from 'tape-six';
-import SListHead from '../src/SListHead.js';
+import SListHead from 'list-toolkit/slist-head.js';
 
 test.skip('Elementary SListHead operations', t => {
   t.equal(typeof SListHead, 'function');
