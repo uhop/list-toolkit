@@ -6,6 +6,15 @@ export class ListNode {
   }
 }
 
+export class ListValueNode extends ListNode {
+  constructor(value) {
+    super();
+    this.value = value;
+  }
+}
+
+// useful low-level operations on doubly linked lists
+
 const pop = head => {
   const rest = head.next;
   head.prev.next = head.next;
@@ -34,12 +43,12 @@ const splice = (head1, head2) => {
   return head1;
 };
 
-const move = (target, from, to = from) => {
+const append = (target, from, to = from) => {
   // extract
   from.prev.next = to.next;
   to.next.prev = from.prev;
 
-  // insert
+  // splice
   const next = target.next;
   target.next = from;
   from.prev = target;
@@ -49,33 +58,57 @@ const move = (target, from, to = from) => {
   return target;
 };
 
-export class ListValueNode extends ListNode {
-  constructor(value) {
-    super();
-    this.value = value;
-  }
+const isNodeLike = node => node && node.prev && node.next;
+const isStandAlone = node => node && node.prev === node && node.next === node;
 
-  pop() {
-    return pop(this).node.value;
+export class ListPtr {
+  constructor(list, node) {
+    if (list instanceof ListPtr) {
+      this.list = list.list;
+      this.node = list.node;
+    } else if (node instanceof ListPtr) {
+      if (list !== node.list) throw new Error('Node specified by ListPtr must belong to the same list');
+      this.list = list;
+      this.node = node.node;
+    } else {
+      this.list = list;
+      this.node = node || list.next;
+    }
   }
-
+  get isHead() {
+    return this.node === this.list;
+  }
+  next() {
+    this.node = this.node.next;
+    return this;
+  }
+  prev() {
+    this.node = this.node.prev;
+    return this;
+  }
+  clone() {
+    return new ListPtr(this.list, this.node);
+  }
+  remove() {
+    if (this.node === this.list) return null;
+    const node = this.node;
+    this.node = node.next;
+    return pop(node).node;
+  }
   addBefore(value) {
-    splice(this, new ListValueNode(value));
+    splice(this.node, value instanceof ListValueNode ? value : new ListValueNode(value));
     return this;
   }
-
   addAfter(value) {
-    splice(this.next, new ListValueNode(value));
+    splice(this.node.next, value instanceof ListValueNode ? value : new ListValueNode(value));
     return this;
   }
-
   insertBefore(list) {
-    splice(this, pop(list).list);
+    splice(this.node, pop(list).list);
     return this;
   }
-
   insertAfter(list) {
-    splice(this.next, pop(list).list);
+    splice(this.node.next, pop(list).list);
     return this;
   }
 }
@@ -93,31 +126,63 @@ export class List extends ListNode {
     return this.prev;
   }
 
+  get frontPtr() {
+    return new ListPtr(this, this.next);
+  }
+
+  get backPtr() {
+    return new ListPtr(this, this.prev);
+  }
+
   getLength() {
     let n = 0;
     for (let p = this.next; p !== this; ++n, p = p.next);
     return n;
   }
 
+  isNodeLike(node) {
+    return isNodeLike(node);
+  }
+
+  isValidValueNode(node) {
+    return node instanceof ListValueNode && isStandAlone(node);
+  }
+
+  makePtr(node) {
+    return new ListPtr(this, node || this.next);
+  }
+
   popFront() {
     if (this.next !== this) {
-      return this.next.pop();
+      return pop(this.next).node.value;
     }
   }
 
   popBack() {
+    if (this.prev !== this) {
+      return pop(this.prev).node.value;
+    }
+  }
+
+  popFrontNode() {
     if (this.next !== this) {
-      return this.prev.pop();
+      return pop(this.next).node;
+    }
+  }
+
+  popBackNode() {
+    if (this.prev !== this) {
+      return pop(this.prev).node;
     }
   }
 
   pushFront(value) {
-    splice(this.next, new ListValueNode(value));
+    splice(this.next, this.isValidValueNode(value) ? value : new ListValueNode(value));
     return this;
   }
 
   pushBack(value) {
-    splice(this, new ListValueNode(value));
+    splice(this, this.isValidValueNode(value) ? value : new ListValueNode(value));
     return this;
   }
 
@@ -136,15 +201,17 @@ export class List extends ListNode {
   }
 
   moveToFront(node) {
+    if (node instanceof ListPtr) node = node.node;
     if (this.next !== node) {
-      splice(this.next, extract(node, node));
+      splice(this.next, pop(node).node);
     }
     return this;
   }
 
   moveToBack(node) {
+    if (node instanceof ListPtr) node = node.node;
     if (this.prev !== node) {
-      splice(this, extract(node, node));
+      splice(this, pop(node).node);
     }
     return this;
   }
@@ -155,11 +222,35 @@ export class List extends ListNode {
   }
 
   remove(from, to = from) {
+    if (from instanceof ListPtr) {
+      if (to instanceof ListPtr) {
+        if (from.list !== to.list) throw new Error("Range specified by ListPtr's must belong to the same list");
+        to = to.node;
+      }
+      from = from.node;
+    } else {
+      if (to instanceof ListPtr) to = to.node;
+    }
     extract(from, to);
     return this;
   }
 
+  removeNode(node) {
+    if (node instanceof ListPtr) node = node.node;
+    pop(node);
+    return this;
+  }
+
   extract(from, to) {
+    if (from instanceof ListPtr) {
+      if (to instanceof ListPtr) {
+        if (from.list !== to.list) throw new Error("Range specified by ListPtr's must belong to the same list");
+        to = to.node;
+      }
+      from = from.node;
+    } else {
+      if (to instanceof ListPtr) to = to.node;
+    }
     return splice(new List(), extract(from, to));
   }
 
@@ -200,6 +291,15 @@ export class List extends ListNode {
   }
 
   getIterable(from, to) {
+    if (from instanceof ListPtr) {
+      if (to instanceof ListPtr) {
+        if (from.list !== to.list) throw new Error("Range specified by ListPtr's must belong to the same list");
+        to = to.node;
+      }
+      from = from.node;
+    } else {
+      if (to instanceof ListPtr) to = to.node;
+    }
     return {
       [Symbol.iterator]: () => {
         let current = from || this.next;
@@ -217,6 +317,15 @@ export class List extends ListNode {
   }
 
   getNodeIterable(from, to) {
+    if (from instanceof ListPtr) {
+      if (to instanceof ListPtr) {
+        if (from.list !== to.list) throw new Error("Range specified by ListPtr's must belong to the same list");
+        to = to.node;
+      }
+      from = from.node;
+    } else {
+      if (to instanceof ListPtr) to = to.node;
+    }
     return {
       [Symbol.iterator]: () => {
         let current = from || this.next;
@@ -233,7 +342,34 @@ export class List extends ListNode {
     };
   }
 
+  getPtrIterable(from, to) {
+    if (from instanceof ListPtr && to instanceof ListPtr && from.list !== to.list) throw new Error("Range specified by ListPtr's must belong to the same list");
+    return {
+      [Symbol.iterator]: () => {
+        const current = from instanceof ListPtr ? from.clone() : new ListPtr(this, from || this.next),
+          stop = to instanceof ListPtr ? to.node : to ? to.next : this;
+        return {
+          next: () => {
+            if (current.node === stop) return {done: true};
+            const value = current.clone();
+            current.next();
+            return {value};
+          }
+        };
+      }
+    };
+  }
+
   getReverseIterable(from, to) {
+    if (from instanceof ListPtr) {
+      if (to instanceof ListPtr) {
+        if (from.list !== to.list) throw new Error("Range specified by ListPtr's must belong to the same list");
+        to = to.node;
+      }
+      from = from.node;
+    } else {
+      if (to instanceof ListPtr) to = to.node;
+    }
     return {
       [Symbol.iterator]: () => {
         let current = to || this.prev;
@@ -251,6 +387,15 @@ export class List extends ListNode {
   }
 
   getReverseNodeIterable(from, to) {
+    if (from instanceof ListPtr) {
+      if (to instanceof ListPtr) {
+        if (from.list !== to.list) throw new Error("Range specified by ListPtr's must belong to the same list");
+        to = to.node;
+      }
+      from = from.node;
+    } else {
+      if (to instanceof ListPtr) to = to.node;
+    }
     return {
       [Symbol.iterator]: () => {
         let current = to || this.prev;
@@ -260,6 +405,24 @@ export class List extends ListNode {
             if (current === stop) return {done: true};
             const value = current;
             current = current.prev;
+            return {value};
+          }
+        };
+      }
+    };
+  }
+
+  getReversePtrIterable(from, to) {
+    if (from instanceof ListPtr && to instanceof ListPtr && from.list !== to.list) throw new Error("Range specified by ListPtr's must belong to the same list");
+    return {
+      [Symbol.iterator]: () => {
+        const current = to instanceof ListPtr ? to.clone() : new ListPtr(this, to || this.prev),
+          stop = from instanceof ListPtr ? from.node : from ? from.next : this;
+        return {
+          next: () => {
+            if (current.node === stop) return {done: true};
+            const value = current.clone();
+            current.prev();
             return {value};
           }
         };
@@ -305,17 +468,21 @@ export class List extends ListNode {
 
   findNodeBy(condition) {
     for (const current of this.getNodeIterable()) {
-      if (condition(current.value)) return current;
+      if (condition(current)) return current;
+    }
+    return null;
+  }
+
+  findPtrBy(condition) {
+    for (const current of this.getPtrIterable()) {
+      if (condition(current.node)) return current;
     }
     return null;
   }
 
   removeNodeBy(condition) {
     for (const current of this.getNodeIterable()) {
-      if (condition(current.value)) {
-        List.pop(current);
-        return current;
-      }
+      if (condition(current)) return pop(current).node;
     }
     return null;
   }
@@ -323,10 +490,10 @@ export class List extends ListNode {
   extractBy(condition) {
     const extracted = this.make();
     for (let node = this.next; node !== this; ) {
-      if (condition(node.value)) {
+      if (condition(node)) {
         const current = node;
         node = node.next;
-        List.move(extracted, current);
+        List.append(extracted, current);
       } else {
         node = node.next;
       }
@@ -336,9 +503,7 @@ export class List extends ListNode {
 
   static from(values) {
     const list = new List();
-    for (const value of values) {
-      list.pushBack(value);
-    }
+    for (const value of values) list.pushBack(value);
     return list;
   }
 }
@@ -346,7 +511,9 @@ export class List extends ListNode {
 List.pop = pop;
 List.extract = extract;
 List.splice = splice;
-List.move = move;
+List.append = append;
+List.isNodeLike = isNodeLike;
+List.isStandAlone = isStandAlone;
 
 List.Node = ListNode;
 List.ValueNode = ListValueNode;

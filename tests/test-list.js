@@ -224,21 +224,21 @@ test('List helpers', t => {
 
   {
     const list = List.from([1, 2, 3, 2, 5]),
-      node = list.findNodeBy(value => value === 2);
+      node = list.findNodeBy(node => node.value === 2);
     t.deepEqual(Array.from(list), [1, 2, 3, 2, 5]);
     t.equal(node.value, 2);
   }
 
   {
     const list = List.from([1, 2, 3, 2, 5]),
-      node = list.removeNodeBy(value => value === 2);
+      node = list.removeNodeBy(node => node.value === 2);
     t.deepEqual(Array.from(list), [1, 3, 2, 5]);
     t.equal(node.value, 2);
   }
 
   {
     const list = List.from([1, 2, 3, 2, 5]),
-      extracted = list.extractBy(value => value === 2);
+      extracted = list.extractBy(node => node.value === 2);
     t.deepEqual(Array.from(list), [1, 3, 5]);
     t.deepEqual(Array.from(extracted), [2, 2]);
   }
