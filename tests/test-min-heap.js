@@ -89,7 +89,7 @@ test('MinHeap', t => {
   t.equal(heap2.length, 5);
   t.equal(heap2.top, 1);
   t.deepEqual(heap2.releaseSorted(), [5, 4, 3, 2, 1]);
-  t.notEqual(heap, heap2);
+  t.ok(heap !== heap2);
   heap2.clear();
 
   // remove()
