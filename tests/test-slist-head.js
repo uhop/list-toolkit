@@ -3,7 +3,7 @@
 import test from 'tape-six';
 import SListHead from 'list-toolkit/slist-head.js';
 
-test.skip('Elementary SListHead operations', t => {
+test('Elementary SListHead operations', t => {
   t.equal(typeof SListHead, 'function');
 
   const a = {x: 1},
