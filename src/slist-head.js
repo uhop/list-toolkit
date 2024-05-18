@@ -31,6 +31,10 @@ export class SListHead {
     return this.head[this.nextName];
   }
 
+  get frontPtr() {
+    return new SListHead.SListPtr(this);
+  }
+
   getBack() {
     return SListHead.getPrev(this, this.head);
   }
@@ -39,10 +43,6 @@ export class SListHead {
     let n = 0;
     for (let p = this.head[this.nextName]; p !== this.head; ++n, p = p[this.nextName]);
     return n;
-  }
-
-  getPtr() {
-    return new SListHead.SListPtr(this);
   }
 
   popFront() {
@@ -206,7 +206,11 @@ export class SListHead {
     return {
       [Symbol.iterator]: () => {
         let current =
-          from instanceof SListHead.SListPtr ? from.clone() : from ? new SListHead.SListPtr(this, SListHead.getPrev(this, this.head, from)) : this.getPtr();
+          from instanceof SListHead.SListPtr
+            ? from.clone()
+            : from
+            ? new SListHead.SListPtr(this, SListHead.getPrev(this, this.head, from))
+            : this.frontPtr;
         const stop = to ? ((to instanceof SListHead.SListPtr && to.node) || to)[this.nextName] : this.head;
         return {
           next: () => {
@@ -348,7 +352,7 @@ export class SListPtr {
   clone() {
     return new SListHead.SListPtr(this.list, this.prev);
   }
-};
+}
 SListHead.SListPtr = SListPtr;
 
 export default SListHead;
