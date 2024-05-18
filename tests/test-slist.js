@@ -2,6 +2,7 @@
 
 import test from 'tape-six';
 import SList from 'list-toolkit/slist.js';
+import {pushValuesFront, findPtrBy, removeNodeBy} from 'list-toolkit/list-utils.js';
 
 test('General SList tests', t => {
   const numbers = SList.from([1, 2, 3, 4, 5, 6, 7, 8, 9]),
@@ -142,11 +143,8 @@ test('SList helpers', t => {
     t.deepEqual(Array.from(other), [1, 2, 3, 4, 5]);
   }
 
-  list.pushValuesFront([1, 2]);
+  pushValuesFront(list, [1, 2]);
   t.deepEqual(Array.from(list), [2, 1]);
-
-  list.appendValuesFront([5, 6]);
-  t.deepEqual(Array.from(list), [5, 6, 2, 1]);
 
   {
     const other = list.clone();
@@ -157,14 +155,14 @@ test('SList helpers', t => {
 
   {
     const list = SList.from([1, 2, 3, 2, 5]),
-      ptr = list.findPtrBy(node => node.value === 2);
+      ptr = findPtrBy(list, node => node.value === 2);
     t.deepEqual(Array.from(list), [1, 2, 3, 2, 5]);
     t.equal(ptr.node.value, 2);
   }
 
   {
     const list = SList.from([1, 2, 3, 2, 5]),
-      node = list.removeNodeBy(node => node.value === 2);
+      node = removeNodeBy(list, node => node.value === 2);
     t.deepEqual(Array.from(list), [1, 3, 2, 5]);
     t.equal(node.value, 2);
   }
@@ -186,7 +184,7 @@ test('SList.SListPtr', t => {
     t.deepEqual(array, [1, 2, 3, 4, 5]);
   }
 
-  const getPtrByValue = (list, value) => list.findPtrBy(node => node.value === value);
+  const getPtrByValue = (list, value) => findPtrBy(list, node => node.value === value);
 
   list.moveToFront(getPtrByValue(list, 4));
   t.deepEqual(Array.from(list), [4, 1, 2, 3, 5]);
@@ -195,14 +193,14 @@ test('SList.SListPtr', t => {
   list.remove(getPtrByValue(list, 2), getPtrByValue(list, 4));
   t.deepEqual(Array.from(list), [1, 5]);
 
-  list.pushValuesFront([2, 3, 4]);
+  pushValuesFront(list, [2, 3, 4]);
   list.sort((a, b) => a - b);
   const extract = list.extract(getPtrByValue(list, 2), getPtrByValue(list, 4));
   t.deepEqual(Array.from(list), [1, 5]);
   t.deepEqual(Array.from(extract), [2, 3, 4]);
 
   {
-    list.pushValuesFront([2, 3, 4]);
+    pushValuesFront(list, [2, 3, 4]);
     list.sort((a, b) => a - b);
     const array = [];
     for (const value of list.getIterable(getPtrByValue(list, 2), getPtrByValue(list, 4))) array.push(value);

@@ -1,5 +1,7 @@
 'use strict';
 
+import {addAliases} from './utils-meta.js';
+
 export class SListNode {
   constructor() {
     this.next = this;
@@ -191,6 +193,24 @@ export class SList extends SListNode {
     return splice(new SList(), extract({prevFrom: fromPtr.prev, to}));
   }
 
+  extractBy(condition) {
+    const extracted = this.make();
+    let tail = extracted;
+    for (let prev = this, current = prev.next; current !== this; ) {
+      if (condition(current)) {
+        prev.next = current.next;
+        tail.next = current;
+        tail = current;
+        current = prev.next;
+      } else {
+        prev = current;
+        current = current.next;
+      }
+    }
+    tail.next = extracted;
+    return extracted;
+  }
+
   reverse() {
     let prev = this,
       current = prev.next;
@@ -228,25 +248,14 @@ export class SList extends SListNode {
   }
 
   getIterable(from, to) {
-    if (from instanceof SListPtr) {
-      if (to instanceof SListPtr) {
-        if (from.list !== to.list) throw new Error("Range specified by SListPtr's must belong to the same list");
-        to = to.node;
-      }
-      from = from.node;
-    } else {
-      if (to instanceof SListPtr) to = to.node;
-    }
     return {
       [Symbol.iterator]: () => {
-        let current = from || this.next;
-        const stop = to ? to.next : this;
+        const nodeIterable = this.getNodeIterable(from, to)[Symbol.iterator]();
         return {
           next: () => {
-            if (current === stop) return {done: true};
-            const value = current.value;
-            current = current.next;
-            return {value};
+            const result = nodeIterable.next();
+            if (result.done) return result;
+            return {value: result.value.value};
           }
         };
       }
@@ -315,59 +324,6 @@ export class SList extends SListNode {
     return SList.from(values);
   }
 
-  pushValuesFront(values) {
-    for (const value of values) {
-      this.pushFront(value);
-    }
-    return this;
-  }
-
-  appendValuesFront(values) {
-    const list = new SList();
-    let tail = list;
-    for (const value of values) {
-      const node = new SListValueNode(value);
-      tail.next = node;
-      tail = node;
-    }
-    tail.next = list;
-    splice(this, {prevFrom: list, to: tail});
-    return this;
-  }
-
-  findPtrBy(condition) {
-    for (const ptr of this.getPtrIterable()) {
-      if (condition(ptr.node)) return ptr;
-    }
-    return null;
-  }
-
-  removeNodeBy(condition) {
-    for (const current of this.getPtrIterable()) {
-      if (condition(current.node)) return current.remove();
-    }
-    return null;
-  }
-
-  extractBy(condition) {
-    const extracted = this.make();
-    let tail = extracted;
-    for (let prev = this, current = prev.next; current !== this; ) {
-      if (condition(current)) {
-        prev.next = current.next;
-        tail.next = current;
-        tail = current;
-        current = prev.next;
-      } else {
-        prev = current;
-        current = current.next;
-      }
-    }
-    tail.next = extracted;
-    return extracted;
-  }
-
-
   static from(values) {
     const list = new SList();
     let tail = list;
@@ -381,17 +337,7 @@ export class SList extends SListNode {
   }
 }
 
-SList.pop = pop;
-SList.extract = extract;
-SList.splice = splice;
-SList.append = append;
-SList.isNodeLike = isNodeLike;
-SList.isStandAlone = isStandAlone;
-
-SList.Node = SListNode;
-SList.ValueNode = SListValueNode;
-
-SList.prototype.pop = SList.prototype.popFront;
-SList.prototype.push = SList.prototype.pushFront;
+Object.assign(SList, {pop, extract, splice, append, isNodeLike, isStandAlone, Node: SListNode, ValueNode: SListValueNode});
+addAliases(SList, {popFront: 'pop', pushFront: 'push'});
 
 export default SList;
