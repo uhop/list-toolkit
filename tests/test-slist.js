@@ -38,60 +38,15 @@ test('Elementary SList operations', t => {
   const list = new SList();
   t.ok(list.isEmpty);
 
-  t.throws(() => SList.getPrevPrev(list, {}));
-
-  list.pushBack(1);
-  t.notOk(list.isEmpty);
-  t.equal(list.front.value, 1);
-  t.equal(list.getBack().value, 1);
-  t.equal(list.getLength(), 1);
-  t.deepEqual(Array.from(list), [1]);
-  t.deepEqual(Array.from(list.getIterable()), [1]);
-
   list.pushFront(2);
   t.notOk(list.isEmpty);
   t.equal(list.front.value, 2);
-  t.equal(list.getBack().value, 1);
-  t.equal(list.getLength(), 2);
-  t.deepEqual(Array.from(list), [2, 1]);
-
-  list.pushBack(3);
-  t.notOk(list.isEmpty);
-  t.equal(list.front.value, 2);
-  t.equal(list.getBack().value, 3);
-  t.equal(list.getLength(), 3);
-  t.deepEqual(Array.from(list), [2, 1, 3]);
+  t.equal(list.getLength(), 1);
+  t.deepEqual(Array.from(list), [2]);
 
   t.equal(list.popFront(), 2);
-  t.equal(list.front.value, 1);
-  t.equal(list.getBack().value, 3);
-  t.equal(list.getLength(), 2);
-  t.deepEqual(Array.from(list), [1, 3]);
-
-  t.equal(list.popBack(), 3);
-  t.equal(list.front.value, 1);
-  t.equal(list.getBack().value, 1);
-  t.equal(list.getLength(), 1);
-  t.deepEqual(Array.from(list), [1]);
-
-  list.appendFront(SList.from([2, 3]));
-  t.equal(list.front.value, 2);
-  t.equal(list.getBack().value, 1);
-  t.equal(list.getLength(), 3);
-  t.deepEqual(Array.from(list), [2, 3, 1]);
-
-  list.appendBack(SList.from([4, 5]));
-  t.equal(list.front.value, 2);
-  t.equal(list.getBack().value, 5);
-  t.equal(list.getLength(), 5);
-  t.deepEqual(Array.from(list), [2, 3, 1, 4, 5]);
-
-  const two = list.front,
-    five = list.getBack();
-  list.moveToFront(five);
-  t.deepEqual(Array.from(list), [5, 2, 3, 1, 4]);
-  list.moveToBack(two);
-  t.deepEqual(Array.from(list), [5, 3, 1, 4, 2]);
+  t.equal(list.getLength(), 0);
+  t.deepEqual(Array.from(list), []);
 
   list.clear();
   t.ok(list.isEmpty);
@@ -99,17 +54,29 @@ test('Elementary SList operations', t => {
   t.deepEqual(Array.from(list), []);
 });
 
+test('SList.moveToFront()', t => {
+  const list = SList.from([1, 2, 3, 4, 5]);
+  const ptr = list.frontPtr;
+  ptr.next();
+  list.moveToFront(ptr);
+  t.deepEqual(Array.from(list), [2, 1, 3, 4, 5]);
+});
+
 test('SList.remove()', t => {
   const list = SList.from([1, 2, 3, 4, 5]);
-  list.remove(list.front.next, SList.getPrevPrev(list));
-  t.deepEqual(Array.from(list), [1, 5]);
+  const ptr = list.frontPtr;
+  ptr.next();
+  list.remove(ptr, ptr.node);
+  t.deepEqual(Array.from(list), [1, 3, 4, 5]);
 });
 
 test('SList.extract()', t => {
-  const list = SList.from([1, 2, 3, 4, 5]),
-    extract = list.extract(list.front.next, SList.getPrevPrev(list));
+  const list = SList.from([1, 2, 3, 4, 5]);
+  const ptr = list.frontPtr;
+  ptr.next();
+  const extracted = list.extract(ptr, ptr.node.next.next);
   t.deepEqual(Array.from(list), [1, 5]);
-  t.deepEqual(Array.from(extract), [2, 3, 4]);
+  t.deepEqual(Array.from(extracted), [2, 3, 4]);
 });
 
 test('SList.reverse()', t => {
@@ -144,7 +111,7 @@ test('SList iterators', t => {
 
   {
     const array = [];
-    for (const value of list.getIterable(list.front.next, SList.getPrevPrev(list))) array.push(value);
+    for (const value of list.getIterable(list.front.next, list.front.next.next.next)) array.push(value);
     t.deepEqual(array, [2, 3, 4]);
   }
 
@@ -156,7 +123,7 @@ test('SList iterators', t => {
 
   {
     const array = [];
-    for (const node of list.getNodeIterable(list.front.next, SList.getPrevPrev(list))) array.push(node.value);
+    for (const node of list.getNodeIterable(list.front.next, list.front.next.next.next)) array.push(node.value);
     t.deepEqual(array, [2, 3, 4]);
   }
 });
@@ -190,21 +157,21 @@ test('SList helpers', t => {
 
   {
     const list = SList.from([1, 2, 3, 2, 5]),
-      ptr = list.findPtrBy(value => value === 2);
+      ptr = list.findPtrBy(node => node.value === 2);
     t.deepEqual(Array.from(list), [1, 2, 3, 2, 5]);
     t.equal(ptr.node.value, 2);
   }
 
   {
     const list = SList.from([1, 2, 3, 2, 5]),
-      node = list.removeNodeBy(value => value === 2);
+      node = list.removeNodeBy(node => node.value === 2);
     t.deepEqual(Array.from(list), [1, 3, 2, 5]);
     t.equal(node.value, 2);
   }
 
   {
     const list = SList.from([1, 2, 3, 2, 5]),
-      extracted = list.extractBy(value => value === 2);
+      extracted = list.extractBy(node => node.value === 2);
     t.deepEqual(Array.from(list), [1, 3, 5]);
     t.deepEqual(Array.from(extracted), [2, 2]);
   }
@@ -219,16 +186,10 @@ test('SList.SListPtr', t => {
     t.deepEqual(array, [1, 2, 3, 4, 5]);
   }
 
-  const getPtrByValue = (list, value) => {
-    for (const ptr of list.getPtrIterable()) if (ptr.node.value === value) return ptr;
-    return null;
-  };
+  const getPtrByValue = (list, value) => list.findPtrBy(node => node.value === value);
 
   list.moveToFront(getPtrByValue(list, 4));
   t.deepEqual(Array.from(list), [4, 1, 2, 3, 5]);
-
-  list.moveToBack(getPtrByValue(list, 2));
-  t.deepEqual(Array.from(list), [4, 1, 3, 5, 2]);
 
   list.sort((a, b) => a - b);
   list.remove(getPtrByValue(list, 2), getPtrByValue(list, 4));
@@ -250,7 +211,7 @@ test('SList.SListPtr', t => {
 
   {
     const array = [];
-    for (const ptr = list.getPtr(); !ptr.isHead; ptr.next()) array.push(ptr.node.value);
+    for (const ptr = list.frontPtr; !ptr.isHead; ptr.next()) array.push(ptr.node.value);
     t.deepEqual(array, [1, 2, 3, 4, 5]);
   }
 });
