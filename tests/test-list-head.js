@@ -2,6 +2,7 @@
 
 import test from 'tape-six';
 import ListHead from 'list-toolkit/list-head.js';
+import {pushValuesFront, pushValuesBack, appendValuesFront, appendValuesBack} from 'list-toolkit/list-utils.js';
 
 test('Elementary ListHead operations', t => {
   t.equal(typeof ListHead, 'function');
@@ -162,26 +163,26 @@ test('ListHead helpers', t => {
     other.clear(true);
   }
 
-  list.pushValuesFront([a, b]);
+  pushValuesFront(list, [a, b]);
   t.deepEqual(
     Array.from(list).map(value => value.x),
     [2, 1]
   );
 
-  list.pushValuesBack([c]);
+  pushValuesBack(list, [c]);
   t.deepEqual(
     Array.from(list).map(value => value.x),
     [2, 1, 3]
   );
   list.clear(true);
 
-  list.appendValuesFront([c, b]);
+  appendValuesFront(list, [c, b]);
   t.deepEqual(
     Array.from(list).map(value => value.x),
     [3, 2]
   );
 
-  list.appendValuesBack([a]);
+  appendValuesBack(list, [a]);
   t.deepEqual(
     Array.from(list).map(value => value.x),
     [3, 2, 1]
@@ -193,7 +194,7 @@ test('ListHead with custom next/prev', t => {
     b = {x: 2},
     c = {x: 3};
   const list = new ListHead(null, {nextName: Symbol(), prevName: Symbol()});
-  list.pushValuesFront([a, b, c]);
+  pushValuesFront(list, [a, b, c]);
   t.deepEqual(
     Array.from(list).map(value => value.x),
     [3, 2, 1]
