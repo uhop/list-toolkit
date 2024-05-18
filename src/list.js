@@ -1,8 +1,10 @@
 'use strict';
 
+import {addAliases} from './utils-meta.js';
+
 export class ListNode {
   constructor() {
-    this.prev = this.next = this;
+    this.next = this.prev = this;
   }
 }
 
@@ -254,16 +256,22 @@ export class List extends ListNode {
     return splice(new List(), extract(from, to));
   }
 
-  reverse() {
-    let next = this.next;
-    this.next = this.prev;
-    this.prev = next;
-    while (next !== this) {
-      const node = next;
-      next = node.next;
-      node.next = node.prev;
-      node.prev = next;
+  extractBy(condition) {
+    const extracted = this.make();
+    for (const ptr of this.getPtrIterable()) {
+      if (condition(ptr.node)) extracted.pushBack(ptr.remove());
     }
+    return extracted;
+  }
+
+  reverse() {
+    let current = this;
+    do {
+      const next = current.next;
+      current.next = current.prev;
+      current.prev = next;
+      current = next;
+    } while(current !== this);
     return this;
   }
 
@@ -291,25 +299,14 @@ export class List extends ListNode {
   }
 
   getIterable(from, to) {
-    if (from instanceof ListPtr) {
-      if (to instanceof ListPtr) {
-        if (from.list !== to.list) throw new Error("Range specified by ListPtr's must belong to the same list");
-        to = to.node;
-      }
-      from = from.node;
-    } else {
-      if (to instanceof ListPtr) to = to.node;
-    }
     return {
       [Symbol.iterator]: () => {
-        let current = from || this.next;
-        const stop = to ? to.next : this;
+        const nodeIterable = this.getNodeIterable(from, to)[Symbol.iterator]();
         return {
           next: () => {
-            if (current === stop) return {done: true};
-            const value = current.value;
-            current = current.next;
-            return {value};
+            const result = nodeIterable.next();
+            if (result.done) return result;
+            return {value: result.value.value};
           }
         };
       }
@@ -343,17 +340,14 @@ export class List extends ListNode {
   }
 
   getPtrIterable(from, to) {
-    if (from instanceof ListPtr && to instanceof ListPtr && from.list !== to.list) throw new Error("Range specified by ListPtr's must belong to the same list");
     return {
       [Symbol.iterator]: () => {
-        const current = from instanceof ListPtr ? from.clone() : new ListPtr(this, from || this.next),
-          stop = to instanceof ListPtr ? to.node : to ? to.next : this;
+        const nodeIterable = this.getNodeIterable(from, to)[Symbol.iterator]();
         return {
           next: () => {
-            if (current.node === stop) return {done: true};
-            const value = current.clone();
-            current.next();
-            return {value};
+            const result = nodeIterable.next();
+            if (result.done) return result;
+            return {value: new ListPtr(this, result.value)};
           }
         };
       }
@@ -361,25 +355,14 @@ export class List extends ListNode {
   }
 
   getReverseIterable(from, to) {
-    if (from instanceof ListPtr) {
-      if (to instanceof ListPtr) {
-        if (from.list !== to.list) throw new Error("Range specified by ListPtr's must belong to the same list");
-        to = to.node;
-      }
-      from = from.node;
-    } else {
-      if (to instanceof ListPtr) to = to.node;
-    }
     return {
       [Symbol.iterator]: () => {
-        let current = to || this.prev;
-        const stop = from ? from.prev : this;
+        const nodeIterable = this.getReverseNodeIterable(from, to)[Symbol.iterator]();
         return {
           next: () => {
-            if (current === stop) return {done: true};
-            const value = current.value;
-            current = current.prev;
-            return {value};
+            const result = nodeIterable.next();
+            if (result.done) return result;
+            return {value: result.value.value};
           }
         };
       }
@@ -413,24 +396,21 @@ export class List extends ListNode {
   }
 
   getReversePtrIterable(from, to) {
-    if (from instanceof ListPtr && to instanceof ListPtr && from.list !== to.list) throw new Error("Range specified by ListPtr's must belong to the same list");
     return {
       [Symbol.iterator]: () => {
-        const current = to instanceof ListPtr ? to.clone() : new ListPtr(this, to || this.prev),
-          stop = from instanceof ListPtr ? from.node : from ? from.next : this;
+        const nodeIterable = this.getReverseNodeIterable(from, to)[Symbol.iterator]();
         return {
           next: () => {
-            if (current.node === stop) return {done: true};
-            const value = current.clone();
-            current.prev();
-            return {value};
+            const result = nodeIterable.next();
+            if (result.done) return result;
+            return {value: new ListPtr(this, result.value)};
           }
         };
       }
     };
   }
 
-  // helpers
+  // meta helpers
 
   clone() {
     return List.from(this);
@@ -444,63 +424,6 @@ export class List extends ListNode {
     return List.from(values);
   }
 
-  pushValuesFront(values) {
-    for (const value of values) {
-      this.pushFront(value);
-    }
-    return this;
-  }
-
-  pushValuesBack(values) {
-    for (const value of values) {
-      this.pushBack(value);
-    }
-    return this;
-  }
-
-  appendValuesFront(values) {
-    return this.appendFront(this.makeFrom(values));
-  }
-
-  appendValuesBack(values) {
-    return this.appendBack(this.makeFrom(values));
-  }
-
-  findNodeBy(condition) {
-    for (const current of this.getNodeIterable()) {
-      if (condition(current)) return current;
-    }
-    return null;
-  }
-
-  findPtrBy(condition) {
-    for (const current of this.getPtrIterable()) {
-      if (condition(current.node)) return current;
-    }
-    return null;
-  }
-
-  removeNodeBy(condition) {
-    for (const current of this.getNodeIterable()) {
-      if (condition(current)) return pop(current).node;
-    }
-    return null;
-  }
-
-  extractBy(condition) {
-    const extracted = this.make();
-    for (let node = this.next; node !== this; ) {
-      if (condition(node)) {
-        const current = node;
-        node = node.next;
-        List.append(extracted, current);
-      } else {
-        node = node.next;
-      }
-    }
-    return extracted;
-  }
-
   static from(values) {
     const list = new List();
     for (const value of values) list.pushBack(value);
@@ -508,18 +431,7 @@ export class List extends ListNode {
   }
 }
 
-List.pop = pop;
-List.extract = extract;
-List.splice = splice;
-List.append = append;
-List.isNodeLike = isNodeLike;
-List.isStandAlone = isStandAlone;
-
-List.Node = ListNode;
-List.ValueNode = ListValueNode;
-
-List.prototype.pop = List.prototype.popFront;
-List.prototype.push = List.prototype.pushFront;
-List.prototype.append = List.prototype.appendBack;
+Object.assign(List, {pop, extract, splice, append, isNodeLike, isStandAlone, Node: ListNode, ValueNode: ListValueNode});
+addAliases(List, {popFront: 'pop', pushFront: 'push', appendBack: 'append'});
 
 export default List;

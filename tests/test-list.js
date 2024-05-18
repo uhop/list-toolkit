@@ -2,6 +2,7 @@
 
 import test from 'tape-six';
 import List from 'list-toolkit/list.js';
+import {pushValuesFront, pushValuesBack, appendValuesFront, appendValuesBack, findNodeBy, removeNodeBy} from 'list-toolkit/list-utils.js';
 
 test('General List tests', t => {
   const numbers = List.from([1, 2, 3, 4, 5, 6, 7, 8, 9]),
@@ -203,16 +204,16 @@ test('List helpers', t => {
     t.deepEqual(Array.from(other), [1, 2, 3, 4, 5]);
   }
 
-  list.pushValuesFront([1, 2]);
+  pushValuesFront(list, [1, 2]);
   t.deepEqual(Array.from(list), [2, 1]);
 
-  list.pushValuesBack([3, 4]);
+  pushValuesBack(list, [3, 4]);
   t.deepEqual(Array.from(list), [2, 1, 3, 4]);
 
-  list.appendValuesFront([5, 6]);
+  appendValuesFront(list, [5, 6]);
   t.deepEqual(Array.from(list), [5, 6, 2, 1, 3, 4]);
 
-  list.appendValuesBack([7, 8]);
+  appendValuesBack(list, [7, 8]);
   t.deepEqual(Array.from(list), [5, 6, 2, 1, 3, 4, 7, 8]);
 
   {
@@ -224,14 +225,14 @@ test('List helpers', t => {
 
   {
     const list = List.from([1, 2, 3, 2, 5]),
-      node = list.findNodeBy(node => node.value === 2);
+      node = findNodeBy(list, node => node.value === 2);
     t.deepEqual(Array.from(list), [1, 2, 3, 2, 5]);
     t.equal(node.value, 2);
   }
 
   {
     const list = List.from([1, 2, 3, 2, 5]),
-      node = list.removeNodeBy(node => node.value === 2);
+      node = removeNodeBy(list, node => node.value === 2);
     t.deepEqual(Array.from(list), [1, 3, 2, 5]);
     t.equal(node.value, 2);
   }
