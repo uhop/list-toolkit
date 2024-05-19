@@ -338,11 +338,8 @@ export class SListBuilder extends SList {
   }
 
   syncLast() {
-    let current = this;
-    do {
-      this.last = current;
-      current = current.next;
-    } while(current !== this);
+    this.last = this;
+    while (this.last.next !== this) this.last = this.last.next;
     return this;
   }
 
@@ -351,6 +348,18 @@ export class SListBuilder extends SList {
     node.next = this.last.next;
     this.last = this.last.next = node;
     return this;
+  }
+
+  static from(list) {
+    const builder = new SListBuilder(list);
+    if (list.isEmpty) return builder;
+
+    let last = list.next;
+    while (last.next !== list) last = last.next;
+    splice(builder, {prevFrom: list, to: last});
+    builder.last = last;
+
+    return builder;
   }
 }
 
