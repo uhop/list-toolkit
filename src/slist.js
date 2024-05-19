@@ -180,26 +180,26 @@ export class SList extends Node {
   }
 
   popFront() {
-    if (this.next !== this) {
-      const value = pop(this).node.value;
-      if (this.next === this) this.last = this;
-      return value;
-    }
+    if (this.next === this) return undefined;
+    const node = this.next;
+    this.next = node.next;
+    if (this.next === this) this.last = this;
+    return node.value;
   }
 
   popFrontNode() {
-    if (this.next !== this) {
-      const node = pop(this).node;
-      if (this.next === this) this.last = this;
-      return node;
-    }
+    if (this.next === this) return undefined;
+    const node = this.next;
+    this.next = node.next;
+    if (this.next === this) this.last = this;
+    return (node.next = node);
   }
 
   pushFront(value) {
-    const wasEmpty = this.next === this,
-      node = this.isValidValueNode(value) ? (value.next = value) : new ValueNode(value);
-    splice(this, {prevFrom: node});
-    if (wasEmpty) this.last = node;
+    const node = this.isValidValueNode(value) ? (value.next = value) : new ValueNode(value);
+    node.next = this.next;
+    this.next = node;
+    if (node.next === this) this.last = node;
     return this;
   }
 
@@ -213,27 +213,31 @@ export class SList extends Node {
   appendFront(list) {
     if (list.next !== list) {
       if (this.last === this) this.last = list.last;
-      list.last = list;
+      list.next = list.last = list;
     }
     return this;
   }
 
   appendBack(list) {
     if (list.next !== list) {
-      const last = list.last;
-      splice(this.last, extract({prevFrom: list, to: list.last}));
-      this.last = last;
-      list.last = list;
+      this.last.next = list.next;
+      list.last.next = this;
+      this.last = list.last;
+      list.next = list.last = list;
     }
     return this;
   }
 
   moveToFront(ptr) {
     if (ptr.isHead) return this;
-    if (this.last === ptr.prev.next) this.last = ptr.prev;
-    splice(this, {prevFrom: ptr.prev});
-    if (this.last === this) this.last = this.next;
-    return this;
+    const node = ptr.remove();
+    return this.pushFrontNode(node);
+  }
+
+  moveToBack(ptr) {
+    if (ptr.isHead) return this;
+    const node = ptr.remove();
+    return this.pushBackNode(node);
   }
 
   clear() {
@@ -260,7 +264,7 @@ export class SList extends Node {
       }
     }
     if (this.last === to) this.last = fromPtr.prev;
-    const extracted = splice(new SList(), extract({prevFrom: fromPtr.prev, to}));
+    const extracted = splice(this.make(), extract({prevFrom: fromPtr.prev, to}));
     extracted.last = to;
     return extracted;
   }
