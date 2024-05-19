@@ -14,9 +14,14 @@ export const pushValuesBack = (list, values) => {
   return list;
 };
 
-export const appendValuesFront = (list, values) => list.appendFront(list.makeFrom(values));
-
-export const appendValuesBack = (list, values) => list.appendBack(list.makeFrom(values));
+export const appendValuesFront = (list, values) => {
+  if (typeof list.appendFront == 'function') return list.appendFront(list.makeFrom(values));
+  if (!Array.isArray(values)) values = Array.from(values);
+  for (let i = values.length - 1; i >= 0; --i) {
+    list.pushFront(values[i]);
+  }
+  return list;
+}
 
 export const findNodeBy = (list, condition) => {
   for (const node of list.getNodeIterable()) {
