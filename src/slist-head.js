@@ -287,6 +287,15 @@ export class SListHead {
     return this;
   }
 
+  adopt(node) {
+    if (node[this.nextName]) {
+      if (node[this.nextName] === node) return node;
+      throw new Error('node is already a part of a list, or there is a name clash');
+    }
+    node[this.nextName] = node;
+    return node;
+  }
+
   // iterators
 
   [Symbol.iterator]() {
@@ -306,7 +315,7 @@ export class SListHead {
   getNodeIterable(from, to) {
     if (from instanceof SListPtr) {
       if (to instanceof SListPtr) {
-        if (from.list !== to.list) throw new Error("Range specified by pointers must belong to the same list");
+        if (from.list !== to.list) throw new Error('Range specified by pointers must belong to the same list');
         to = to.node;
       }
       from = from.node;
@@ -364,15 +373,6 @@ export class SListHead {
     };
   }
 
-  adopt(node) {
-    if (node[this.nextName]) {
-      if (node[this.nextName] === node) return node;
-      throw new Error('node is already a part of a list, or there is a name clash');
-    }
-    node[this.nextName] = node;
-    return node;
-  }
-
   // meta helpers
 
   clone() {
@@ -409,11 +409,8 @@ export class SListHeadBuilder extends SListHead {
   }
 
   syncLast() {
-    let current = this.head;
-    do {
-      this.last = current;
-      current = current[this.nextName];
-    } while (current !== this.head);
+    this.last = this.head;
+    while (this.last.next !== this.head) this.last = this.last.next;
     return this;
   }
 
@@ -422,6 +419,31 @@ export class SListHeadBuilder extends SListHead {
     node[this.nextName] = this.last[this.nextName];
     this.last = this.last[this.nextName] = node;
     return this;
+  }
+
+  convertToHeadlessList() {
+    if (this.isHeadless) return this;
+    this.head = extract(this, {prevFrom: this.head, to: this.last});
+    return this;
+  }
+
+  releaseAsHeadlessList() {
+    const list = this.make();
+    if (this.isHeadless) {
+      list.head = this.head;
+      this.head = new SListHeadNode(this);
+    } else {
+      list.head = extract(this, {prevFrom: this.head, to: this.last});
+    }
+    return list;
+  }
+
+  static from(list) {
+    const builder = new SListHeadBuilder(list);
+    builder.head = list.head;
+    list.head = new SListHeadNode(list);
+    builder.syncLast();
+    return builder;
   }
 }
 
