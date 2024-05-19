@@ -1,121 +1,17 @@
 'use strict';
 
 import {addAliases} from './meta-utils.js';
-
-export class Node {
-  constructor() {
-    this.next = this.prev = this;
-  }
-}
-
-export class ValueNode extends Node {
-  constructor(value) {
-    super();
-    this.value = value;
-  }
-}
+import {HeadNode, ValueNode} from './list-nodes.js';
+import {pop, extract, splice, append, isNodeLike, isStandAlone} from './list-basics.js';
+import Ptr from './list-ptr.js';
 
 // useful low-level operations on doubly linked lists
 
-const pop = head => {
-  const rest = head.next;
-  head.prev.next = head.next;
-  head.next.prev = head.prev;
-  head.prev = head.next = head;
-  return {node: head, list: rest};
-};
+export class List extends HeadNode {
+  constructor() {
+    super();
+  }
 
-const extract = (from, to = from) => {
-  const prev = from.prev,
-    next = to.next;
-  prev.next = next;
-  next.prev = prev;
-  from.prev = to;
-  to.next = from;
-  return from;
-};
-
-const splice = (head1, head2) => {
-  const tail1 = head1.prev,
-    tail2 = head2.prev;
-  tail1.next = head2;
-  head2.prev = tail1;
-  tail2.next = head1;
-  head1.prev = tail2;
-  return head1;
-};
-
-const append = (target, from, to = from) => {
-  // extract
-  from.prev.next = to.next;
-  to.next.prev = from.prev;
-
-  // splice
-  const next = target.next;
-  target.next = from;
-  from.prev = target;
-  to.next = next;
-  next.prev = to;
-
-  return target;
-};
-
-const isNodeLike = node => node && node.prev && node.next;
-const isStandAlone = node => node && node.prev === node && node.next === node;
-
-export class Ptr {
-  constructor(list, node) {
-    if (list instanceof Ptr) {
-      this.list = list.list;
-      this.node = list.node;
-    } else if (node instanceof Ptr) {
-      if (list !== node.list) throw new Error('Node specified by Ptr must belong to the same list');
-      this.list = list;
-      this.node = node.node;
-    } else {
-      this.list = list;
-      this.node = node || list.next;
-    }
-  }
-  get isHead() {
-    return this.node === this.list;
-  }
-  next() {
-    this.node = this.node.next;
-    return this;
-  }
-  prev() {
-    this.node = this.node.prev;
-    return this;
-  }
-  clone() {
-    return new Ptr(this.list, this.node);
-  }
-  remove() {
-    if (this.node === this.list) return null;
-    const node = this.node;
-    this.node = node.next;
-    return pop(node).node;
-  }
-  addBefore(value) {
-    splice(this.node, value instanceof ValueNode ? value : new ValueNode(value));
-    return this;
-  }
-  addAfter(value) {
-    splice(this.node.next, value instanceof ValueNode ? value : new ValueNode(value));
-    return this;
-  }
-  insertBefore(list) {
-    splice(this.node, pop(list).list);
-    return this;
-  }
-  insertAfter(list) {
-    splice(this.node.next, pop(list).list);
-    return this;
-  }
-}
-
-export class List extends Node {
   get isEmpty() {
     return this.next === this;
   }
@@ -150,12 +46,8 @@ export class List extends Node {
     return n;
   }
 
-  isNodeLike(node) {
-    return isNodeLike(node);
-  }
-
   isValidValueNode(node) {
-    return node instanceof ValueNode && isStandAlone(node);
+    return node instanceof ValueNode && isStandAlone(this, node);
   }
 
   makePtr(node) {
@@ -164,48 +56,48 @@ export class List extends Node {
 
   popFront() {
     if (this.next !== this) {
-      return pop(this.next).node.value;
+      return pop(this, this.next).node.value;
     }
   }
 
   popBack() {
     if (this.prev !== this) {
-      return pop(this.prev).node.value;
+      return pop(this, this.prev).node.value;
     }
   }
 
   popFrontNode() {
     if (this.next !== this) {
-      return pop(this.next).node;
+      return pop(this, this.next).node;
     }
   }
 
   popBackNode() {
     if (this.prev !== this) {
-      return pop(this.prev).node;
+      return pop(this, this.prev).node;
     }
   }
 
   pushFront(value) {
-    splice(this.next, this.isValidValueNode(value) ? value : new ValueNode(value));
+    splice(this, this.next, this.isValidValueNode(value) ? value : new ValueNode(value));
     return this;
   }
 
   pushBack(value) {
-    splice(this, this.isValidValueNode(value) ? value : new ValueNode(value));
+    splice(this, this, this.isValidValueNode(value) ? value : new ValueNode(value));
     return this;
   }
 
   appendFront(list) {
     if (list.next !== list) {
-      splice(this.next, extract(list.next, list.prev));
+      splice(this, this.next, extract(this, {from: list.next, to: list.prev}));
     }
     return this;
   }
 
   appendBack(list) {
     if (list.next !== list) {
-      splice(this, extract(list.next, list.prev));
+      splice(this, this, extract(this, {from: list.next, to: list.prev}));
     }
     return this;
   }
@@ -213,7 +105,7 @@ export class List extends Node {
   moveToFront(node) {
     if (node instanceof Ptr) node = node.node;
     if (this.next !== node) {
-      splice(this.next, pop(node).node);
+      splice(this, this.next, pop(this, node).node);
     }
     return this;
   }
@@ -221,7 +113,7 @@ export class List extends Node {
   moveToBack(node) {
     if (node instanceof Ptr) node = node.node;
     if (this.prev !== node) {
-      splice(this, pop(node).node);
+      splice(this, this, pop(this, node).node);
     }
     return this;
   }
@@ -241,13 +133,13 @@ export class List extends Node {
     } else {
       if (to instanceof Ptr) to = to.node;
     }
-    extract(from, to);
+    extract(this, {from, to});
     return this;
   }
 
   removeNode(node) {
     if (node instanceof Ptr) node = node.node;
-    pop(node);
+    pop(this, node);
     return this;
   }
 
@@ -261,7 +153,7 @@ export class List extends Node {
     } else {
       if (to instanceof Ptr) to = to.node;
     }
-    return splice(new List(), extract(from, to));
+    return splice(this, new List(), extract(this, {from, to}));
   }
 
   extractBy(condition) {
@@ -290,6 +182,10 @@ export class List extends Node {
       current = current.next;
     }
     return this;
+  }
+
+  adopt(value) {
+    return this.isValidValueNode(value) ? value : new ValueNode(value);
   }
 
   // iterators
@@ -439,7 +335,7 @@ export class List extends Node {
   }
 }
 
-Object.assign(List, {pop, extract, splice, append, isNodeLike, isStandAlone, Node, ValueNode, Ptr});
+Object.assign(List, {pop, extract, splice, append, isNodeLike, isStandAlone, HeadNode, ValueNode, Ptr});
 addAliases(List, {popFront: 'pop', pushFront: 'push', appendBack: 'append'});
 
 export default List;
