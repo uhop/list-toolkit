@@ -1,6 +1,6 @@
 'use strict';
 
-import {addAliases} from './utils-meta.js';
+import {addAliases} from './meta-utils.js';
 
 export class ListNode {
   constructor({nextName = 'next', prevName = 'prev'} = {}) {
@@ -94,7 +94,7 @@ export class ListPtr {
     return this;
   }
   clone() {
-    return new ListPtr(this.list, this.node);
+    return new ListPtr(this);
   }
   remove() {
     if (this.node === this.list) return null;
@@ -103,23 +103,25 @@ export class ListPtr {
     return pop(this.list, node).node;
   }
   addBefore(value) {
-    splice(this.node, this.list.adopt(value));
+    splice(this.list, this.node, this.list.adopt(value));
     return this;
   }
   addAfter(value) {
-    splice(this.node[this.list.nextName], this.list.adopt(value));
+    splice(this.list, this.node[this.list.nextName], this.list.adopt(value));
     return this;
   }
   insertBefore(list) {
     if (!this.list.isCompatible(list)) throw new Error('Incompatible lists');
+    if (list.isEmpty) return this;
     const head = list.isHeadless ? list.head : pop(list, list.head).list;
-    splice(this.node, head);
+    splice(this.list, this.node, head);
     return this;
   }
   insertAfter(list) {
     if (!this.list.isCompatible(list)) throw new Error('Incompatible lists');
+    if (list.isEmpty) return this;
     const head = list.isHeadless ? list.head : pop(list, list.head).list;
-    splice(this.node[this.list.nextName], head);
+    splice(this.list, this.node[this.list.nextName], head);
     return this;
   }
 }
@@ -134,10 +136,6 @@ export class ListHead {
     }
     this.nextName = nextName;
     this.prevName = prevName;
-    if (!head) {
-      this.head = new ListHeadNode(this);
-      return;
-    }
     if (head instanceof UnsafeHead) {
       this.head = head.head;
       return;
@@ -146,8 +144,7 @@ export class ListHead {
       this.head = head;
       return;
     }
-    if (head[this.nextName] || head[this.prevName]) throw new Error('"head" is partially incomplete list node');
-    this.head = this.adopt(head);
+    this.head = new ListHeadNode(this);
   }
 
   get isHeadless() {
@@ -318,8 +315,7 @@ export class ListHead {
   }
 
   remove(from, to = from, drop) {
-    const extracted = this.extract(from, to);
-    if (drop) while (!extracted.isEmpty) extracted.popFront();
+    this.extract(from, to).clear(drop);
     return this;
   }
 
@@ -359,16 +355,15 @@ export class ListHead {
       current[this.nextName] = current[this.prevName];
       current[this.prevName] = next;
       current = next;
-    } while(current !== this.head);
-    if (this.isHeadless) this.head = current[this.nextName];
+    } while (current !== this.head);
+    if (this.isHeadless) this.head = this.head[this.nextName];
     return this;
   }
 
   sort(compareFn) {
     if (this.isEmpty || this.isOneNode) return this;
 
-    const sortedNodes = Array.from(this).sort(compareFn),
-      head = sortedNodes[0];
+    const sortedNodes = Array.from(this).sort(compareFn);
 
     for (let i = 1; i < sortedNodes.length; i++) {
       const prev = sortedNodes[i - 1],
@@ -377,7 +372,8 @@ export class ListHead {
       current[this.prevName] = prev;
     }
 
-    const tail = sortedNodes[sortedNodes.length - 1];
+    const head = sortedNodes[0],
+      tail = sortedNodes[sortedNodes.length - 1];
     tail[this.nextName] = head;
     head[this.prevName] = tail;
 
@@ -394,26 +390,13 @@ export class ListHead {
   // iterators
 
   [Symbol.iterator]() {
-    if (!this.isHeadless) {
-      let current = this.head[this.nextName];
-      return {
-        next: () => {
-          if (current === this.head) return {done: true};
-          const value = current;
-          current = current[this.nextName];
-          return {value};
-        }
-      };
-    }
-
-    let current = this.head,
-      readyToStop = false;
-
+    let current = this.isHeadless ? this.head : this.head[this.nextName],
+      readyToStop = this.isEmpty;
     return {
       next: () => {
         if (readyToStop && current === this.head) return {done: true};
         readyToStop = true;
-        const value = current.value;
+        const value = current;
         current = current[this.nextName];
         return {value};
       }
@@ -433,32 +416,15 @@ export class ListHead {
     if (from && !this.isNodeLike(from)) throw new Error('"from" is not a compatible node');
     if (to && !this.isNodeLike(to)) throw new Error('"to" is not a compatible node');
 
-    let current = from || (this.isHeadless ? this.head : this.head[this.nextName]);
-
-    const stop = to ? to[this.nextName] : this.head;
-
-    if (current === stop) {
-      return {
-        [Symbol.iterator]: () => {
-          let readyToStop = false;
-          return {
-            next: () => {
-              if (readyToStop && current === stop) return {done: true};
-              readyToStop = true;
-              const value = current;
-              current = current[this.nextName];
-              return {value};
-            }
-          };
-        }
-      };
-    }
-
     return {
       [Symbol.iterator]: () => {
+        let current = from || (this.isHeadless ? this.head : this.head[this.nextName]),
+          readyToStop = this.isEmpty;
+        const stop = to ? to[this.nextName] : this.head;
         return {
           next: () => {
-            if (current === stop) return {done: true};
+            if (readyToStop && current === stop) return {done: true};
+            readyToStop = true;
             const value = current;
             current = current[this.nextName];
             return {value};
@@ -496,32 +462,15 @@ export class ListHead {
     if (from && !this.isNodeLike(from)) throw new Error('"from" is not a compatible node');
     if (to && !this.isNodeLike(to)) throw new Error('"to" is not a compatible node');
 
-    let current = to || this.head[this.prevName];
-
-    const stop = from ? from[this.prevName] : this.head;
-
-    if (current === stop) {
-      return {
-        [Symbol.iterator]: () => {
-          let readyToStop = false;
-          return {
-            next: () => {
-              if (readyToStop && current === stop) return {done: true};
-              readyToStop = true;
-              const value = current;
-              current = current[this.prevName];
-              return {value};
-            }
-          };
-        }
-      };
-    }
-
     return {
       [Symbol.iterator]: () => {
+        let current = to || this.head[this.prevName],
+          readyToStop = this.isEmpty;
+        const stop = from ? from[this.prevName] : this.head;
         return {
           next: () => {
-            if (current === stop) return {done: true};
+            if (readyToStop && current === stop) return {done: true};
+            readyToStop = true;
             const value = current;
             current = current[this.prevName];
             return {value};
@@ -577,7 +526,6 @@ export class ListHead {
 }
 
 Object.assign(ListHead, {pop, extract, splice, append, isNodeLike, isStandAlone, UnsafeHead, unsafe, Node: ListNode, HeadNode: ListHeadNode});
-
 addAliases(ListHead, {
   popFrontNode: 'popFront, pop',
   pushFrontNode: 'pushFront, push',

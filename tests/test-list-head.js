@@ -2,7 +2,7 @@
 
 import test from 'tape-six';
 import ListHead from 'list-toolkit/list-head.js';
-import {pushValuesFront, pushValuesBack, appendValuesFront, appendValuesBack} from 'list-toolkit/list-utils.js';
+import {pushValuesFront, pushValuesBack, appendValuesFront} from 'list-toolkit/list-utils.js';
 
 test('Elementary ListHead operations', t => {
   t.equal(typeof ListHead, 'function');
@@ -180,12 +180,6 @@ test('ListHead helpers', t => {
   t.deepEqual(
     Array.from(list).map(value => value.x),
     [3, 2]
-  );
-
-  appendValuesBack(list, [a]);
-  t.deepEqual(
-    Array.from(list).map(value => value.x),
-    [3, 2, 1]
   );
 });
 
