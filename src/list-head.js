@@ -155,8 +155,14 @@ export class ListHead {
     return this.head instanceof HeadNode && this.head[this.nextName] === this.head;
   }
 
-  get isOneNode() {
-    return this.head instanceof HeadNode ? this.head[this.nextName] === this.head[this.prevName] : this.head[this.nextName] === this.head;
+  get isOne() {
+    return this.head instanceof HeadNode
+      ? this.head[this.nextName] !== this.head && this.head[this.nextName][this.nextName] === this.head
+      : this.head[this.nextName] === this.head;
+  }
+
+  get isOneOrEmpty() {
+    return this.head instanceof HeadNode ? this.head[this.nextName][this.nextName] === this.head : this.head[this.nextName] === this.head;
   }
 
   get front() {
@@ -339,7 +345,7 @@ export class ListHead {
     if (this.isEmpty) return extracted;
 
     while (this.isEmpty && condition(this.front)) extracted.pushBack(this.popFront());
-    if (this.isEmpty || this.isOneNode) return extracted;
+    if (this.isOneOrEmpty) return extracted;
 
     for (const ptr of this.getPtrIterable(this.front[this.nextName])) {
       if (condition(ptr.node)) extracted.pushBack(ptr.remove());
@@ -361,7 +367,7 @@ export class ListHead {
   }
 
   sort(compareFn) {
-    if (this.isEmpty || this.isOneNode) return this;
+    if (this.isOneOrEmpty) return this;
 
     const sortedNodes = Array.from(this).sort(compareFn);
 

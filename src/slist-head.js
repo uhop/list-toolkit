@@ -142,12 +142,14 @@ export class SListHead {
     return this.head instanceof HeadNode && this.head[this.nextName] === this.head;
   }
 
-  get isOneNode() {
-    if (this.head instanceof HeadNode) {
-      const front = this.head[this.nextName];
-      return front !== this.head && front[this.nextName] === this.head;
-    }
-    return this.head[this.nextName] === this.head;
+  get isOne() {
+    return this.head instanceof HeadNode
+      ? this.head[this.nextName] !== this.head && this.head[this.nextName][this.nextName] === this.head
+      : this.head[this.nextName] === this.head;
+  }
+
+  get isOneOrEmpty() {
+    return this.head instanceof HeadNode ? this.head[this.nextName][this.nextName] === this.head : this.head[this.nextName] === this.head;
   }
 
   get front() {
@@ -249,7 +251,7 @@ export class SListHead {
   }
 
   reverse() {
-    if (this.isEmpty || this.isOneNode) return this;
+    if (this.isOneOrEmpty) return this;
     let prev = this.head,
       current = prev[this.nextName];
     do {
@@ -264,7 +266,7 @@ export class SListHead {
   }
 
   sort(compareFn) {
-    if (this.isEmpty || this.isOneNode) return this;
+    if (this.isOneEmpty) return this;
 
     const sortedNodes = Array.from(this).sort(compareFn);
 

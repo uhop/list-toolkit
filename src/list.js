@@ -120,6 +120,14 @@ export class List extends Node {
     return this.next === this;
   }
 
+  get isOne() {
+    return this.next !== this && this.next.next === this;
+  }
+
+  get isOneOrEmpty() {
+    return this.next.next === this;
+  }
+
   get front() {
     return this.next;
   }
