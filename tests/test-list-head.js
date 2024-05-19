@@ -196,3 +196,63 @@ test('ListHead with custom next/prev', t => {
 
   t.throws(() => list.adopt(a));
 });
+
+test("ListHead's Ptr", t => {
+  const list = ListHead.from([{x: 1}, {x: 2}, {x: 3}], {nextName: Symbol('next'), prevName: Symbol('prev')});
+
+  const ptr = list.frontPtr;
+  t.equal(ptr.node.x, 1);
+
+  ptr.addBefore({x: 4});
+  t.deepEqual(
+    Array.from(list).map(value => value.x),
+    [4, 1, 2, 3]
+  );
+  t.equal(ptr.node.x, 1);
+  t.equal(list.frontPtr.node.x, 4);
+
+  ptr.addAfter({x: 5});
+  t.deepEqual(
+    Array.from(list).map(value => value.x),
+    [4, 1, 5, 2, 3]
+  );
+  t.equal(ptr.node.x, 1);
+
+  ptr.insertBefore(list.makeFrom([6, 7].map(value => ({x: value}))));
+  t.deepEqual(
+    Array.from(list).map(value => value.x),
+    [4, 6, 7, 1, 5, 2, 3]
+  );
+  t.equal(ptr.node.x, 1);
+
+  ptr.insertAfter(list.makeFrom([8, 9].map(value => ({x: value}))));
+  t.deepEqual(
+    Array.from(list).map(value => value.x),
+    [4, 6, 7, 1, 8, 9, 5, 2, 3]
+  );
+  t.equal(ptr.node.x, 1);
+
+  ptr.prev();
+  t.equal(ptr.node.x, 7);
+  ptr.next().next();
+  t.equal(ptr.node.x, 8);
+
+  t.equal(ptr.remove().x, 8);
+  t.deepEqual(
+    Array.from(list).map(value => value.x),
+    [4, 6, 7, 1, 9, 5, 2, 3]
+  );
+  t.equal(ptr.node.x, 9);
+
+  t.equal(list.frontPtr.remove().x, 4);
+  t.deepEqual(
+    Array.from(list).map(value => value.x),
+    [6, 7, 1, 9, 5, 2, 3]
+  );
+
+  t.equal(list.backPtr.remove().x, 3);
+  t.deepEqual(
+    Array.from(list).map(value => value.x),
+    [6, 7, 1, 9, 5, 2]
+  );
+});

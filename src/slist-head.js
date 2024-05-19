@@ -98,13 +98,19 @@ export class Ptr {
     return node;
   }
   addBefore(node) {
-    splice(this.list, this.prev, {prevFrom: this.list.adopt(node)});
+    this.list.adopt(node);
+    node[this.list.nextName] = this.prev[this.list.nextName];
+    this.prev[this.list.nextName] = node;
+    this.prev = node;
     if (!this.list.isHeadless && this.list.head.last === this.list.head) this.list.head.last = node;
     return this;
   }
   addAfter(node) {
-    splice(this.list, this.prev[this.list.nextName], {prevFrom: this.list.adopt(node)});
-    if (!this.list.isHeadless && this.list.head.last === this.list.head) this.list.head.last = node;
+    this.list.adopt(node);
+    const nextName = this.list.nextName;
+    if (!this.list.isHeadless && this.list.head.last === this.prev[nextName]) this.list.head.last = node;
+    node[nextName] = this.prev[nextName][nextName];
+    this.prev[nextName][nextName] = node;
     return this;
   }
   insertBefore(list) {
@@ -112,8 +118,9 @@ export class Ptr {
     if (!this.list.isCompatible(list)) throw new Error('Incompatible lists');
     if (list.isEmpty) return this;
 
-    splice(this.list, this.prev, {prevFrom: list.head, to: list.last});
-    if (!this.list.isHeadless && this.list.head.last === this.list.head) this.list.head.last = list.last;
+    splice(this.list, this.prev, {prevFrom: list.head, to: list.head.last});
+    if (!this.list.isHeadless && this.list.head.last === this.list.head) this.list.head.last = list.head.last;
+    this.prev = list.head.last;
 
     list.head.last = list.head;
 
@@ -124,8 +131,8 @@ export class Ptr {
     if (!this.list.isCompatible(list)) throw new Error('Incompatible lists');
     if (list.isEmpty) return this;
 
-    splice(this.list, this.prev, {prevFrom: list.head, to: list.last});
-    if (!this.list.isHeadless && this.list.head.last === this.prev) this.list.head.last = list.last;
+    splice(this.list, this.prev[this.list.nextName], {prevFrom: list.head, to: list.head.last});
+    if (!this.list.isHeadless && this.list.head.last === this.prev) this.list.head.last = list.head.last;
 
     list.head.last = list.head;
 

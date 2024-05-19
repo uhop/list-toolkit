@@ -94,20 +94,22 @@ export class Ptr {
     const node = value instanceof ValueNode ? (value.next = value) : new ValueNode(value);
     node.next = this.prev.next;
     this.prev.next = node;
+    this.prev = node;
     if (this.list.last === this.list) this.list.last = node;
     return this;
   }
   addAfter(value) {
     const node = new ValueNode(value);
     if (this.list.last === this.prev.next) this.list.last = node;
-    node.next = this.prev.next;
-    this.prev.next = node;
+    node.next = this.prev.next.next;
+    this.prev.next.next = node;
     if (this.list.last === this.list) this.list.last = node;
     return this;
   }
   insertBefore(list) {
     if (this.list.last === this.list) this.list.last = list.last;
     splice(this.prev, {prevFrom: list, to: list.last});
+    this.prev = list.last;
     list.last = list;
     return this;
   }

@@ -215,3 +215,37 @@ test('SList.SListPtr', t => {
     t.deepEqual(array, [1, 2, 3, 4, 5]);
   }
 });
+
+test("SList's Ptr", t => {
+  const list = SList.from([1, 2, 3]);
+
+  const ptr = list.frontPtr;
+  t.equal(ptr.node.value, 1);
+
+  ptr.addBefore(4);
+  t.deepEqual(Array.from(list), [4, 1, 2, 3]);
+  t.equal(ptr.node.value, 1);
+  t.equal(list.frontPtr.node.value, 4);
+
+  ptr.addAfter(5);
+  t.deepEqual(Array.from(list), [4, 1, 5, 2, 3]);
+  t.equal(ptr.node.value, 1);
+
+  ptr.insertBefore(list.makeFrom([6, 7]));
+  t.deepEqual(Array.from(list), [4, 6, 7, 1, 5, 2, 3]);
+  t.equal(ptr.node.value, 1);
+
+  ptr.insertAfter(list.makeFrom([8, 9]));
+  t.deepEqual(Array.from(list), [4, 6, 7, 1, 8, 9, 5, 2, 3]);
+  t.equal(ptr.node.value, 1);
+
+  ptr.next();
+  t.equal(ptr.node.value, 8);
+
+  t.equal(ptr.remove().value, 8);
+  t.deepEqual(Array.from(list), [4, 6, 7, 1, 9, 5, 2, 3]);
+  t.equal(ptr.node.value, 9);
+
+  t.equal(list.frontPtr.remove().value, 4);
+  t.deepEqual(Array.from(list), [6, 7, 1, 9, 5, 2, 3]);
+});
