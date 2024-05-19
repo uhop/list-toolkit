@@ -387,6 +387,32 @@ export class ListHead {
     return this;
   }
 
+  adopt(node) {
+    if (node[this.nextName] || node[this.prevName]) {
+      if (node[this.nextName] === node && node[this.prevName] === node) return node;
+      throw new Error('node is already a part of a list, or there is a name clash');
+    }
+    node[this.nextName] = node[this.prevName] = node;
+    return node;
+  }
+
+  convertToHeadlessList() {
+    if (this.isHeadless) return this;
+    this.head = extract(this, this.head[this.nextName], this.head[this.prevName]);
+    return this;
+  }
+
+  releaseAsHeadlessList() {
+    const list = this.make();
+    if (this.isHeadless) {
+      list.head = this.head;
+      this.head = new ListHeadNode(this);
+    } else {
+      list.head = extract(this, this.head[this.nextName], this.head[this.prevName]);
+    }
+    return list;
+  }
+
   // iterators
 
   [Symbol.iterator]() {
@@ -493,15 +519,6 @@ export class ListHead {
         };
       }
     };
-  }
-
-  adopt(node) {
-    if (node[this.nextName] || node[this.prevName]) {
-      if (node[this.nextName] === node && node[this.prevName] === node) return node;
-      throw new Error('node is already a part of a list, or there is a name clash');
-    }
-    node[this.nextName] = node[this.prevName] = node;
-    return node;
   }
 
   // meta helpers
