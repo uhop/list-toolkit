@@ -92,30 +92,43 @@ export class Ptr {
   remove() {
     const node = this.prev[this.list.nextName];
     if (node === this.list || node === this.prev) return null;
+    if (!this.list.isHeadless && this.list.head.last === node) this.list.head.last = this.prev;
     this.prev[this.list.nextName] = node[this.list.nextName];
     node[this.list.nextName] = node;
     return node;
   }
-  addBefore(value) {
-    splice(this.list, this.prev, {prevFrom: this.list.adopt(value)});
+  addBefore(node) {
+    splice(this.list, this.prev, {prevFrom: this.list.adopt(node)});
+    if (!this.list.isHeadless && this.list.head.last === this.list.head) this.list.head.last = node;
     return this;
   }
-  addAfter(value) {
-    splice(this.list, this.prev[this.list.nextName], {prevFrom: this.list.adopt(value)});
+  addAfter(node) {
+    splice(this.list, this.prev[this.list.nextName], {prevFrom: this.list.adopt(node)});
+    if (!this.list.isHeadless && this.list.head.last === this.list.head) this.list.head.last = node;
     return this;
   }
   insertBefore(list) {
+    if (list.isHeadless) throw new Error('Cannot insert before a headless list');
     if (!this.list.isCompatible(list)) throw new Error('Incompatible lists');
     if (list.isEmpty) return this;
-    const head = list.isHeadless ? list.head : pop(list, list.head).list;
-    splice(this.list, this.prev, {prevFrom: head, to: head});
+
+    splice(this.list, this.prev, {prevFrom: list.head, to: list.last});
+    if (!this.list.isHeadless && this.list.head.last === this.list.head) this.list.head.last = list.last;
+
+    list.head.last = list.head;
+
     return this;
   }
   insertAfter(list) {
+    if (list.isHeadless) throw new Error('Cannot insert after a headless list');
     if (!this.list.isCompatible(list)) throw new Error('Incompatible lists');
     if (list.isEmpty) return this;
-    const head = list.isHeadless ? list.head : pop(list, list.head).list;
-    splice(this.list, this.prev[this.list.nextName], {prevFrom: head, to: head});
+
+    splice(this.list, this.prev, {prevFrom: list.head, to: list.last});
+    if (!this.list.isHeadless && this.list.head.last === this.prev) this.list.head.last = list.last;
+
+    list.head.last = list.head;
+
     return this;
   }
 }
