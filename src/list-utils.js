@@ -23,6 +23,11 @@ export const appendValuesFront = (list, values) => {
   return list;
 }
 
+export const appendValuesBack = (list, values) => {
+  if (typeof list.appendBack == 'function') return list.appendBack(list.makeFrom(values));
+  return pushValuesBack(list, values);
+}
+
 export const findNodeBy = (list, condition) => {
   for (const node of list.getNodeIterable()) {
     if (condition(node)) return node;
