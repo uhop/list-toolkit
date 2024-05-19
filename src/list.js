@@ -1,6 +1,6 @@
 'use strict';
 
-import {addAliases} from './utils-meta.js';
+import {addAliases} from './meta-utils.js';
 
 export class ListNode {
   constructor() {

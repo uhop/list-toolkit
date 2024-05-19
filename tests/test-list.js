@@ -2,7 +2,7 @@
 
 import test from 'tape-six';
 import List from 'list-toolkit/list.js';
-import {pushValuesFront, pushValuesBack, appendValuesFront, appendValuesBack, findNodeBy, removeNodeBy} from 'list-toolkit/list-utils.js';
+import {pushValuesFront, pushValuesBack, appendValuesFront, findNodeBy, removeNodeBy} from 'list-toolkit/list-utils.js';
 
 test('General List tests', t => {
   const numbers = List.from([1, 2, 3, 4, 5, 6, 7, 8, 9]),
@@ -213,7 +213,7 @@ test('List helpers', t => {
   appendValuesFront(list, [5, 6]);
   t.deepEqual(Array.from(list), [5, 6, 2, 1, 3, 4]);
 
-  appendValuesBack(list, [7, 8]);
+  pushValuesBack(list, [7, 8]);
   t.deepEqual(Array.from(list), [5, 6, 2, 1, 3, 4, 7, 8]);
 
   {
