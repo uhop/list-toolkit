@@ -85,41 +85,80 @@ export class Ptr {
   remove() {
     const node = this.prev.next;
     if (node === this.list || node === this.prev) return null;
+    if (this.list.last === node) this.list.last = this.prev;
     this.prev.next = node.next;
     node.next = node;
     return node;
   }
   addBefore(value) {
     const node = value instanceof ValueNode ? (value.next = value) : new ValueNode(value);
-    splice(this.prev, {prevFrom: node});
+    node.next = this.prev.next;
+    this.prev.next = node;
+    if (this.list.last === this.list) this.list.last = node;
     return this;
   }
   addAfter(value) {
     const node = new ValueNode(value);
-    splice(this.prev.next, {prevFrom: node});
+    if (this.list.last === this.prev.next) this.list.last = node;
+    node.next = this.prev.next;
+    this.prev.next = node;
+    if (this.list.last === this.list) this.list.last = node;
     return this;
   }
   insertBefore(list) {
-    splice(this.prev, {prevFrom: list, to: list});
+    if (this.list.last === this.list) this.list.last = list.last;
+    splice(this.prev, {prevFrom: list, to: list.last});
+    list.last = list;
     return this;
   }
   insertAfter(list) {
-    splice(this.prev.next, {prevFrom: list, to: list});
+    if (this.list.last === this.prev.next) this.list.last = list.last;
+    splice(this.prev.next, {prevFrom: list, to: list.last});
+    list.last = list;
     return this;
   }
 }
 
 export class SList extends Node {
+  constructor() {
+    super();
+    this.last = this;
+  }
+
   get isEmpty() {
     return this.next === this;
+  }
+
+  get isOne() {
+    return this.next !== this && this.next.next === this;
+  }
+
+  get isOneOrEmpty() {
+    return this.next.next === this;
+  }
+
+  get isLastValid() {
+    return this.last.next === this;
   }
 
   get front() {
     return this.next;
   }
 
+  get back() {
+    return this.last;
+  }
+
   get frontPtr() {
     return new Ptr(this);
+  }
+
+  get range() {
+    return {prevFrom: this, to: last};
+  }
+
+  get rangePtr() {
+    return {prevFrom: new Ptr(this), to: last};
   }
 
   getLength() {
@@ -142,29 +181,63 @@ export class SList extends Node {
 
   popFront() {
     if (this.next !== this) {
-      return pop(this).node.value;
+      const value = pop(this).node.value;
+      if (this.next === this) this.last = this;
+      return value;
     }
   }
 
   popFrontNode() {
     if (this.next !== this) {
-      return pop(this).node;
+      const node = pop(this).node;
+      if (this.next === this) this.last = this;
+      return node;
     }
   }
 
   pushFront(value) {
-    const node = this.isValidValueNode(value) ? (value.next = value) : new ValueNode(value);
+    const wasEmpty = this.next === this,
+      node = this.isValidValueNode(value) ? (value.next = value) : new ValueNode(value);
     splice(this, {prevFrom: node});
+    if (wasEmpty) this.last = node;
+    return this;
+  }
+
+  pushBack(value) {
+    const node = this.isValidValueNode(value) ? (value.next = value) : new ValueNode(value);
+    node.next = this;
+    this.last = this.last.next = node;
+    return this;
+  }
+
+  appendFront(list) {
+    if (list.next !== list) {
+      if (this.last === this) this.last = list.last;
+      list.last = list;
+    }
+    return this;
+  }
+
+  appendBack(list) {
+    if (list.next !== list) {
+      const last = list.last;
+      splice(this.last, extract({prevFrom: list, to: list.last}));
+      this.last = last;
+      list.last = list;
+    }
     return this;
   }
 
   moveToFront(ptr) {
-    if (!ptr.isHead) splice(this, {prevFrom: ptr.prev});
+    if (ptr.isHead) return this;
+    if (this.last === ptr.prev.next) this.last = ptr.prev;
+    splice(this, {prevFrom: ptr.prev});
+    if (this.last === this) this.last = this.next;
     return this;
   }
 
   clear() {
-    this.next = this;
+    this.next = this.last = this;
     return this;
   }
 
@@ -175,37 +248,46 @@ export class SList extends Node {
 
   extract(fromPtr, to = fromPtr) {
     if (fromPtr instanceof Ptr) {
+      if (fromPtr.list !== this) throw new Error('Node specified by a pointer must belong to the same list');
       if (to instanceof Ptr) {
         if (fromPtr.list !== to.list) throw new Error('Range specified by pointers must belong to the same list');
         to = to.node;
       }
     } else {
-      if (to instanceof Ptr) to = to.node;
+      if (to instanceof Ptr) {
+        if (to.list !== this) throw new Error('Node specified by a pointer must belong to the same list');
+        to = to.node;
+      }
     }
-    return splice(new SList(), extract({prevFrom: fromPtr.prev, to}));
+    if (this.last === to) this.last = fromPtr.prev;
+    const extracted = splice(new SList(), extract({prevFrom: fromPtr.prev, to}));
+    extracted.last = to;
+    return extracted;
   }
 
   extractBy(condition) {
     const extracted = this.make();
     let tail = extracted;
-    for (let prev = this, current = prev.next; current !== this; ) {
+    for (let prev = (this.last = this), current = prev.next; current !== this; ) {
       if (condition(current)) {
         prev.next = current.next;
-        tail.next = current;
-        tail = current;
+        tail = tail.next = current;
         current = prev.next;
       } else {
-        prev = current;
+        prev = this.last = current;
         current = current.next;
       }
     }
     tail.next = extracted;
+    extracted.last = tail;
     return extracted;
   }
 
   reverse() {
+    if (this.next.next === this) return this; // 0 or 1 elements
     let prev = this,
       current = prev.next;
+    this.last = this.next;
     while (current !== this) {
       const next = current.next;
       current.next = prev;
@@ -217,11 +299,18 @@ export class SList extends Node {
   }
 
   sort(compareFn) {
+    if (this.next.next === this) return this; // 0 or 1 elements
     let current = this.next;
     for (const value of Array.from(this).sort(compareFn)) {
       current.value = value;
       current = current.next;
     }
+    return this;
+  }
+
+  syncLast() {
+    this.last = this;
+    while (this.last.next !== this) this.last = this.last.next;
     return this;
   }
 
@@ -317,54 +406,13 @@ export class SList extends Node {
   }
 
   static from(values) {
-    const list = new Builder();
+    const list = new SList();
     for (const value of values) list.pushBack(value);
     return list;
   }
 }
 
-export class Builder extends SList {
-  constructor() {
-    super();
-    this.last = this;
-  }
-
-  get range() {
-    return {prevFrom: this, to: last};
-  }
-
-  get rangePtr() {
-    return {prevFrom: new Ptr(this), to: last};
-  }
-
-  syncLast() {
-    this.last = this;
-    while (this.last.next !== this) this.last = this.last.next;
-    return this;
-  }
-
-  pushBack(value) {
-    const node = this.isValidValueNode(value) ? (value.next = value) : new ValueNode(value);
-    node.next = this.last.next;
-    this.last = this.last.next = node;
-    return this;
-  }
-
-  static from(list) {
-    const builder = new Builder(list);
-    if (list.isEmpty) return builder;
-
-    let last = list.next;
-    while (last.next !== list) last = last.next;
-    splice(builder, {prevFrom: list, to: last});
-    builder.last = last;
-
-    return builder;
-  }
-}
-
-Object.assign(SList, {pop, extract, splice, append, isNodeLike, isStandAlone, Node, ValueNode, Ptr, Builder});
-addAliases(SList, {popFront: 'pop', pushFront: 'push, pushFrontNode'});
-addAliases(Builder, {pushBack: 'pushBackNode'});
+Object.assign(SList, {pop, extract, splice, append, isNodeLike, isStandAlone, Node, ValueNode, Ptr});
+addAliases(SList, {popFront: 'pop', pushFront: 'push, pushFrontNode', pushBack: 'pushBackNode'});
 
 export default SList;
