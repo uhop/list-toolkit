@@ -2,6 +2,7 @@
 
 import test from 'tape-six';
 import SListHead from 'list-toolkit/slist-head.js';
+import {pushValuesFront, pushValuesBack, appendValuesFront} from 'list-toolkit/list-utils.js';
 
 test('Elementary SListHead operations', t => {
   t.equal(typeof SListHead, 'function');
@@ -16,74 +17,43 @@ test('Elementary SListHead operations', t => {
   list.pushFront(a);
   t.notOk(list.isEmpty);
   t.ok(list.front === a);
-  t.ok(list.getBack() === a);
 
   list.pushFront(b);
   t.notOk(list.isEmpty);
   t.ok(b[list.nextName] === a);
   t.equal(list.getLength(), 2);
   t.ok(list.front === b);
-  t.ok(list.getBack() === a);
   t.deepEqual(
     Array.from(list).map(value => value.x),
     [2, 1]
   );
 
-  list.pushBack(c);
-  t.equal(list.getLength(), 3);
-  t.ok(list.front === b);
-  t.ok(list.getBack() === c);
-  t.deepEqual(
-    Array.from(list).map(value => value.x),
-    [2, 1, 3]
-  );
-
   t.ok(list.popFront() === b);
-  t.deepEqual(
-    Array.from(list).map(value => value.x),
-    [1, 3]
-  );
-
-  t.ok(list.popBack() === c);
   t.deepEqual(
     Array.from(list).map(value => value.x),
     [1]
   );
 
-  list.appendFront(SListHead.from([b, c]));
+  pushValuesFront(list, [b, c]);
+  t.deepEqual(
+    Array.from(list).map(value => value.x),
+    [3, 2, 1]
+  );
+
+  list.moveToFront(list.frontPtr.next());
   t.deepEqual(
     Array.from(list).map(value => value.x),
     [2, 3, 1]
   );
 
-  list.popFront();
-  list.popFront();
-  list.appendBack(SListHead.from([b, c]));
-  t.deepEqual(
-    Array.from(list).map(value => value.x),
-    [1, 2, 3]
-  );
-
-  list.moveToFront(b);
-  t.deepEqual(
-    Array.from(list).map(value => value.x),
-    [2, 1, 3]
-  );
-
-  list.moveToBack(b);
-  t.deepEqual(
-    Array.from(list).map(value => value.x),
-    [1, 3, 2]
-  );
-
-  const extract = list.extract(a, c);
+  const extract = list.extract(list.frontPtr.next(), a);
   t.deepEqual(
     Array.from(list).map(value => value.x),
     [2]
   );
   t.deepEqual(
     Array.from(extract).map(value => value.x),
-    [1, 3]
+    [3, 1]
   );
   extract.clear(true);
 
@@ -91,12 +61,12 @@ test('Elementary SListHead operations', t => {
   t.ok(list.isEmpty);
   t.deepEqual(Array.from(list), []);
 
-  list.appendFront(SListHead.from([a, b, c])).remove(a, c);
-  t.deepEqual(Array.from(list), []);
+  appendValuesFront(list, [a, b, c]).remove(list.frontPtr, c, true);
+  t.deepEqual(Array.from(list).map(node => node.x), []);
 
   new SListHead(a).clear(true);
 
-  list.appendFront(SListHead.from([a, b, c])).reverse();
+  appendValuesFront(list, [a, b, c]).reverse();
   t.deepEqual(
     Array.from(list).map(value => value.x),
     [3, 2, 1]
@@ -149,14 +119,14 @@ test('SListHead helpers', t => {
     other.clear(true);
   }
 
-  list.pushValuesFront([a, b]);
+  pushValuesFront(list, [a, b]);
   t.deepEqual(
     Array.from(list).map(value => value.x),
     [2, 1]
   );
   list.clear(true);
 
-  list.appendValuesFront([c, b]);
+  appendValuesFront(list, [c, b]);
   t.deepEqual(
     Array.from(list).map(value => value.x),
     [3, 2]
@@ -168,7 +138,7 @@ test('SListHead with custom next', t => {
     b = {x: 2},
     c = {x: 3};
   const list = new SListHead(null, {nextName: Symbol()});
-  list.pushValuesFront([a, b, c]);
+  pushValuesFront(list, [a, b, c]);
   t.deepEqual(
     Array.from(list).map(value => value.x),
     [3, 2, 1]
