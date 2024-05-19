@@ -2,7 +2,7 @@
 
 import {addAliases} from './meta-utils.js';
 
-export class ListNode {
+export class Node {
   constructor({nextName = 'next', prevName = 'prev'} = {}) {
     this.nextName = nextName;
     this.prevName = prevName;
@@ -10,7 +10,7 @@ export class ListNode {
   }
 }
 
-export class ListHeadNode extends ListNode {}
+export class HeadNode extends Node {}
 
 export class UnsafeHead {
   constructor(head) {
@@ -68,13 +68,13 @@ const append = ({nextName, prevName}, target, from, to = from) => {
 const isNodeLike = ({nextName, prevName}, node) => node && node[prevName] && node[nextName];
 const isStandAlone = ({nextName, prevName}, node) => node && node[prevName] === node && node[nextName] === node;
 
-export class ListPtr {
+export class Ptr {
   constructor(list, node) {
-    if (list instanceof ListPtr) {
+    if (list instanceof Ptr) {
       this.list = list.list;
       this.node = list.node;
-    } else if (node instanceof ListPtr) {
-      if (list !== node.list) throw new Error('Node specified by ListPtr must belong to the same list');
+    } else if (node instanceof Ptr) {
+      if (list !== node.list) throw new Error('Node specified by Ptr must belong to the same list');
       this.list = list;
       this.node = node.node;
     } else {
@@ -94,7 +94,7 @@ export class ListPtr {
     return this;
   }
   clone() {
-    return new ListPtr(this);
+    return new Ptr(this);
   }
   remove() {
     if (this.node === this.list) return null;
@@ -144,23 +144,23 @@ export class ListHead {
       this.head = head;
       return;
     }
-    this.head = new ListHeadNode(this);
+    this.head = new HeadNode(this);
   }
 
   get isHeadless() {
-    return !(this.head instanceof ListHeadNode);
+    return !(this.head instanceof HeadNode);
   }
 
   get isEmpty() {
-    return this.head instanceof ListHeadNode && this.head[this.nextName] === this.head;
+    return this.head instanceof HeadNode && this.head[this.nextName] === this.head;
   }
 
   get isOneNode() {
-    return this.head instanceof ListHeadNode ? this.head[this.nextName] === this.head[this.prevName] : this.head[this.nextName] === this.head;
+    return this.head instanceof HeadNode ? this.head[this.nextName] === this.head[this.prevName] : this.head[this.nextName] === this.head;
   }
 
   get front() {
-    return this.head instanceof ListHeadNode ? this.head[this.nextName] : this.head;
+    return this.head instanceof HeadNode ? this.head[this.nextName] : this.head;
   }
 
   get back() {
@@ -168,11 +168,11 @@ export class ListHead {
   }
 
   get frontPtr() {
-    return new ListPtr(this, this.front);
+    return new Ptr(this, this.front);
   }
 
   get backPtr() {
-    return new ListPtr(this, this.back);
+    return new Ptr(this, this.back);
   }
 
   getLength() {
@@ -191,13 +191,13 @@ export class ListHead {
   }
 
   makePtr(node) {
-    return new ListPtr(this, node || this.front);
+    return new Ptr(this, node || this.front);
   }
 
   popFrontNode() {
     if (this.isHeadless) {
       const result = pop(this, this.head);
-      this.head = result.node === result.list ? new ListHeadNode(this) : result.list;
+      this.head = result.node === result.list ? new HeadNode(this) : result.list;
       return result.node;
     }
     if (!this.isEmpty) return pop(this, this.head[this.nextName]).node;
@@ -206,7 +206,7 @@ export class ListHead {
   popBackNode() {
     if (this.isHeadless) {
       const result = pop(this, this.head[this.prevName]);
-      if (result.node === result.list) this.head = new ListHeadNode(this);
+      if (result.node === result.list) this.head = new HeadNode(this);
       return result.node;
     }
     if (!this.isEmpty) return pop(this, this.head[this.prevName]).node;
@@ -230,7 +230,7 @@ export class ListHead {
     let head;
     if (list.isHeadless) {
       list = list.head;
-      list.head = new ListHeadNode(list);
+      list.head = new HeadNode(list);
     } else {
       head = extract(this, list.head[this.nextName], list.head[this.prevName]);
     }
@@ -251,7 +251,7 @@ export class ListHead {
     let head;
     if (list.isHeadless) {
       list = list.head;
-      list.head = new ListHeadNode(list);
+      list.head = new HeadNode(list);
     } else {
       head = extract(this, list.head[this.nextName], list.head[this.prevName]);
     }
@@ -262,7 +262,7 @@ export class ListHead {
   }
 
   moveToFront(node) {
-    if (node instanceof ListPtr) {
+    if (node instanceof Ptr) {
       if (!this.isCompatible(node.list)) throw new Error('Incompatible lists');
       node = node.node;
     } else {
@@ -281,7 +281,7 @@ export class ListHead {
   }
 
   moveToBack(node) {
-    if (node instanceof ListPtr) {
+    if (node instanceof Ptr) {
       if (!this.isCompatible(node.list)) throw new Error('Incompatible lists');
       node = node.node;
     } else {
@@ -298,13 +298,13 @@ export class ListHead {
     if (drop) {
       while (!this.isEmpty) this.popFront();
     } else {
-      this.head = new ListHeadNode(this);
+      this.head = new HeadNode(this);
     }
     return this;
   }
 
   removeNode(node) {
-    if (node instanceof ListPtr) {
+    if (node instanceof Ptr) {
       if (!this.isCompatible(node.list)) throw new Error('Incompatible lists');
       node = node.node;
     } else {
@@ -320,18 +320,18 @@ export class ListHead {
   }
 
   extract(from, to = from) {
-    if (from instanceof ListPtr) {
-      if (to instanceof ListPtr) {
-        if (from.list !== to.list) throw new Error("Range specified by ListPtr's must belong to the same list");
+    if (from instanceof Ptr) {
+      if (to instanceof Ptr) {
+        if (from.list !== to.list) throw new Error('Range specified by pointers must belong to the same list');
         to = to.node;
       }
       from = from.node;
     } else {
-      if (to instanceof ListPtr) to = to.node;
+      if (to instanceof Ptr) to = to.node;
     }
     if (!this.isNodeLike(from)) throw new Error('"from" is not a compatible node');
     if (!this.isNodeLike(to)) throw new Error('"to" is not a compatible node');
-    return new ListHead(unsafe(splice(this, new ListHeadNode(this), extract(this, from, to))), this);
+    return new ListHead(unsafe(splice(this, new HeadNode(this), extract(this, from, to))), this);
   }
 
   extractBy(condition) {
@@ -406,7 +406,7 @@ export class ListHead {
     const list = this.make();
     if (this.isHeadless) {
       list.head = this.head;
-      this.head = new ListHeadNode(this);
+      this.head = new HeadNode(this);
     } else {
       list.head = extract(this, this.head[this.nextName], this.head[this.prevName]);
     }
@@ -430,14 +430,14 @@ export class ListHead {
   }
 
   getNodeIterable(from, to) {
-    if (from instanceof ListPtr) {
-      if (to instanceof ListPtr) {
-        if (from.list !== to.list) throw new Error("Range specified by ListPtr's must belong to the same list");
+    if (from instanceof Ptr) {
+      if (to instanceof Ptr) {
+        if (from.list !== to.list) throw new Error('Range specified by pointers must belong to the same list');
         to = to.node;
       }
       from = from.node;
     } else {
-      if (to instanceof ListPtr) to = to.node;
+      if (to instanceof Ptr) to = to.node;
     }
     if (from && !this.isNodeLike(from)) throw new Error('"from" is not a compatible node');
     if (to && !this.isNodeLike(to)) throw new Error('"to" is not a compatible node');
@@ -468,7 +468,7 @@ export class ListHead {
           next: () => {
             const result = nodeIterable.next();
             if (result.done) return result;
-            return {value: new ListPtr(this, result.value)};
+            return {value: new Ptr(this, result.value)};
           }
         };
       }
@@ -476,14 +476,14 @@ export class ListHead {
   }
 
   getReverseNodeIterable(from, to) {
-    if (from instanceof ListPtr) {
-      if (to instanceof ListPtr) {
-        if (from.list !== to.list) throw new Error("Range specified by ListPtr's must belong to the same list");
+    if (from instanceof Ptr) {
+      if (to instanceof Ptr) {
+        if (from.list !== to.list) throw new Error('Range specified by pointers must belong to the same list');
         to = to.node;
       }
       from = from.node;
     } else {
-      if (to instanceof ListPtr) to = to.node;
+      if (to instanceof Ptr) to = to.node;
     }
     if (from && !this.isNodeLike(from)) throw new Error('"from" is not a compatible node');
     if (to && !this.isNodeLike(to)) throw new Error('"to" is not a compatible node');
@@ -514,7 +514,7 @@ export class ListHead {
           next: () => {
             const result = nodeIterable.next();
             if (result.done) return result;
-            return {value: new ListPtr(this, result.value)};
+            return {value: new Ptr(this, result.value)};
           }
         };
       }
@@ -542,7 +542,7 @@ export class ListHead {
   }
 }
 
-Object.assign(ListHead, {pop, extract, splice, append, isNodeLike, isStandAlone, UnsafeHead, unsafe, Node: ListNode, HeadNode: ListHeadNode});
+Object.assign(ListHead, {pop, extract, splice, append, isNodeLike, isStandAlone, UnsafeHead, unsafe, Node, HeadNode, Ptr});
 addAliases(ListHead, {
   popFrontNode: 'popFront, pop',
   pushFrontNode: 'pushFront, push',

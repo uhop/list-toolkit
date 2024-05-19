@@ -2,7 +2,7 @@
 
 import test from 'tape-six';
 import SListHead from 'list-toolkit/slist-head.js';
-import {pushValuesFront, pushValuesBack, appendValuesFront} from 'list-toolkit/list-utils.js';
+import {pushValuesFront, appendValuesFront} from 'list-toolkit/list-utils.js';
 
 test('Elementary SListHead operations', t => {
   t.equal(typeof SListHead, 'function');

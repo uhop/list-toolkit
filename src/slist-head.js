@@ -2,14 +2,14 @@
 
 import {addAliases} from './meta-utils.js';
 
-export class SListNode {
+export class Node {
   constructor({nextName = 'next'} = {}) {
     this.nextName = nextName;
     this[nextName] = this;
   }
 }
 
-export class SListHeadNode extends SListNode {}
+export class HeadNode extends Node {}
 
 export class UnsafeHead {
   constructor(head) {
@@ -56,13 +56,13 @@ const append = ({nextName}, target, {prevFrom, to = prevFrom[nextName]}) => {
 const isNodeLike = ({nextName}, node) => node && node[nextName];
 const isStandAlone = ({nextName}, node) => node && node[nextName] === node;
 
-export class SListPtr {
+export class Ptr {
   constructor(list, prev) {
-    if (list instanceof SListPtr) {
+    if (list instanceof Ptr) {
       this.list = list.list;
       this.prev = list.prev;
-    } else if (prev instanceof SListPtr) {
-      if (list !== prev.list) throw new Error('Node specified by SListPtr must belong to the same list');
+    } else if (prev instanceof Ptr) {
+      if (list !== prev.list) throw new Error('Node specified by a pointer must belong to the same list');
       this.list = list;
       this.prev = prev.prev;
     } else {
@@ -82,7 +82,7 @@ export class SListPtr {
     return this;
   }
   clone() {
-    return new SListPtr(this);
+    return new Ptr(this);
   }
   remove() {
     const node = this.prev[this.list.nextName];
@@ -131,19 +131,19 @@ export class SListHead {
       this.head = head;
       return;
     }
-    this.head = new SListHeadNode(this);
+    this.head = new HeadNode(this);
   }
 
   get isHeadless() {
-    return !(this.head instanceof SListHeadNode);
+    return !(this.head instanceof HeadNode);
   }
 
   get isEmpty() {
-    return this.head instanceof SListHeadNode && this.head[this.nextName] === this.head;
+    return this.head instanceof HeadNode && this.head[this.nextName] === this.head;
   }
 
   get isOneNode() {
-    if (this.head instanceof SListHeadNode) {
+    if (this.head instanceof HeadNode) {
       const front = this.head[this.nextName];
       return front !== this.head && front[this.nextName] === this.head;
     }
@@ -151,11 +151,11 @@ export class SListHead {
   }
 
   get front() {
-    return this.head instanceof SListHeadNode ? this.head[this.nextName] : this.head;
+    return this.head instanceof HeadNode ? this.head[this.nextName] : this.head;
   }
 
   get frontPtr() {
-    return this.head instanceof SListHeadNode ? new SListPtr(this, this.head) : null;
+    return this.head instanceof HeadNode ? new Ptr(this, this.head) : null;
   }
 
   getLength() {
@@ -174,7 +174,7 @@ export class SListHead {
   }
 
   makePtr(prev) {
-    return new SListPtr(this, prev || (this.isHeadless ? null : this.head));
+    return new Ptr(this, prev || (this.isHeadless ? null : this.head));
   }
 
   popFrontNode() {
@@ -205,7 +205,7 @@ export class SListHead {
         current = next;
       } while (current !== this.head);
     } else {
-      this.head = new SListHeadNode(this);
+      this.head = new HeadNode(this);
     }
     return this;
   }
@@ -217,19 +217,19 @@ export class SListHead {
 
   extract(fromPtr, to = fromPtr) {
     if (!this.isCompatible(fromPtr.list)) throw new Error('Incompatible lists');
-    if (to instanceof SListPtr) {
-      if (fromPtr.list !== to.list) throw new Error("Range specified by SListPtr's must belong to the same list");
+    if (to instanceof Ptr) {
+      if (fromPtr.list !== to.list) throw new Error('Range specified by pointers must belong to the same list');
       to = to.node;
     }
-    return new SListHead(unsafe(splice(this, new SListHeadNode(this), extract(this, {prevFrom: fromPtr.prev, to}))), this);
+    return new SListHead(unsafe(splice(this, new HeadNode(this), extract(this, {prevFrom: fromPtr.prev, to}))), this);
   }
 
   extractBy(condition) {
-    const extracted = new SListHeadBuilder(this);
+    const extracted = new Builder(this);
     if (this.isEmpty) return extracted;
 
     const wasHeadless = this.isHeadless,
-      rest = new SListHeadBuilder(this);
+      rest = new Builder(this);
 
     let current = this.front;
     do {
@@ -313,14 +313,14 @@ export class SListHead {
   }
 
   getNodeIterable(from, to) {
-    if (from instanceof SListPtr) {
-      if (to instanceof SListPtr) {
+    if (from instanceof Ptr) {
+      if (to instanceof Ptr) {
         if (from.list !== to.list) throw new Error('Range specified by pointers must belong to the same list');
         to = to.node;
       }
       from = from.node;
     } else {
-      if (to instanceof SListPtr) to = to.node;
+      if (to instanceof Ptr) to = to.node;
     }
     if (from && !this.isNodeLike(from)) throw new Error('"from" is not a compatible node');
     if (to && !this.isNodeLike(to)) throw new Error('"to" is not a compatible node');
@@ -348,7 +348,7 @@ export class SListHead {
     fromPtr ??= this.frontPtr;
     if (!this.isCompatible(fromPtr.list)) throw new Error('"fromPtr" is not compatible with this list');
 
-    if (to instanceof SListPtr) {
+    if (to instanceof Ptr) {
       if (fromPtr.list !== to.list) throw new Error('Range specified by pointers must belong to the same list');
       to = to.node;
     }
@@ -388,13 +388,13 @@ export class SListHead {
   }
 
   static from(values, options) {
-    const list = new SListHeadBuilder(options);
+    const list = new Builder(options);
     for (const value of values) list.pushBack(value);
     return list;
   }
 }
 
-export class SListHeadBuilder extends SListHead {
+export class Builder extends SListHead {
   constructor(options) {
     super(null, options);
     this.last = this.head;
@@ -405,7 +405,7 @@ export class SListHeadBuilder extends SListHead {
   }
 
   get rangePtr() {
-    return {prevFrom: new SListPtr(this), to: this.last};
+    return {prevFrom: new Ptr(this), to: this.last};
   }
 
   syncLast() {
@@ -431,7 +431,7 @@ export class SListHeadBuilder extends SListHead {
     const list = this.make();
     if (this.isHeadless) {
       list.head = this.head;
-      this.head = new SListHeadNode(this);
+      this.head = new HeadNode(this);
     } else {
       list.head = extract(this, {prevFrom: this.head, to: this.last});
     }
@@ -439,16 +439,16 @@ export class SListHeadBuilder extends SListHead {
   }
 
   static from(list) {
-    const builder = new SListHeadBuilder(list);
+    const builder = new Builder(list);
     builder.head = list.head;
-    list.head = new SListHeadNode(list);
+    list.head = new HeadNode(list);
     builder.syncLast();
     return builder;
   }
 }
 
-Object.assign(SListHead, {pop, extract, splice, append, isNodeLike, isStandAlone, UnsafeHead, unsafe, Node: SListNode, HeadNode: SListHeadNode});
+Object.assign(SListHead, {pop, extract, splice, append, isNodeLike, isStandAlone, UnsafeHead, unsafe, Node, HeadNode, Ptr, Builder});
 addAliases(SListHead, {popFrontNode: 'popFront, pop', pushFrontNode: 'pushFront, push', getNodeIterable: 'getIterable'});
-addAliases(SListHeadBuilder, {pushBackNode: 'pushBack'});
+addAliases(Builder, {pushBackNode: 'pushBack'});
 
 export default SListHead;

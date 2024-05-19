@@ -2,13 +2,13 @@
 
 import {addAliases} from './meta-utils.js';
 
-export class SListNode {
+export class Node {
   constructor() {
     this.next = this;
   }
 }
 
-export class SListValueNode extends SListNode {
+export class ValueNode extends Node {
   constructor(value) {
     super();
     this.value = value;
@@ -54,13 +54,13 @@ const append = (target, {prevFrom, to = prevFrom.next}) => {
 const isNodeLike = node => node && node.next;
 const isStandAlone = node => node && node.next === node;
 
-export class SListPtr {
+export class Ptr {
   constructor(list, prev) {
-    if (list instanceof SListPtr) {
+    if (list instanceof Ptr) {
       this.list = list.list;
       this.prev = list.prev;
-    } else if (prev instanceof SListPtr) {
-      if (list !== prev.list) throw new Error('Node specified by SListPtr must belong to the same list');
+    } else if (prev instanceof Ptr) {
+      if (list !== prev.list) throw new Error('Node specified by a pointer must belong to the same list');
       this.list = list;
       this.prev = prev.prev;
     } else {
@@ -80,7 +80,7 @@ export class SListPtr {
     return this;
   }
   clone() {
-    return new SListPtr(this);
+    return new Ptr(this);
   }
   remove() {
     const node = this.prev.next;
@@ -90,12 +90,12 @@ export class SListPtr {
     return node;
   }
   addBefore(value) {
-    const node = value instanceof SListValueNode ? (value.next = value) : new SListValueNode(value);
+    const node = value instanceof ValueNode ? (value.next = value) : new ValueNode(value);
     splice(this.prev, {prevFrom: node});
     return this;
   }
   addAfter(value) {
-    const node = new SListValueNode(value);
+    const node = new ValueNode(value);
     splice(this.prev.next, {prevFrom: node});
     return this;
   }
@@ -109,7 +109,7 @@ export class SListPtr {
   }
 }
 
-export class SList extends SListNode {
+export class SList extends Node {
   get isEmpty() {
     return this.next === this;
   }
@@ -119,7 +119,7 @@ export class SList extends SListNode {
   }
 
   get frontPtr() {
-    return new SListPtr(this);
+    return new Ptr(this);
   }
 
   getLength() {
@@ -133,11 +133,11 @@ export class SList extends SListNode {
   }
 
   isValidValueNode(node) {
-    return node instanceof SListValueNode && isStandAlone(node);
+    return node instanceof ValueNode && isStandAlone(node);
   }
 
   makePtr(prev) {
-    return new SListPtr(this, prev || this);
+    return new Ptr(this, prev || this);
   }
 
   popFront() {
@@ -153,7 +153,7 @@ export class SList extends SListNode {
   }
 
   pushFront(value) {
-    const node = this.isValidValueNode(value) ? (value.next = value) : new SListValueNode(value);
+    const node = this.isValidValueNode(value) ? (value.next = value) : new ValueNode(value);
     splice(this, {prevFrom: node});
     return this;
   }
@@ -174,13 +174,13 @@ export class SList extends SListNode {
   }
 
   extract(fromPtr, to = fromPtr) {
-    if (fromPtr instanceof SListPtr) {
-      if (to instanceof SListPtr) {
-        if (fromPtr.list !== to.list) throw new Error("Range specified by SListPtr's must belong to the same list");
+    if (fromPtr instanceof Ptr) {
+      if (to instanceof Ptr) {
+        if (fromPtr.list !== to.list) throw new Error('Range specified by pointers must belong to the same list');
         to = to.node;
       }
     } else {
-      if (to instanceof SListPtr) to = to.node;
+      if (to instanceof Ptr) to = to.node;
     }
     return splice(new SList(), extract({prevFrom: fromPtr.prev, to}));
   }
@@ -255,14 +255,14 @@ export class SList extends SListNode {
   }
 
   getNodeIterable(from, to) {
-    if (from instanceof SListPtr) {
-      if (to instanceof SListPtr) {
-        if (from.list !== to.list) throw new Error("Range specified by SListPtr's must belong to the same list");
+    if (from instanceof Ptr) {
+      if (to instanceof Ptr) {
+        if (from.list !== to.list) throw new Error('Range specified by pointers must belong to the same list');
         to = to.node;
       }
       from = from.node;
     } else {
-      if (to instanceof SListPtr) to = to.node;
+      if (to instanceof Ptr) to = to.node;
     }
     return {
       [Symbol.iterator]: () => {
@@ -282,8 +282,8 @@ export class SList extends SListNode {
 
   getPtrIterable(fromPtr, to) {
     fromPtr ??= this.frontPtr;
-    if (to instanceof SListPtr) {
-      if (fromPtr.list !== to.list) throw new Error("Range specified by SListPtr's must belong to the same list");
+    if (to instanceof Ptr) {
+      if (fromPtr.list !== to.list) throw new Error('Range specified by pointers must belong to the same list');
       to = to.node;
     }
     return {
@@ -317,13 +317,13 @@ export class SList extends SListNode {
   }
 
   static from(values) {
-    const list = new SListBuilder();
+    const list = new Builder();
     for (const value of values) list.pushBack(value);
     return list;
   }
 }
 
-export class SListBuilder extends SList {
+export class Builder extends SList {
   constructor() {
     super();
     this.last = this;
@@ -334,7 +334,7 @@ export class SListBuilder extends SList {
   }
 
   get rangePtr() {
-    return {prevFrom: new SListPtr(this), to: last};
+    return {prevFrom: new Ptr(this), to: last};
   }
 
   syncLast() {
@@ -344,14 +344,14 @@ export class SListBuilder extends SList {
   }
 
   pushBack(value) {
-    const node = this.isValidValueNode(value) ? (value.next = value) : new SListValueNode(value);
+    const node = this.isValidValueNode(value) ? (value.next = value) : new ValueNode(value);
     node.next = this.last.next;
     this.last = this.last.next = node;
     return this;
   }
 
   static from(list) {
-    const builder = new SListBuilder(list);
+    const builder = new Builder(list);
     if (list.isEmpty) return builder;
 
     let last = list.next;
@@ -363,8 +363,8 @@ export class SListBuilder extends SList {
   }
 }
 
-Object.assign(SList, {pop, extract, splice, append, isNodeLike, isStandAlone, Node: SListNode, ValueNode: SListValueNode});
+Object.assign(SList, {pop, extract, splice, append, isNodeLike, isStandAlone, Node, ValueNode, Ptr, Builder});
 addAliases(SList, {popFront: 'pop', pushFront: 'push, pushFrontNode'});
-addAliases(SListBuilder, {pushBack: 'pushBackNode'});
+addAliases(Builder, {pushBack: 'pushBackNode'});
 
 export default SList;
