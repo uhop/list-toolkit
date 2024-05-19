@@ -1,7 +1,7 @@
 'use strict';
 
 import test from 'tape-six';
-import {compareFromLess, lessFromCompare, equalFromLess, greaterFromLess, binarySearch, copyOptions} from '../src/utils.js';
+import {compareFromLess, lessFromCompare, equalFromLess, greaterFromLess, binarySearch} from 'list-toolkit/utils.js';
 
 test('utils: compareFromLess()', t => {
   t.equal(typeof compareFromLess, 'function');
@@ -98,13 +98,4 @@ test('utils: binarySearch()', t => {
     t.equal(array.length, 100);
     t.ok(isSorted(array));
   }
-});
-
-test('utils: copyOptions()', t => {
-  t.equal(typeof copyOptions, 'function');
-
-  t.deepEqual(copyOptions({a: 1}, {b: 2, c: 3}), {a: 1, b: 2, c: 3});
-  t.deepEqual(copyOptions({a: 1}, {b: 2, c: 3}, {c: 5, d: 4}), {a: 1, b: 2, c: 5});
-  t.deepEqual(copyOptions({a: 1}, {b: 2, c: 3}, null, 1, 'z'), {a: 1, b: 2, c: 3});
-  t.deepEqual(copyOptions(null, {b: 2, c: 3}, null, 1, 'z'), {b: 2, c: 3});
 });

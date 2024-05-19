@@ -18,18 +18,3 @@ export const binarySearch = (sortedArray, lessValueFn, from = 0, to = sortedArra
   }
   return right;
 };
-
-export const copyOptions = (target, pattern, ...sources) => {
-  target = target || {};
-  const keys = Object.keys(pattern);
-  for (const key of keys) {
-    target[key] = pattern[key];
-  }
-  for (const source of sources) {
-    if (!source || typeof source !== 'object') continue;
-    for (const key of keys) {
-      if (key in source) target[key] = source[key];
-    }
-  }
-  return target;
-};
