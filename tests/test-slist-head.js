@@ -46,16 +46,16 @@ test('Elementary SListHead operations', t => {
     [2, 3, 1]
   );
 
-  const extract = list.extract(list.frontPtr.next(), a);
+  const extracted = list.extract(list.frontPtr.next(), a);
   t.deepEqual(
     Array.from(list).map(value => value.x),
     [2]
   );
   t.deepEqual(
-    Array.from(extract).map(value => value.x),
+    Array.from(extracted).map(value => value.x),
     [3, 1]
   );
-  extract.clear(true);
+  extracted.clear(true);
 
   list.clear(true);
   t.ok(list.isEmpty);
