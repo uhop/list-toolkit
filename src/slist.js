@@ -1,6 +1,6 @@
 'use strict';
 
-import {addAliases} from './utils-meta.js';
+import {addAliases} from './meta-utils.js';
 
 export class SListNode {
   constructor() {
@@ -15,7 +15,7 @@ export class SListValueNode extends SListNode {
   }
 }
 
-// useful low-level operations on doubly linked lists
+// useful low-level operations on singly linked lists
 
 const pop = prev => {
   const node = prev.next;
@@ -169,19 +169,11 @@ export class SList extends SListNode {
   }
 
   remove(fromPtr, to = fromPtr) {
-    if (fromPtr instanceof SListPtr) {
-      if (to instanceof SListPtr) {
-        if (fromPtr.list !== to.list) throw new Error("Range specified by SListPtr's must belong to the same list");
-        to = to.node;
-      }
-    } else {
-      if (to instanceof SListPtr) to = to.node;
-    }
-    extract({prevFrom: fromPtr.prev, to});
+    this.extract(fromPtr, to);
     return this;
   }
 
-  extract(fromPtr, to) {
+  extract(fromPtr, to = fromPtr) {
     if (fromPtr instanceof SListPtr) {
       if (to instanceof SListPtr) {
         if (fromPtr.list !== to.list) throw new Error("Range specified by SListPtr's must belong to the same list");
@@ -325,19 +317,45 @@ export class SList extends SListNode {
   }
 
   static from(values) {
-    const list = new SList();
-    let tail = list;
-    for (const value of values) {
-      const node = new SListValueNode(value);
-      tail.next = node;
-      tail = node;
-    }
-    tail.next = list;
+    const list = new SListBuilder();
+    for (const value of values) list.pushBack(value);
     return list;
   }
 }
 
+export class SListBuilder extends SList {
+  constructor() {
+    super();
+    this.last = this;
+  }
+
+  get range() {
+    return {prevFrom: this, to: last};
+  }
+
+  get rangePtr() {
+    return {prevFrom: new SListPtr(this), to: last};
+  }
+
+  syncLast() {
+    let current = this;
+    do {
+      this.last = current;
+      current = current.next;
+    } while(current !== this);
+    return this;
+  }
+
+  pushBack(value) {
+    const node = this.isValidValueNode(value) ? (value.next = value) : new SListValueNode(value);
+    node.next = this.last.next;
+    this.last = this.last.next = node;
+    return this;
+  }
+}
+
 Object.assign(SList, {pop, extract, splice, append, isNodeLike, isStandAlone, Node: SListNode, ValueNode: SListValueNode});
-addAliases(SList, {popFront: 'pop', pushFront: 'push'});
+addAliases(SList, {popFront: 'pop', pushFront: 'push, pushFrontNode'});
+addAliases(SListBuilder, {pushBack: 'pushBackNode'});
 
 export default SList;
