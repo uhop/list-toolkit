@@ -6,7 +6,6 @@ export class Node {
     this.prevName = prevName;
     this[nextName] = this[prevName] = this;
   }
-
   get isStandAlone() {
     return this[this.nextName] === this;
   }
