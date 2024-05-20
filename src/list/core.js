@@ -200,7 +200,7 @@ export class List extends HeadNode {
   }
 
   releaseCircularList() {
-    return pop(this, this).list;
+    return this.isEmpty ? null : pop(this, this).list;
   }
 
   // iterators
