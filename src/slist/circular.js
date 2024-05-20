@@ -66,7 +66,8 @@ export class CircularSList {
   }
 
   makePtr(prev) {
-    return this.head ? new Ptr(this, prev || this.head) : null;
+    prev ||= this.head;
+    return prev ? new Ptr(this, prev) : null;
   }
 
   getLength() {
