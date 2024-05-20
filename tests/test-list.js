@@ -1,285 +1,258 @@
 'use strict';
 
 import test from 'tape-six';
-import List from 'list-toolkit/list.js';
-import {pushValuesFront, pushValuesBack, appendValuesFront, findNodeBy, removeNodeBy} from 'list-toolkit/list-utils.js';
-
-test('General List tests', t => {
-  const numbers = List.from([1, 2, 3, 4, 5, 6, 7, 8, 9]),
-    odds = new List(),
-    evens = new List();
-
-  for (const value of numbers.getReverseIterable()) {
-    if (value & 1) {
-      odds.pushFront(value);
-    } else {
-      evens.pushBack(value);
-    }
-  }
-
-  numbers.reverse();
-  evens.reverse();
-
-  t.deepEqual(Array.from(numbers), [9, 8, 7, 6, 5, 4, 3, 2, 1]);
-  t.deepEqual(Array.from(odds), [1, 3, 5, 7, 9]);
-  t.deepEqual(Array.from(evens), [2, 4, 6, 8]);
-
-  const oddsAndEvens = new List();
-
-  for (const value of odds) oddsAndEvens.pushBack(value);
-  for (const value of evens) oddsAndEvens.pushBack(value);
-
-  t.deepEqual(Array.from(oddsAndEvens), [1, 3, 5, 7, 9, 2, 4, 6, 8]);
-  t.deepEqual(Array.from(oddsAndEvens.sort((a, b) => a.value - b.value)), [1, 2, 3, 4, 5, 6, 7, 8, 9]);
-});
+import List from '../src/list.js';
+import {pushValuesFront, pushValuesBack, appendValuesFront} from 'list-toolkit/list-utils.js';
 
 test('Elementary List operations', t => {
+  t.equal(typeof List, 'function');
+
+  const a = {x: 1},
+    b = {x: 2},
+    c = {x: 3};
   const list = new List();
+
   t.ok(list.isEmpty);
 
-  list.pushBack(1);
+  list.pushFront(a);
   t.notOk(list.isEmpty);
-  t.equal(list.front.value, 1);
-  t.equal(list.back.value, 1);
-  t.equal(list.getLength(), 1);
-  t.deepEqual(Array.from(list), [1]);
-  t.deepEqual(Array.from(list.getReverseIterable()), [1]);
+  t.ok(list.front === a);
+  t.ok(list.back === a);
 
-  list.pushFront(2);
+  list.pushFront(b);
   t.notOk(list.isEmpty);
-  t.equal(list.front.value, 2);
-  t.equal(list.back.value, 1);
+  t.ok(b[list.nextName] === a);
+  t.ok(a[list.prevName] === b);
   t.equal(list.getLength(), 2);
-  t.deepEqual(Array.from(list), [2, 1]);
-  t.deepEqual(Array.from(list.getReverseIterable()), [1, 2]);
+  t.ok(list.front === b);
+  t.ok(list.back === a);
+  t.deepEqual(
+    Array.from(list).map(value => value.x),
+    [2, 1]
+  );
 
-  list.pushBack(3);
-  t.notOk(list.isEmpty);
-  t.equal(list.front.value, 2);
-  t.equal(list.back.value, 3);
+  list.pushBack(c);
   t.equal(list.getLength(), 3);
-  t.deepEqual(Array.from(list), [2, 1, 3]);
-  t.deepEqual(Array.from(list.getReverseIterable()), [3, 1, 2]);
+  t.ok(list.front === b);
+  t.ok(list.back === c);
+  t.deepEqual(
+    Array.from(list).map(value => value.x),
+    [2, 1, 3]
+  );
 
-  t.equal(list.popFront(), 2);
-  t.equal(list.front.value, 1);
-  t.equal(list.back.value, 3);
-  t.equal(list.getLength(), 2);
-  t.deepEqual(Array.from(list), [1, 3]);
-  t.deepEqual(Array.from(list.getReverseIterable()), [3, 1]);
+  t.ok(list.popFront() === b);
+  t.deepEqual(
+    Array.from(list).map(value => value.x),
+    [1, 3]
+  );
 
-  t.equal(list.popBack(), 3);
-  t.equal(list.front.value, 1);
-  t.equal(list.back.value, 1);
-  t.equal(list.getLength(), 1);
-  t.deepEqual(Array.from(list), [1]);
-  t.deepEqual(Array.from(list.getReverseIterable()), [1]);
+  t.ok(list.popBack() === c);
+  t.deepEqual(
+    Array.from(list).map(value => value.x),
+    [1]
+  );
 
-  list.appendFront(List.from([2, 3]));
-  t.equal(list.front.value, 2);
-  t.equal(list.back.value, 1);
-  t.equal(list.getLength(), 3);
-  t.deepEqual(Array.from(list), [2, 3, 1]);
-  t.deepEqual(Array.from(list.getReverseIterable()), [1, 3, 2]);
+  list.appendFront(list.makeFrom([b, c]));
+  t.deepEqual(
+    Array.from(list).map(value => value.x),
+    [2, 3, 1]
+  );
 
-  list.appendBack(List.from([4, 5]));
-  t.equal(list.front.value, 2);
-  t.equal(list.back.value, 5);
-  t.equal(list.getLength(), 5);
-  t.deepEqual(Array.from(list), [2, 3, 1, 4, 5]);
-  t.deepEqual(Array.from(list.getReverseIterable()), [5, 4, 1, 3, 2]);
+  list.popFront();
+  list.popFront();
+  list.appendBack(List.from([b, c]));
+  t.deepEqual(
+    Array.from(list).map(value => value.x),
+    [1, 2, 3]
+  );
 
-  const two = list.front,
-    five = list.back;
-  list.moveToFront(five);
-  t.deepEqual(Array.from(list), [5, 2, 3, 1, 4]);
-  list.moveToBack(two);
-  t.deepEqual(Array.from(list), [5, 3, 1, 4, 2]);
+  list.moveToFront(b);
+  t.deepEqual(
+    Array.from(list).map(value => value.x),
+    [2, 1, 3]
+  );
 
-  list.clear();
+  list.moveToBack(b);
+  t.deepEqual(
+    Array.from(list).map(value => value.x),
+    [1, 3, 2]
+  );
+
+  const extract = list.extract(a, c);
+  t.deepEqual(
+    Array.from(list).map(value => value.x),
+    [2]
+  );
+  t.deepEqual(
+    Array.from(extract).map(value => value.x),
+    [1, 3]
+  );
+  extract.clear(true);
+
+  list.clear(true);
   t.ok(list.isEmpty);
-  t.equal(list.getLength(), 0);
   t.deepEqual(Array.from(list), []);
-  t.deepEqual(Array.from(list.getReverseIterable()), []);
-});
 
-test('List.remove()', t => {
-  const list = List.from([1, 2, 3, 4, 5]);
-  list.remove(list.front.next, list.back.prev);
-  t.deepEqual(Array.from(list), [1, 5]);
-});
+  list.appendFront(list.makeFrom([a, b, c])).remove(a, c, true);
+  t.deepEqual(Array.from(list), []);
 
-test('List.extract()', t => {
-  const list = List.from([1, 2, 3, 4, 5]),
-    extract = list.extract(list.front.next, list.back.prev);
-  t.deepEqual(Array.from(list), [1, 5]);
-  t.deepEqual(Array.from(extract), [2, 3, 4]);
-});
+  new List(a).clear(true);
 
-test('List.reverse()', t => {
-  const list = List.from([1, 2, 3, 4, 5]);
-  t.deepEqual(Array.from(list), [1, 2, 3, 4, 5]);
-  list.reverse();
-  t.deepEqual(Array.from(list), [5, 4, 3, 2, 1]);
-});
+  list.appendFront(list.makeFrom([a, b, c])).reverse();
+  t.deepEqual(
+    Array.from(list).map(value => value.x),
+    [3, 2, 1]
+  );
 
-test('List.sort()', t => {
-  const list = List.from([3, 1, 5, 4, 2]);
-  list.sort((a, b) => b.value - a.value);
-  t.deepEqual(Array.from(list), [5, 4, 3, 2, 1]);
-  list.sort((a, b) => a.value - b.value);
-  t.deepEqual(Array.from(list), [1, 2, 3, 4, 5]);
+  list.sort((a, b) => a.x - b.x);
+  t.deepEqual(
+    Array.from(list).map(value => value.x),
+    [1, 2, 3]
+  );
 });
 
 test('List iterators', t => {
-  const list = List.from([1, 2, 3, 4, 5]);
+  const a = {x: 1},
+    b = {x: 2},
+    c = {x: 3};
+  const list = List.from([a, b, c]);
 
   {
     const array = [];
-    for (const value of list) array.push(value);
-    t.deepEqual(array, [1, 2, 3, 4, 5]);
+    for (const value of list) array.push(value.x);
+    t.deepEqual(array, [1, 2, 3]);
   }
 
   {
     const array = [];
-    for (const value of list.getIterable()) array.push(value);
-    t.deepEqual(array, [1, 2, 3, 4, 5]);
+    for (const value of list.getIterable()) array.push(value.x);
+    t.deepEqual(array, [1, 2, 3]);
   }
 
   {
     const array = [];
-    for (const value of list.getIterable(list.front.next, list.back.prev)) array.push(value);
-    t.deepEqual(array, [2, 3, 4]);
+    for (const value of list.getIterable(b, b)) array.push(value.x);
+    t.deepEqual(array, [2]);
   }
 
   {
     const array = [];
-    for (const value of list.getReverseIterable()) array.push(value);
-    t.deepEqual(array, [5, 4, 3, 2, 1]);
+    for (const value of list.getReverseIterable()) array.push(value.x);
+    t.deepEqual(array, [3, 2, 1]);
   }
 
   {
     const array = [];
-    for (const value of list.getReverseIterable(list.front.next, list.back.prev)) array.push(value);
-    t.deepEqual(array, [4, 3, 2]);
-  }
-
-  {
-    const array = [];
-    for (const node of list.getNodeIterable()) array.push(node.value);
-    t.deepEqual(array, [1, 2, 3, 4, 5]);
-  }
-
-  {
-    const array = [];
-    for (const node of list.getNodeIterable(list.front.next, list.back.prev)) array.push(node.value);
-    t.deepEqual(array, [2, 3, 4]);
-  }
-
-  {
-    const array = [];
-    for (const node of list.getReverseNodeIterable()) array.push(node.value);
-    t.deepEqual(array, [5, 4, 3, 2, 1]);
-  }
-
-  {
-    const array = [];
-    for (const node of list.getReverseNodeIterable(list.front.next, list.back.prev)) array.push(node.value);
-    t.deepEqual(array, [4, 3, 2]);
+    for (const value of list.getReverseIterable(b, b)) array.push(value.x);
+    t.deepEqual(array, [2]);
   }
 });
 
 test('List helpers', t => {
+  const a = {x: 1},
+    b = {x: 2},
+    c = {x: 3};
   const list = new List();
 
   {
-    const other = list.make();
-    t.ok(other instanceof List);
-    t.ok(other.isEmpty);
+    const other = list.makeFrom([b, a, c]);
+    t.deepEqual(
+      Array.from(other).map(value => value.x),
+      [2, 1, 3]
+    );
+    other.clear(true);
   }
 
-  {
-    const other = list.makeFrom([1, 2, 3, 4, 5]);
-    t.ok(other instanceof List);
-    t.deepEqual(Array.from(other), [1, 2, 3, 4, 5]);
-  }
+  pushValuesFront(list, [a, b]);
+  t.deepEqual(
+    Array.from(list).map(value => value.x),
+    [2, 1]
+  );
 
-  pushValuesFront(list, [1, 2]);
-  t.deepEqual(Array.from(list), [2, 1]);
+  pushValuesBack(list, [c]);
+  t.deepEqual(
+    Array.from(list).map(value => value.x),
+    [2, 1, 3]
+  );
+  list.clear(true);
 
-  pushValuesBack(list, [3, 4]);
-  t.deepEqual(Array.from(list), [2, 1, 3, 4]);
+  appendValuesFront(list, [c, b]);
+  t.deepEqual(
+    Array.from(list).map(value => value.x),
+    [3, 2]
+  );
+});
 
-  appendValuesFront(list, [5, 6]);
-  t.deepEqual(Array.from(list), [5, 6, 2, 1, 3, 4]);
+test('List with custom next/prev', t => {
+  const a = {x: 1},
+    b = {x: 2},
+    c = {x: 3};
+  const list = new List({nextName: Symbol(), prevName: Symbol()});
+  pushValuesFront(list, [a, b, c]);
+  t.deepEqual(
+    Array.from(list).map(value => value.x),
+    [3, 2, 1]
+  );
 
-  pushValuesBack(list, [7, 8]);
-  t.deepEqual(Array.from(list), [5, 6, 2, 1, 3, 4, 7, 8]);
-
-  {
-    const other = list.clone();
-    t.ok(other instanceof List);
-    t.ok(other !== list);
-    t.deepEqual(Array.from(other), Array.from(list));
-  }
-
-  {
-    const list = List.from([1, 2, 3, 2, 5]),
-      node = findNodeBy(list, node => node.value === 2);
-    t.deepEqual(Array.from(list), [1, 2, 3, 2, 5]);
-    t.equal(node.value, 2);
-  }
-
-  {
-    const list = List.from([1, 2, 3, 2, 5]),
-      node = removeNodeBy(list, node => node.value === 2);
-    t.deepEqual(Array.from(list), [1, 3, 2, 5]);
-    t.equal(node.value, 2);
-  }
-
-  {
-    const list = List.from([1, 2, 3, 2, 5]),
-      extracted = list.extractBy(node => node.value === 2);
-    t.deepEqual(Array.from(list), [1, 3, 5]);
-    t.deepEqual(Array.from(extracted), [2, 2]);
-  }
+  t.throws(() => list.adopt(a));
 });
 
 test("List's Ptr", t => {
-  const list = List.from([1, 2, 3]);
+  const list = List.from([{x: 1}, {x: 2}, {x: 3}], {nextName: Symbol('next'), prevName: Symbol('prev')});
 
   const ptr = list.frontPtr;
-  t.equal(ptr.node.value, 1);
+  t.equal(ptr.node.x, 1);
 
-  ptr.addBefore(4);
-  t.deepEqual(Array.from(list), [4, 1, 2, 3]);
-  t.equal(ptr.node.value, 1);
-  t.equal(list.frontPtr.node.value, 4);
+  ptr.addBefore({x: 4});
+  t.deepEqual(
+    Array.from(list).map(value => value.x),
+    [4, 1, 2, 3]
+  );
+  t.equal(ptr.node.x, 1);
+  t.equal(list.frontPtr.node.x, 4);
 
-  ptr.addAfter(5);
-  t.deepEqual(Array.from(list), [4, 1, 5, 2, 3]);
-  t.equal(ptr.node.value, 1);
+  ptr.addAfter({x: 5});
+  t.deepEqual(
+    Array.from(list).map(value => value.x),
+    [4, 1, 5, 2, 3]
+  );
+  t.equal(ptr.node.x, 1);
 
-  ptr.insertBefore(list.makeFrom([6, 7]));
-  t.deepEqual(Array.from(list), [4, 6, 7, 1, 5, 2, 3]);
-  t.equal(ptr.node.value, 1);
+  ptr.insertBefore(list.makeFrom([6, 7].map(value => ({x: value}))));
+  t.deepEqual(
+    Array.from(list).map(value => value.x),
+    [4, 6, 7, 1, 5, 2, 3]
+  );
+  t.equal(ptr.node.x, 1);
 
-  ptr.insertAfter(list.makeFrom([8, 9]));
-  t.deepEqual(Array.from(list), [4, 6, 7, 1, 8, 9, 5, 2, 3]);
-  t.equal(ptr.node.value, 1);
+  ptr.insertAfter(list.makeFrom([8, 9].map(value => ({x: value}))));
+  t.deepEqual(
+    Array.from(list).map(value => value.x),
+    [4, 6, 7, 1, 8, 9, 5, 2, 3]
+  );
+  t.equal(ptr.node.x, 1);
 
   ptr.prev();
-  t.equal(ptr.node.value, 7);
+  t.equal(ptr.node.x, 7);
   ptr.next().next();
-  t.equal(ptr.node.value, 8);
+  t.equal(ptr.node.x, 8);
 
-  t.equal(ptr.remove().value, 8);
-  t.deepEqual(Array.from(list), [4, 6, 7, 1, 9, 5, 2, 3]);
-  t.equal(ptr.node.value, 9);
+  t.equal(ptr.remove().x, 8);
+  t.deepEqual(
+    Array.from(list).map(value => value.x),
+    [4, 6, 7, 1, 9, 5, 2, 3]
+  );
+  t.equal(ptr.node.x, 9);
 
-  t.equal(list.frontPtr.remove().value, 4);
-  t.deepEqual(Array.from(list), [6, 7, 1, 9, 5, 2, 3]);
+  t.equal(list.frontPtr.remove().x, 4);
+  t.deepEqual(
+    Array.from(list).map(value => value.x),
+    [6, 7, 1, 9, 5, 2, 3]
+  );
 
-  t.equal(list.backPtr.remove().value, 3);
-  t.deepEqual(Array.from(list), [6, 7, 1, 9, 5, 2]);
+  t.equal(list.backPtr.remove().x, 3);
+  t.deepEqual(
+    Array.from(list).map(value => value.x),
+    [6, 7, 1, 9, 5, 2]
+  );
 });

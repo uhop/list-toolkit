@@ -1,12 +1,12 @@
 'use strict';
 
-import List from './list.js';
+import ValueList from './value-list.js';
 
 export class Cache {
   constructor(capacity = 10) {
     this.capacity = capacity;
     this.size = 0;
-    this.list = new List();
+    this.list = new ValueList();
     this.dict = {};
   }
   find(key) {

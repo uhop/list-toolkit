@@ -1,4 +1,4 @@
-export * from './list/value.js';
-import List from './list/value.js';
+export * from './list/core.js';
+import List from './list/core.js';
 
 export default List;
