@@ -2,7 +2,36 @@
 
 import {CIRCULAR_SLIST_MARKER, HeadNode} from './nodes.js';
 import {pop, extract, splice} from './basics.js';
-import {addAliases, copyDescriptors} from '../meta-utils.js';
+import {addAliases, copyDescriptors, mapIterator} from '../meta-utils.js';
+
+export class Ptr {
+  constructor(list, prev) {
+    if (list instanceof Ptr) {
+      this.list = list.list;
+      this.prev = list.prev;
+      return;
+    }
+    if (!(list instanceof CircularSList)) throw new Error('List must be a CircularSList');
+    if (prev instanceof Ptr) {
+      if (list !== prev.list) throw new Error('Node specified by a pointer must belong to the same list');
+      this.list = list;
+      this.prev = prev.prev;
+    } else {
+      this.list = list;
+      this.prev = prev;
+    }
+  }
+  get node() {
+    return this.prev[this.list.nextName];
+  }
+  next() {
+    this.prev = this.prev[this.list.nextName];
+    return this;
+  }
+  clone() {
+    return new Ptr(this);
+  }
+}
 
 export class CircularSList {
   constructor(head = null, {nextName = 'next'} = {}) {
@@ -34,6 +63,10 @@ export class CircularSList {
 
   get range() {
     return this.head ? {prevFrom: this.head, to: this.head} : null;
+  }
+
+  makePtr(prev) {
+    return this.head ? new Ptr(this, prev || this.head) : null;
   }
 
   getLength() {
@@ -254,6 +287,10 @@ export class CircularSList {
         };
       }
     };
+  }
+
+  getPtrIterator(from, to) {
+    return mapIterator(this.getNodeIterator(from, to), node => new Ptr(this, node));
   }
 
   // meta helpers
