@@ -67,7 +67,7 @@ test('ValueSList.remove()', t => {
   const list = ValueSList.from([1, 2, 3, 4, 5]);
   const ptr = list.frontPtr;
   ptr.next();
-  list.remove(ptr);
+  list.removeRange({from: ptr});
   t.deepEqual(Array.from(list), [1, 3, 4, 5]);
   ptr.remove();
   t.deepEqual(Array.from(list), [1, 4, 5]);
@@ -77,7 +77,7 @@ test('ValueSList.extract()', t => {
   const list = ValueSList.from([1, 2, 3, 4, 5]);
   const ptr = list.frontPtr;
   ptr.next();
-  const extracted = list.extract(ptr, ptr.node.next.next);
+  const extracted = list.extractRange({from: ptr, to: ptr.node.next.next});
   t.deepEqual(Array.from(list), [1, 5]);
   t.deepEqual(Array.from(extracted), [2, 3, 4]);
 });
@@ -192,12 +192,12 @@ test('ValueSList.SListPtr', t => {
   t.deepEqual(Array.from(list), [4, 1, 2, 3, 5]);
 
   list.sort((a, b) => a.value - b.value);
-  list.remove(getPtrByValue(list, 2), getPtrByValue(list, 4));
+  list.removeRange({from: getPtrByValue(list, 2), to: getPtrByValue(list, 4)});
   t.deepEqual(Array.from(list), [1, 5]);
 
   pushValuesFront(list, [2, 3, 4]);
   list.sort((a, b) => a.value - b.value);
-  const extract = list.extract(getPtrByValue(list, 2), getPtrByValue(list, 4));
+  const extract = list.extractRange({from: getPtrByValue(list, 2), to: getPtrByValue(list, 4)});
   t.deepEqual(Array.from(list), [1, 5]);
   t.deepEqual(Array.from(extract), [2, 3, 4]);
 

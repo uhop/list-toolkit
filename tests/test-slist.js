@@ -46,7 +46,7 @@ test('Elementary SList operations', t => {
     [2, 3, 1]
   );
 
-  const extracted = list.extract(list.frontPtr.next(), a);
+  const extracted = list.extractRange({from: list.frontPtr.next(), to: a});
   t.deepEqual(
     Array.from(list).map(value => value.x),
     [2]
@@ -61,7 +61,7 @@ test('Elementary SList operations', t => {
   t.ok(list.isEmpty);
   t.deepEqual(Array.from(list), []);
 
-  appendValuesFront(list, [a, b, c]).remove(list.frontPtr, c, true);
+  appendValuesFront(list, [a, b, c]).removeRange({from: list.frontPtr, to: c}, true);
   t.deepEqual(
     Array.from(list).map(node => node.x),
     []

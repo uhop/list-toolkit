@@ -123,12 +123,14 @@ export class SList extends HeadNode {
     return this;
   }
 
-  remove(fromPtr, to = fromPtr, drop) {
-    this.extract(fromPtr, to).clear(drop);
+  removeRange(range, drop) {
+    this.extractRange(range).clear(drop);
     return this;
   }
 
-  extract(fromPtr, to = fromPtr) {
+  extractRange({from, to = from} = {}) {
+    const fromPtr = from;
+    if (!(fromPtr instanceof Ptr)) throw new Error('"from" is not a compatible pointer');
     if (!this.isCompatible(fromPtr.list)) throw new Error('Incompatible "fromPtr" list');
     if (to instanceof Ptr) {
       if (!this.isCompatible(to.list)) throw new Error('Incompatible "to" list');
