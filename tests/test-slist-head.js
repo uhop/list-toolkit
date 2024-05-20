@@ -137,7 +137,7 @@ test('SListHead with custom next', t => {
   const a = {x: 1},
     b = {x: 2},
     c = {x: 3};
-  const list = new SListHead(null, {nextName: Symbol()});
+  const list = new SListHead({nextName: Symbol()});
   pushValuesFront(list, [a, b, c]);
   t.deepEqual(
     Array.from(list).map(value => value.x),
