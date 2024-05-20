@@ -1,9 +1,9 @@
 'use strict';
 
-import {addAliases} from '../meta-utils.js';
 import {HeadNode} from './nodes.js';
 import {pop, extract, splice} from './basics.js';
 import Ptr from './ptr.js';
+import {addAliases} from '../meta-utils.js';
 
 export class List extends HeadNode {
   get isEmpty() {
