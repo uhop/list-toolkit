@@ -199,7 +199,7 @@ export class SList extends HeadNode {
 
   releaseCircularListAsRange() {
     const range = this.range;
-    return range ? extract(this, range) : null;
+    return range ? extract(this, range).extracted : null;
   }
 
   releaseCircularList() {

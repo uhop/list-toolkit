@@ -35,11 +35,11 @@ export class List extends HeadNode {
   }
 
   popFrontNode() {
-    if (!this.isEmpty) return pop(this, this[this.nextName]).node;
+    if (!this.isEmpty) return pop(this, this[this.nextName]).extracted;
   }
 
   popBackNode() {
-    if (!this.isEmpty) return pop(this, this[this.prevName]).node;
+    if (!this.isEmpty) return pop(this, this[this.prevName]).extracted;
   }
 
   pushFrontNode(node) {
@@ -68,7 +68,7 @@ export class List extends HeadNode {
     if (!this.isCompatible(list)) throw new Error('Incompatible lists');
     if (list.isEmpty) return this;
 
-    const head = extract(this, {from: list[this.nextName], to: list[this.prevName]});
+    const head = extract(this, {from: list[this.nextName], to: list[this.prevName]}).extracted;
     splice(this, this[this.nextName], head);
 
     return this;
@@ -78,7 +78,7 @@ export class List extends HeadNode {
     if (!this.isCompatible(list)) throw new Error('Incompatible lists');
     if (list.isEmpty) return this;
 
-    const head = extract(this, {from: list[this.nextName], to: list[this.prevName]});
+    const head = extract(this, {from: list[this.nextName], to: list[this.prevName]}).extracted;
     splice(this, this, head);
 
     return this;
@@ -93,7 +93,7 @@ export class List extends HeadNode {
     }
 
     if (this[this.nextName] === node) return this;
-    splice(this, this[this.nextName], pop(this, node).node);
+    splice(this, this[this.nextName], pop(this, node).extracted);
 
     return this;
   }
@@ -107,7 +107,7 @@ export class List extends HeadNode {
     }
 
     if (this[this.prevName] === node) return this;
-    splice(this, this, pop(this, node).node);
+    splice(this, this, pop(this, node).extracted);
 
     return this;
   }
@@ -201,7 +201,7 @@ export class List extends HeadNode {
   }
 
   releaseCircularList() {
-    return this.isEmpty ? null : pop(this, this).list;
+    return this.isEmpty ? null : pop(this, this).rest;
   }
 
   // iterators

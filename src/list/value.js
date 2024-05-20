@@ -7,11 +7,11 @@ import {addAliases, mapIterator} from '../meta-utils.js';
 
 export class ValueList extends List {
   popFront() {
-    if (!this.isEmpty) return pop(this, this[this.nextName]).node.value;
+    if (!this.isEmpty) return pop(this, this[this.nextName]).extracted.value;
   }
 
   popBack() {
-    if (!this.isEmpty) return pop(this, this[this.prevName]).node.value;
+    if (!this.isEmpty) return pop(this, this[this.prevName]).extracted.value;
   }
 
   adoptNode(node) {

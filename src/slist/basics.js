@@ -3,19 +3,21 @@
 // useful low-level operations on singly linked lists
 
 export const extract = ({nextName}, {prevFrom, to = prevFrom[nextName]}) => {
-  const node = prevFrom[nextName];
+  const node = prevFrom[nextName],
+    next = to[nextName];
   prevFrom[nextName] = to[nextName]; // exclude the range
   to[nextName] = node; // circle the range making node a list head
-  return {prevFrom: to, to};
+  return {extracted: {prevFrom: to, to}, rest: next === node ? null : next};
 };
 
 // pop(options, prev).node === extract(options, {prevFrom: prev}).prevFrom[options.nextName]
 
 export const pop = ({nextName}, prev) => {
-  const node = prev[nextName];
+  const node = prev[nextName],
+    next = node[nextName];
   prev[nextName] = node[nextName];
   node[nextName] = node;
-  return {node, list: prev};
+  return {extracted: {prevFrom: node, to: node}, rest: next === node ? null : next};
 };
 
 export const splice = ({nextName}, target, {prevFrom, to = prevFrom[nextName]}) => {

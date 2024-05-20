@@ -11,30 +11,30 @@ export const extract = ({nextName, prevName}, {from, to = from}) => {
   // clear
   from[prevName] = to;
   to[nextName] = from;
-  return from;
+  return {extracted: from, rest: next === from ? null : next};
 };
 
 // pop(options, head).node === extract(options, {from: head})
 
-export const pop = ({nextName, prevName}, head) => {
-  const next = head[nextName],
-    prev = head[prevName];
+export const pop = ({nextName, prevName}, node) => {
+  const next = node[nextName],
+    prev = node[prevName];
   // extract
   prev[nextName] = next;
   next[prevName] = prev;
   // clear
-  head[prevName] = head[nextName] = head;
-  return {node: head, list: next};
+  node[prevName] = node[nextName] = node;
+  return {extracted: node, rest: next === node ? null : next};
 };
 
-export const splice = ({nextName, prevName}, head1, head2) => {
-  const tail1 = head1[prevName],
-    tail2 = head2[prevName];
-  tail1[nextName] = head2;
-  head2[prevName] = tail1;
-  tail2[nextName] = head1;
-  head1[prevName] = tail2;
-  return head1;
+export const splice = ({nextName, prevName}, target, circularList) => {
+  const targetTail = target[prevName],
+    listTail = circularList[prevName];
+  targetTail[nextName] = circularList;
+  circularList[prevName] = targetTail;
+  listTail[nextName] = target;
+  target[prevName] = listTail;
+  return target;
 };
 
 // append(options, target, range) === splice(options, target, extract(options, range))

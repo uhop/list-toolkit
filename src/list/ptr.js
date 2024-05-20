@@ -38,7 +38,7 @@ export class Ptr {
     if (this.node === this.list) return null;
     const node = this.node;
     this.node = node[this.list.nextName];
-    return pop(this.list, node).node;
+    return pop(this.list, node).extracted;
   }
   addBefore(value) {
     splice(this.list, this.node, this.list.adoptNode(value));
@@ -51,14 +51,14 @@ export class Ptr {
   insertBefore(list) {
     if (!this.list.isCompatible(list)) throw new Error('Incompatible lists');
     if (list.isEmpty) return this;
-    const head = pop(list, list).list;
+    const head = pop(list, list).rest;
     splice(this.list, this.node, head);
     return this;
   }
   insertAfter(list) {
     if (!this.list.isCompatible(list)) throw new Error('Incompatible lists');
     if (list.isEmpty) return this;
-    const head = pop(list, list).list;
+    const head = pop(list, list).rest;
     splice(this.list, this.node[this.list.nextName], head);
     return this;
   }

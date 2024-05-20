@@ -96,7 +96,7 @@ export class CircularSList {
     if (!this.isNodeLike(prev)) throw new Error('"prev" is not a compatible node');
 
     if (!this.head) {
-      this.head = pop(this, prev).node;
+      this.head = pop(this, prev).extracted.to;
       return this;
     }
 
@@ -107,7 +107,7 @@ export class CircularSList {
       this.head = this.head[this.nextName];
     }
 
-    splice(this, this.head, {prevFrom: pop(this, prev).node});
+    splice(this, this.head, {prevFrom: pop(this, prev).extracted.to});
 
     return this;
   }
@@ -133,9 +133,8 @@ export class CircularSList {
         return prev[this.nextName];
       }
       this.head = this.head[this.nextName];
-      return pop(this, prev).node;
     }
-    return pop(this, prev).node;
+    return pop(this, prev).extracted.to;
   }
 
   removeRange(range, drop) {
@@ -150,7 +149,7 @@ export class CircularSList {
     if (!this.head) return extracted;
     if (this.head === prevFrom[this.nextName] || this.head === to) this.head = to[this.nextName];
     if (this.head === prevFrom[this.nextName]) this.head = null;
-    extracted.head = extract(this, {prevFrom, to}).prevFrom[this.nextName];
+    extracted.head = extract(this, {prevFrom, to}).extracted.prevFrom[this.nextName];
     return extracted;
   }
 

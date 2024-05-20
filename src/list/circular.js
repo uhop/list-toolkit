@@ -76,8 +76,8 @@ export class CircularList {
       return node;
     }
     const result = pop(this, this.head);
-    this.head = result.list;
-    return result.node;
+    this.head = result.rest;
+    return result.extracted;
   }
 
   removeNodeBefore() {
@@ -192,7 +192,7 @@ export class CircularList {
       this.head = this.head[this.nextName];
     }
 
-    return pop(this, node).node;
+    return pop(this, node).extracted;
   }
 
   removeRange(range, drop) {
@@ -209,7 +209,7 @@ export class CircularList {
     if (!this.head) return extracted;
     if (this.head === from || this.head === to) this.head = to[this.nextName];
     if (this.head === from) this.head = null;
-    extracted.head = extract(this, {from, to});
+    extracted.head = extract(this, {from, to}).extracted;
     return extracted;
   }
 
