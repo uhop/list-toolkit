@@ -1,8 +1,8 @@
 'use strict';
 
 import {addAliases} from '../meta-utils.js';
-import {HeadNode} from './nodes.js';
-import {extract, append} from './basics.js';
+import {HeadNode, isCircularSList} from './nodes.js';
+import {extract, append, splice} from './basics.js';
 import Ptr from './ptr.js';
 
 export class SList extends HeadNode {
@@ -298,6 +298,21 @@ export class SList extends HeadNode {
   static from(values, options) {
     const list = new SList(options);
     for (const value of values) list.pushBack(value);
+    return list;
+  }
+
+  static fromCircularList(circularList) {
+    if (!isCircularSList(circularList)) throw new Error('Not a circular list');
+
+    const list = new SList(circularList);
+    if (circularList.isEmpty) return list;
+
+    const range = circularList.range;
+    if (range) {
+      splice(list, list, range);
+      circularList.clear();
+    }
+
     return list;
   }
 }

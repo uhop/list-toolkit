@@ -316,10 +316,13 @@ export class List extends HeadNode {
 
   static fromCircularList(circularList) {
     if (!isCircularList(circularList)) throw new Error('Not a circular list');
+
     const list = new List(circularList);
     if (circularList.isEmpty) return list;
+
     splice(circularList, list, circularList.head);
-    circularList.head = null;
+    circularList.clear();
+
     return list;
   }
 }
