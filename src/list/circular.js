@@ -30,6 +30,14 @@ export class CircularList {
     return !this.head || this.head[this.nextName] === this.head;
   }
 
+  get front() {
+    return this.head;
+  }
+
+  get back() {
+    return this.head?.[this.prevName];
+  }
+
   getLength() {
     if (!this.head) return 0;
 
@@ -125,6 +133,8 @@ export class CircularList {
   }
 
   moveBefore(node) {
+    if (!this.isNodeLike(node)) throw new Error('"node" is not a compatible node');
+
     if (this.head === node) {
       this.head = this.head[this.nextName];
       return this;
@@ -141,6 +151,8 @@ export class CircularList {
   }
 
   moveAfter(node) {
+    if (!this.isNodeLike(node)) throw new Error('"node" is not a compatible node');
+
     if (this.head === node) {
       this.head = this.head[this.prevName];
       return this;
@@ -170,6 +182,8 @@ export class CircularList {
 
   removeNode(node) {
     if (!this.head) return null;
+    if (!this.isNodeLike(node)) throw new Error('"node" is not a compatible node');
+
     if (this.head === node) {
       if (this.head[this.nextName] === this.head) {
         this.head = null;
@@ -177,6 +191,7 @@ export class CircularList {
       }
       this.head = this.head[this.nextName];
     }
+
     return pop(this, node).node;
   }
 
@@ -186,8 +201,11 @@ export class CircularList {
   }
 
   extractRange(range = {}) {
-    const {from = this.head, to = from} = range,
-      extracted = this.make();
+    const {from = this.head, to = from} = range;
+    if (from && !this.isNodeLike(from)) throw new Error('"from" is not a compatible node');
+    if (to && !this.isNodeLike(to)) throw new Error('"to" is not a compatible node');
+
+    const extracted = this.make();
     if (!this.head) return extracted;
     if (this.head === from || this.head === to) this.head = to[this.nextName];
     if (this.head === from) this.head = null;
@@ -210,6 +228,7 @@ export class CircularList {
   }
 
   reverse() {
+    if (this.isOneOrEmpty) return this;
     let current = this.head;
     do {
       const next = current[this.nextName];
