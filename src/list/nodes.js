@@ -20,6 +20,10 @@ export class HeadNode extends Node {
     return prev && typeof prev == 'object';
   }
 
+  isCompatibleNames({nextName, prevName}) {
+    return this.nextName === nextName && this.prevName === prevName;
+  }
+
   isCompatible(list) {
     return list instanceof HeadNode && this.nextName === list.nextName && this.prevName === list.prevName;
   }
