@@ -57,7 +57,7 @@ export class SList extends HeadNode {
   }
 
   pushFrontNode(node) {
-    node = this.adopt(node);
+    node = this.adoptNode(node);
     node[this.nextName] = this[this.nextName];
     this[this.nextName] = node;
     if (node[this.nextName] === this) this.last = node;
@@ -65,7 +65,7 @@ export class SList extends HeadNode {
   }
 
   pushBackNode(node) {
-    node = this.adopt(node);
+    node = this.adoptNode(node);
     node[this.nextName] = this;
     this.last = this.last[this.nextName] = node;
     return this;

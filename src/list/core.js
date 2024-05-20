@@ -43,12 +43,12 @@ export class List extends HeadNode {
   }
 
   pushFrontNode(node) {
-    splice(this, this[this.nextName], this.adopt(node));
+    splice(this, this[this.nextName], this.adoptNode(node));
     return this;
   }
 
   pushBackNode(node) {
-    splice(this, this, this.adopt(node));
+    splice(this, this, this.adoptNode(node));
     return this;
   }
 

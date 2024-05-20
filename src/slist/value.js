@@ -9,8 +9,8 @@ export class ValueSList extends List {
     return this.popFrontNode()?.value;
   }
 
-  adopt(node) {
-    return node instanceof ValueNode ? super.adopt(node) : new ValueNode(node, this);
+  adoptNode(node) {
+    return node instanceof ValueNode ? super.adoptNode(node) : new ValueNode(node, this);
   }
 
   // iterators

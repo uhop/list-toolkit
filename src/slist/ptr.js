@@ -43,7 +43,7 @@ export class Ptr {
     return node;
   }
   addBefore(node) {
-    node = this.list.adopt(node);
+    node = this.list.adoptNode(node);
     node[this.list.nextName] = this.prev[this.list.nextName];
     this.prev[this.list.nextName] = node;
     this.prev = node;
@@ -51,7 +51,7 @@ export class Ptr {
     return this;
   }
   addAfter(node) {
-    node = this.list.adopt(node);
+    node = this.list.adoptNode(node);
     const nextName = this.list.nextName;
     if (this.list.last === this.prev[nextName]) this.list.last = node;
     node[nextName] = this.prev[nextName][nextName];

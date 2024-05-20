@@ -23,7 +23,7 @@ export class HeadNode extends Node {
   isCompatible(list) {
     return list instanceof HeadNode && this.nextName === list.nextName;
   }
-  adopt(node) {
+  adoptNode(node) {
     if (node[this.nextName]) {
       if (node[this.nextName] === node) return node;
       throw new Error('node is already a part of a list, or there is a name clash');

@@ -24,7 +24,7 @@ export class HeadNode extends Node {
     return list instanceof HeadNode && this.nextName === list.nextName && this.prevName === list.prevName;
   }
 
-  adopt(node) {
+  adoptNode(node) {
     if (node[this.nextName] || node[this.prevName]) {
       if (node[this.nextName] === node && node[this.prevName] === node) return node;
       throw new Error('node is already a part of a list, or there is a name clash');

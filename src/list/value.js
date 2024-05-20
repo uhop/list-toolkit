@@ -14,8 +14,8 @@ export class ValueList extends List {
     if (!this.isEmpty) return pop(this, this[this.prevName]).node.value;
   }
 
-  adopt(node) {
-    return node instanceof ValueNode ? super.adopt(node) : new ValueNode(node, this);
+  adoptNode(node) {
+    return node instanceof ValueNode ? super.adoptNode(node) : new ValueNode(node, this);
   }
 
   // iterators

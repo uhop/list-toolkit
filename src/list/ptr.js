@@ -41,11 +41,11 @@ export class Ptr {
     return pop(this.list, node).node;
   }
   addBefore(value) {
-    splice(this.list, this.node, this.list.adopt(value));
+    splice(this.list, this.node, this.list.adoptNode(value));
     return this;
   }
   addAfter(value) {
-    splice(this.list, this.node[this.list.nextName], this.list.adopt(value));
+    splice(this.list, this.node[this.list.nextName], this.list.adoptNode(value));
     return this;
   }
   insertBefore(list) {
