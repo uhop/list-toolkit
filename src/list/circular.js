@@ -314,7 +314,7 @@ export class CircularList {
   }
 }
 
-copyDescriptors(CircularList, 'adoptNode, isCompatibleNames, isNodeLike', HeadNode.prototype);
+copyDescriptors(CircularList, 'adoptNode, isCompatibleNames, isNodeLike', HeadNode);
 
 addAliases(CircularList, {
   addNodeBefore: 'addBefore',
@@ -324,7 +324,5 @@ addAliases(CircularList, {
   getNodeIterator: 'getIterator',
   getReverseNodeIterator: 'getReverseIterator'
 });
-
-// TODO: add a way to build a List out of a circular list
 
 export default CircularList;

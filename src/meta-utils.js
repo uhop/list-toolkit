@@ -13,17 +13,17 @@ export const fromSnakeCase = name => name.split('_');
 export const toKebabCase = names => names.map(name => name.toLowerCase()).join('-');
 export const fromKebabCase = name => name.split('-');
 
-export const directlyTo = Class => ({prototype: Class});
+export const directlyToObject = Class => ({prototype: Class});
 
 export const addDescriptor = (Class, names, descriptor, force) => {
-  const object = Class.prototype || Class;
-  if (!descriptor) return object;
+  const target = Class.prototype || Class;
+  if (!descriptor) return target;
   if (typeof names == 'string') names = names.split(/\s*,\s*/);
   for (const name of names) {
-    if (!force && object.hasOwnProperty(name)) continue;
-    Object.defineProperty(object, name, descriptor);
+    if (!force && target.hasOwnProperty(name)) continue;
+    Object.defineProperty(target, name, descriptor);
   }
-  return object;
+  return target;
 };
 
 export const addDescriptors = (Class, descriptors, force) => {
@@ -41,8 +41,8 @@ export const addGetters = (Class, getters, force) => {
 };
 
 export const addAlias = (Class, newNames, oldName, force) => {
-  const object = Class.prototype || Class;
-  return addDescriptor(Class, newNames, Object.getOwnPropertyDescriptor(object, oldName), force);
+  const target = Class.prototype || Class;
+  return addDescriptor(Class, newNames, Object.getOwnPropertyDescriptor(target, oldName), force);
 };
 
 export const addAliases = (Class, aliases, force) => {
@@ -51,16 +51,17 @@ export const addAliases = (Class, aliases, force) => {
   }
 };
 
-export const copyDescriptors = (Class, names, source, force) => {
-  const object = Class.prototype || Class;
+export const copyDescriptors = (Class, names, SourceClass, force) => {
+  const target = Class.prototype || Class,
+    source = SourceClass.prototype || SourceClass;
   if (typeof names == 'string') names = names.split(/\s*,\s*/);
   for (const name of names) {
-    if (!force && object.hasOwnProperty(name)) continue;
+    if (!force && target.hasOwnProperty(name)) continue;
     const descriptor = Object.getOwnPropertyDescriptor(source, name);
     if (!descriptor) continue;
-    Object.defineProperty(object, name, descriptor);
+    Object.defineProperty(target, name, descriptor);
   }
-  return object;
+  return target;
 };
 
 export const mapIterator = (iterator, callbackFn) => {
