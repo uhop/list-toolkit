@@ -2,17 +2,6 @@
 
 // useful low-level operations on doubly linked lists
 
-export const pop = ({nextName, prevName}, head) => {
-  const next = head[nextName],
-    prev = head[prevName];
-  // extract
-  prev[nextName] = next;
-  next[prevName] = prev;
-  // clear
-  head[prevName] = head[nextName] = head;
-  return {node: head, list: next};
-};
-
 export const extract = ({nextName, prevName}, {from, to = from}) => {
   const prev = from[prevName],
     next = to[nextName];
@@ -25,6 +14,19 @@ export const extract = ({nextName, prevName}, {from, to = from}) => {
   return from;
 };
 
+// pop(options, head).node === extract(options, {from: head})
+
+export const pop = ({nextName, prevName}, head) => {
+  const next = head[nextName],
+    prev = head[prevName];
+  // extract
+  prev[nextName] = next;
+  next[prevName] = prev;
+  // clear
+  head[prevName] = head[nextName] = head;
+  return {node: head, list: next};
+};
+
 export const splice = ({nextName, prevName}, head1, head2) => {
   const tail1 = head1[prevName],
     tail2 = head2[prevName];
@@ -34,6 +36,8 @@ export const splice = ({nextName, prevName}, head1, head2) => {
   head1[prevName] = tail2;
   return head1;
 };
+
+// append(options, target, range) === splice(options, target, extract(options, range))
 
 export const append = ({nextName, prevName}, target, {from, to = from}) => {
   // extract

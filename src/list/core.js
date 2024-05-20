@@ -1,7 +1,7 @@
 'use strict';
 
-import {HeadNode} from './nodes.js';
-import {pop, extract, splice} from './basics.js';
+import {HeadNode, isCircularList} from './nodes.js';
+import {pop, extract, splice, append} from './basics.js';
 import Ptr from './ptr.js';
 import {addAliases} from '../meta-utils.js';
 
@@ -148,7 +148,7 @@ export class List extends HeadNode {
     }
     if (!this.isNodeLike(from)) throw new Error('"from" is not a compatible node');
     if (!this.isNodeLike(to)) throw new Error('"to" is not a compatible node');
-    return splice(this, this.make(), extract(this, {from, to}));
+    return append(this, this.make(), {from, to});
   }
 
   extractBy(condition) {
@@ -328,6 +328,15 @@ export class List extends HeadNode {
   static from(values, options) {
     const list = new List(options);
     for (const value of values) list.pushBack(value);
+    return list;
+  }
+
+  static fromCircularList(circularList) {
+    if (!isCircularList(circularList)) throw new Error('Not a circular list');
+    const list = new List(circularList);
+    if (circularList.isEmpty) return list;
+    splice(circularList, list, circularList.head);
+    circularList.head = null;
     return list;
   }
 }

@@ -2,7 +2,7 @@
 
 import {addAliases} from '../meta-utils.js';
 import {HeadNode} from './nodes.js';
-import {extract, splice} from './basics.js';
+import {extract, append} from './basics.js';
 import Ptr from './ptr.js';
 
 export class SList extends HeadNode {
@@ -141,7 +141,7 @@ export class SList extends HeadNode {
     if (this.last === to) this.last = fromPtr.prev;
 
     const extracted = this.make();
-    splice(this, extracted, extract(this, {prevFrom: fromPtr.prev, to}));
+    append(this, extracted, {prevFrom: fromPtr.prev, to});
     extracted.last = to;
 
     return extracted;

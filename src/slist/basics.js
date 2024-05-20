@@ -2,18 +2,20 @@
 
 // useful low-level operations on singly linked lists
 
-export const pop = ({nextName}, prev) => {
-  const node = prev[nextName];
-  prev[nextName] = node[nextName];
-  node[nextName] = node;
-  return {node, list: prev};
-};
-
 export const extract = ({nextName}, {prevFrom, to = prevFrom[nextName]}) => {
   const node = prevFrom[nextName];
   prevFrom[nextName] = to[nextName]; // exclude the range
   to[nextName] = node; // circle the range making node a list head
   return {prevFrom: to, to};
+};
+
+// pop(options, prev).node === extract(options, {prevFrom: prev}).prevFrom[options.nextName]
+
+export const pop = ({nextName}, prev) => {
+  const node = prev[nextName];
+  prev[nextName] = node[nextName];
+  node[nextName] = node;
+  return {node, list: prev};
 };
 
 export const splice = ({nextName}, target, {prevFrom, to = prevFrom[nextName]}) => {
@@ -23,6 +25,8 @@ export const splice = ({nextName}, target, {prevFrom, to = prevFrom[nextName]}) 
   to[nextName] = tail;
   return target;
 };
+
+// append(options, target, range) === splice(options, target, extract(options, range))
 
 export const append = ({nextName}, target, {prevFrom, to = prevFrom[nextName]}) => {
   const head = prevFrom[nextName],
