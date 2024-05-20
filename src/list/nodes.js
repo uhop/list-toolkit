@@ -40,3 +40,6 @@ export class ValueNode extends Node {
     this.value = value;
   }
 }
+
+export const CIRCULAR_LIST_MARKER = Symbol('CIRCULAR_LIST_MARKER');
+export const isCircularList = list => list?.[CIRCULAR_LIST_MARKER] === CIRCULAR_LIST_MARKER;
