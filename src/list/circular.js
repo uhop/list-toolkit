@@ -4,6 +4,36 @@ import {CIRCULAR_LIST_MARKER, HeadNode} from './nodes.js';
 import {pop, extract, splice} from './basics.js';
 import {addAliases, copyDescriptors} from '../meta-utils.js';
 
+export class Ptr {
+  constructor(list, node) {
+    if (list instanceof Ptr) {
+      this.list = list.list;
+      this.node = list.node;
+      return;
+    }
+    if (!(list instanceof CircularList)) throw new Error('List must be a CircularList');
+    if (node instanceof Ptr) {
+      if (list !== node.list) throw new Error('Node specified by a pointer must belong to the same list');
+      this.list = list;
+      this.node = node.node;
+    } else {
+      this.list = list;
+      this.node = node;
+    }
+  }
+  next() {
+    this.node = this.node[this.list.nextName];
+    return this;
+  }
+  prev() {
+    this.node = this.node[this.list.prevName];
+    return this;
+  }
+  clone() {
+    return new Ptr(this);
+  }
+}
+
 export class CircularList {
   constructor(head = null, {nextName = 'next', prevName = 'prev'} = {}) {
     this[CIRCULAR_LIST_MARKER] = CIRCULAR_LIST_MARKER;
@@ -40,6 +70,11 @@ export class CircularList {
 
   get range() {
     return this.head ? {from: this.head, to: this.head[this.prevName]} : null;
+  }
+
+  makePtr(node) {
+    node ||= this.head;
+    return node ? new Ptr(this, node) : null;
   }
 
   getLength() {
@@ -304,6 +339,10 @@ export class CircularList {
     };
   }
 
+  getPtrIterator(from, to) {
+    return mapIterator(this.getNodeIterator(from, to), node => new Ptr(this, node));
+  }
+
   getReversedNodeIterator(from, to) {
     if (from && !this.isNodeLike(from)) throw new Error('"from" is not a compatible node');
     if (to && !this.isNodeLike(to)) throw new Error('"to" is not a compatible node');
@@ -324,6 +363,10 @@ export class CircularList {
         };
       }
     };
+  }
+
+  getReversedPtrIterator(from, to) {
+    return mapIterator(this.getReversedNodeIterator(from, to), node => new Ptr(this, node));
   }
 
   // meta helpers
