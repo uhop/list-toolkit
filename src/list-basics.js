@@ -3,18 +3,23 @@
 // useful low-level operations on doubly linked lists
 
 export const pop = ({nextName, prevName}, head) => {
-  const rest = head[nextName];
-  head[prevName][nextName] = head[nextName];
-  head[nextName][prevName] = head[prevName];
+  const next = head[nextName],
+    prev = head[prevName];
+  // extract
+  prev[nextName] = next;
+  next[prevName] = prev;
+  // clear
   head[prevName] = head[nextName] = head;
-  return {node: head, list: rest};
+  return {node: head, list: next};
 };
 
 export const extract = ({nextName, prevName}, {from, to = from}) => {
   const prev = from[prevName],
     next = to[nextName];
+  // extract
   prev[nextName] = next;
   next[prevName] = prev;
+  // clear
   from[prevName] = to;
   to[nextName] = from;
   return from;
