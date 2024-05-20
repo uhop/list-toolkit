@@ -49,18 +49,16 @@ export class Ptr {
     return this;
   }
   insertBefore(list) {
-    const listHead = list.head || list;
-    if (!this.list.isCompatible(listHead)) throw new Error('Incompatible lists');
+    if (!this.list.isCompatible(list)) throw new Error('Incompatible lists');
     if (list.isEmpty) return this;
-    const head = pop(listHead, listHead).list;
+    const head = pop(list, list).list;
     splice(this.list, this.node, head);
     return this;
   }
   insertAfter(list) {
-    const listHead = list.head || list;
-    if (!this.list.isCompatible(listHead)) throw new Error('Incompatible lists');
+    if (!this.list.isCompatible(list)) throw new Error('Incompatible lists');
     if (list.isEmpty) return this;
-    const head = pop(listHead, listHead).list;
+    const head = pop(list, list).list;
     splice(this.list, this.node[this.list.nextName], head);
     return this;
   }
