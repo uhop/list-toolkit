@@ -3,7 +3,7 @@
 import {HeadNode, isCircularList} from './nodes.js';
 import {pop, extract, splice, append} from './basics.js';
 import Ptr from './ptr.js';
-import {addAliases} from '../meta-utils.js';
+import {addAliases, mapIterator} from '../meta-utils.js';
 
 export class List extends HeadNode {
   get isEmpty() {
@@ -251,18 +251,7 @@ export class List extends HeadNode {
   }
 
   getPtrIterable(from, to) {
-    return {
-      [Symbol.iterator]: () => {
-        const nodeIterable = this.getNodeIterable(from, to)[Symbol.iterator]();
-        return {
-          next: () => {
-            const result = nodeIterable.next();
-            if (result.done) return result;
-            return {value: new Ptr(this, result.value)};
-          }
-        };
-      }
-    };
+    return mapIterator(this.getNodeIterable(from, to), node => new Ptr(this, node));
   }
 
   getReverseNodeIterable(from, to) {
@@ -297,18 +286,7 @@ export class List extends HeadNode {
   }
 
   getReversePtrIterable(from, to) {
-    return {
-      [Symbol.iterator]: () => {
-        const nodeIterable = this.getReverseNodeIterable(from, to)[Symbol.iterator]();
-        return {
-          next: () => {
-            const result = nodeIterable.next();
-            if (result.done) return result;
-            return {value: new Ptr(this, result.value)};
-          }
-        };
-      }
-    };
+    return mapIterator(this.getReverseNodeIterable(from, to), node => new Ptr(this, node));
   }
 
   // meta helpers

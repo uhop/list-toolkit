@@ -51,6 +51,35 @@ export const addAliases = (Class, aliases, force) => {
   }
 };
 
+export const copyDescriptors = (Class, names, source, force) => {
+  const object = Class.prototype || Class;
+  if (typeof names == 'string') names = names.split(/\s*,\s*/);
+  for (const name of names) {
+    if (!force && object.hasOwnProperty(name)) continue;
+    const descriptor = Object.getOwnPropertyDescriptor(source, name);
+    if (!descriptor) continue;
+    Object.defineProperty(object, name, descriptor);
+  }
+  return object;
+};
+
+export const mapIterator = (iterator, callbackFn) => {
+  if (typeof iterator?.map == 'function') return iterator.map(callbackFn);
+  return {
+    [Symbol.iterator]: () => {
+      const iterable = iterator[Symbol.iterator]();
+      let index = 0;
+      return {
+        next: () => {
+          const result = iterable.next();
+          if (result.done) return result;
+          return {value: callbackFn(result.value, index++)};
+        }
+      };
+    }
+  };
+};
+
 export const copyOptions = (target, pattern, ...sources) => {
   target = target || {};
   const keys = Object.keys(pattern);

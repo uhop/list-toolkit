@@ -3,7 +3,7 @@
 import List from './core.js';
 import {ValueNode} from './nodes.js';
 import {pop} from './basics.js';
-import {addAliases} from '../meta-utils.js';
+import {addAliases, mapIterator} from '../meta-utils.js';
 
 export class ValueList extends List {
   popFront() {
@@ -35,33 +35,11 @@ export class ValueList extends List {
   }
 
   getValueIterable(from, to) {
-    return {
-      [Symbol.iterator]: () => {
-        const nodeIterable = this.getNodeIterable(from, to)[Symbol.iterator]();
-        return {
-          next: () => {
-            const result = nodeIterable.next();
-            if (result.done) return result;
-            return {value: result.value.value};
-          }
-        };
-      }
-    };
+    return mapIterator(this.getNodeIterable(from, to), node => node.value);
   }
 
   getReverseValueIterable(from, to) {
-    return {
-      [Symbol.iterator]: () => {
-        const nodeIterable = this.getReverseNodeIterable(from, to)[Symbol.iterator]();
-        return {
-          next: () => {
-            const result = nodeIterable.next();
-            if (result.done) return result;
-            return {value: result.value.value};
-          }
-        };
-      }
-    };
+    return mapIterator(this.getReverseNodeIterable(from, to), node => node.value);
   }
 
   // meta helpers
