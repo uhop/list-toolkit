@@ -1,7 +1,7 @@
 'use strict';
 
 import test from 'tape-six';
-import List from '../src/list.js';
+import List from 'list-toolkit/list.js';
 import {pushValuesFront, pushValuesBack, appendValuesFront} from 'list-toolkit/list-utils.js';
 
 test('Elementary List operations', t => {

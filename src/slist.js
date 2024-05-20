@@ -1,6 +1,6 @@
 'use strict';
 
-export * from './slist/value.js';
-import ValueList from './slist/value.js';
+export * from './slist/core.js';
+import SList from './slist/core.js';
 
-export default ValueList;
+export default SList;
