@@ -38,6 +38,10 @@ export class CircularList {
     return this.head?.[this.prevName];
   }
 
+  get range() {
+    return this.head ? {from: this.head, to: this.head[this.prevName]} : null;
+  }
+
   getLength() {
     if (!this.head) return 0;
 

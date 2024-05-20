@@ -26,12 +26,12 @@ export class SList extends HeadNode {
     return this.last;
   }
 
-  get frontPtr() {
-    return new Ptr(this, this);
+  get range() {
+    return this[this.nextName] === this ? null : {prevFrom: this, to: this.last};
   }
 
-  get range() {
-    return this.isEmpty ? null : {prevFrom: this, to: this.last};
+  get frontPtr() {
+    return new Ptr(this, this);
   }
 
   get rangePtr() {

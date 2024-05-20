@@ -26,6 +26,10 @@ export class List extends HeadNode {
     return this[this.prevName];
   }
 
+  get range() {
+    return this[this.nextName] === this ? null : {from: this[this.nextName], to: this[this.prevName]};
+  }
+
   get frontPtr() {
     return new Ptr(this, this.front);
   }

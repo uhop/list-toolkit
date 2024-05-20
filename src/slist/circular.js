@@ -32,6 +32,10 @@ export class CircularSList {
     return this.head;
   }
 
+  get range() {
+    return this.head ? {prevFrom: this.head, to: this.head} : null;
+  }
+
   getLength() {
     if (!this.head) return 0;
 
