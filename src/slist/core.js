@@ -222,7 +222,7 @@ export class SList extends HeadNode {
     };
   }
 
-  getNodeIterator(from, to) {
+  getNodeIterator({from, to} = {}) {
     if (from instanceof Ptr) {
       if (to instanceof Ptr) {
         if (from.list !== to.list) throw new Error('Range specified by pointers must belong to the same list');
@@ -253,8 +253,9 @@ export class SList extends HeadNode {
     };
   }
 
-  getPtrIterator(fromPtr, to) {
-    fromPtr ??= this.frontPtr;
+  getPtrIterator({from, to} = {}) {
+    const fromPtr = from || this.frontPtr;
+    if (!(fromPtr instanceof Ptr)) throw new Error('"fromPtr" is not a compatible pointer');
     if (!this.isCompatible(fromPtr.list)) throw new Error('"fromPtr" is not compatible with this list');
 
     if (to instanceof Ptr) {

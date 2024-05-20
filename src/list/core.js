@@ -163,7 +163,7 @@ export class List extends HeadNode {
     while (this.isEmpty && condition(this.front)) extracted.pushBack(this.popFront());
     if (this.isOneOrEmpty) return extracted;
 
-    for (const ptr of this.getPtrIterator(this.front[this.nextName])) {
+    for (const ptr of this.getPtrIterator({from: this.front[this.nextName]})) {
       if (condition(ptr.node)) extracted.pushBack(ptr.remove());
     }
 
@@ -224,7 +224,7 @@ export class List extends HeadNode {
     };
   }
 
-  getNodeIterator(from, to) {
+  getNodeIterator({from, to} = {}) {
     if (from instanceof Ptr) {
       if (to instanceof Ptr) {
         if (from.list !== to.list) throw new Error('Range specified by pointers must belong to the same list');
@@ -255,11 +255,11 @@ export class List extends HeadNode {
     };
   }
 
-  getPtrIterator(from, to) {
-    return mapIterator(this.getNodeIterator(from, to), node => new Ptr(this, node));
+  getPtrIterator(range) {
+    return mapIterator(this.getNodeIterator(range), node => new Ptr(this, node));
   }
 
-  getReverseNodeIterator(from, to) {
+  getReverseNodeIterator({from, to} = {}) {
     if (from instanceof Ptr) {
       if (to instanceof Ptr) {
         if (from.list !== to.list) throw new Error('Range specified by pointers must belong to the same list');
@@ -290,8 +290,8 @@ export class List extends HeadNode {
     };
   }
 
-  getReversePtrIterator(from, to) {
-    return mapIterator(this.getReverseNodeIterator(from, to), node => new Ptr(this, node));
+  getReversePtrIterator(range) {
+    return mapIterator(this.getReverseNodeIterator(range), node => new Ptr(this, node));
   }
 
   // meta helpers

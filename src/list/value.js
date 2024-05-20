@@ -34,12 +34,12 @@ export class ValueList extends List {
     };
   }
 
-  getValueIterator(from, to) {
-    return mapIterator(this.getNodeIterator(from, to), node => node.value);
+  getValueIterator(range) {
+    return mapIterator(this.getNodeIterator(range), node => node.value);
   }
 
-  getReverseValueIterator(from, to) {
-    return mapIterator(this.getReverseNodeIterator(from, to), node => node.value);
+  getReverseValueIterator(range) {
+    return mapIterator(this.getReverseNodeIterator(range), node => node.value);
   }
 
   // meta helpers

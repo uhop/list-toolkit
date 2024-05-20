@@ -62,7 +62,10 @@ test('Elementary SList operations', t => {
   t.deepEqual(Array.from(list), []);
 
   appendValuesFront(list, [a, b, c]).remove(list.frontPtr, c, true);
-  t.deepEqual(Array.from(list).map(node => node.x), []);
+  t.deepEqual(
+    Array.from(list).map(node => node.x),
+    []
+  );
 
   new SList(a).clear(true);
 
@@ -99,7 +102,7 @@ test('SList iterators', t => {
 
   {
     const array = [];
-    for (const value of list.getIterator(b, b)) array.push(value.x);
+    for (const value of list.getIterator({from: b, to: b})) array.push(value.x);
     t.deepEqual(array, [2]);
   }
 });

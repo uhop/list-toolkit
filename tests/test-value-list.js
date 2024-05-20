@@ -148,7 +148,7 @@ test('ValueList iterators', t => {
 
   {
     const array = [];
-    for (const value of list.getIterator(list.front.next, list.back.prev)) array.push(value);
+    for (const value of list.getIterator({from: list.front.next, to: list.back.prev})) array.push(value);
     t.deepEqual(array, [2, 3, 4]);
   }
 
@@ -160,7 +160,7 @@ test('ValueList iterators', t => {
 
   {
     const array = [];
-    for (const value of list.getReverseIterator(list.front.next, list.back.prev)) array.push(value);
+    for (const value of list.getReverseIterator({from: list.front.next, to: list.back.prev})) array.push(value);
     t.deepEqual(array, [4, 3, 2]);
   }
 
@@ -172,7 +172,7 @@ test('ValueList iterators', t => {
 
   {
     const array = [];
-    for (const node of list.getNodeIterator(list.front.next, list.back.prev)) array.push(node.value);
+    for (const node of list.getNodeIterator({from: list.front.next, to: list.back.prev})) array.push(node.value);
     t.deepEqual(array, [2, 3, 4]);
   }
 
@@ -184,7 +184,7 @@ test('ValueList iterators', t => {
 
   {
     const array = [];
-    for (const node of list.getReverseNodeIterator(list.front.next, list.back.prev)) array.push(node.value);
+    for (const node of list.getReverseNodeIterator({from: list.front.next, to: list.back.prev})) array.push(node.value);
     t.deepEqual(array, [4, 3, 2]);
   }
 });

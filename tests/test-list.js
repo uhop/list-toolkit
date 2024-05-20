@@ -131,7 +131,7 @@ test('List iterators', t => {
 
   {
     const array = [];
-    for (const value of list.getIterator(b, b)) array.push(value.x);
+    for (const value of list.getIterator({from: b, to: b})) array.push(value.x);
     t.deepEqual(array, [2]);
   }
 
@@ -143,7 +143,7 @@ test('List iterators', t => {
 
   {
     const array = [];
-    for (const value of list.getReverseIterator(b, b)) array.push(value.x);
+    for (const value of list.getReverseIterator({from: b, to: b})) array.push(value.x);
     t.deepEqual(array, [2]);
   }
 });

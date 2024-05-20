@@ -270,7 +270,7 @@ test('CircularList iterators', t => {
 
   {
     const array = [];
-    for (const value of circularList.getNodeIterator(b, c)) array.push(value.x);
+    for (const value of circularList.getNodeIterator({from: b, to: c})) array.push(value.x);
     t.deepEqual(array, [2, 3]);
   }
 
@@ -282,7 +282,7 @@ test('CircularList iterators', t => {
 
   {
     const array = [];
-    for (const value of circularList.getReverseNodeIterator(b, c)) array.push(value.x);
+    for (const value of circularList.getReverseNodeIterator({from: b, to: c})) array.push(value.x);
     t.deepEqual(array, [3, 2]);
   }
 });

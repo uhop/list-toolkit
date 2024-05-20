@@ -29,8 +29,8 @@ export class ValueSList extends List {
     };
   }
 
-  getValueIterator(from, to) {
-    return mapIterator(this.getNodeIterator(from, to), node => node.value);
+  getValueIterator(range) {
+    return mapIterator(this.getNodeIterator(range), node => node.value);
   }
 
   // meta helpers
