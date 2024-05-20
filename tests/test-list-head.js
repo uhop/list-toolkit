@@ -21,8 +21,8 @@ test('Elementary ListHead operations', t => {
 
   list.pushFront(b);
   t.notOk(list.isEmpty);
-  t.ok(b[list.nextName] === a);
-  t.ok(a[list.prevName] === b);
+  t.ok(b[list.head.nextName] === a);
+  t.ok(a[list.head.prevName] === b);
   t.equal(list.getLength(), 2);
   t.ok(list.front === b);
   t.ok(list.back === a);
@@ -93,12 +93,12 @@ test('Elementary ListHead operations', t => {
   t.ok(list.isEmpty);
   t.deepEqual(Array.from(list), []);
 
-  list.appendFront(ListHead.from([a, b, c])).remove(a, c);
+  list.appendFront(list.makeFrom([a, b, c])).remove(a, c, true);
   t.deepEqual(Array.from(list), []);
 
   new ListHead(a).clear(true);
 
-  list.appendFront(ListHead.from([a, b, c])).reverse();
+  list.appendFront(list.makeFrom([a, b, c])).reverse();
   t.deepEqual(
     Array.from(list).map(value => value.x),
     [3, 2, 1]

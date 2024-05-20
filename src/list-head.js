@@ -5,106 +5,72 @@ import {HeadNode} from './list-nodes.js';
 import {pop, extract, splice, append, isNodeLike, isStandAlone} from './list-basics.js';
 import Ptr from './list-ptr.js';
 
-export class UnsafeHead {
-  constructor(head) {
-    this.head = head;
-  }
-}
-
-export const unsafe = head => new UnsafeHead(head);
-
 export class ListHead {
-  constructor(head, {nextName = 'next', prevName = 'prev'} = {}) {
+  constructor(head, options) {
     if (head instanceof ListHead) {
-      this.nextName = head.nextName;
-      this.prevName = head.prevName;
-      this.head = head.head;
-      return;
+      head = head.head;
     }
-    this.nextName = nextName;
-    this.prevName = prevName;
-    if (head instanceof UnsafeHead) {
-      this.head = head.head;
-      return;
-    }
-    if (isNodeLike(this, head)) {
+    if (head instanceof HeadNode) {
       this.head = head;
       return;
     }
-    this.head = new HeadNode(this);
-  }
-
-  get isHeadless() {
-    return !(this.head instanceof HeadNode);
+    this.head = new HeadNode(options);
   }
 
   get isEmpty() {
-    return this.head instanceof HeadNode && this.head[this.nextName] === this.head;
+    return this.head.isEmpty;
   }
 
   get isOne() {
-    return this.head instanceof HeadNode
-      ? this.head[this.nextName] !== this.head && this.head[this.nextName][this.nextName] === this.head
-      : this.head[this.nextName] === this.head;
+    return this.head.isOne;
   }
 
   get isOneOrEmpty() {
-    return this.head instanceof HeadNode ? this.head[this.nextName][this.nextName] === this.head : this.head[this.nextName] === this.head;
+    return this.head.isOneOrEmpty;
   }
 
   get front() {
-    return this.head instanceof HeadNode ? this.head[this.nextName] : this.head;
+    return this.head[this.head.nextName];
   }
 
   get back() {
-    return this.head[this.prevName];
+    return this.head[this.head.prevName];
   }
 
   get frontPtr() {
-    return new Ptr(this.head, this.front);
+    return new Ptr(this.head, this.head.front);
   }
 
   get backPtr() {
-    return new Ptr(this.head, this.back);
+    return new Ptr(this.head, this.head.back);
   }
 
   getLength() {
     let n = 0;
-    for (let p = this.head[this.nextName]; p !== this.head; ++n, p = p[this.nextName]);
-    if (this.isHeadless) ++n;
+    const nextName = this.head.nextName;
+    for (let p = this.head[nextName]; p !== this.head; ++n, p = p[nextName]);
     return n;
   }
 
   makePtr(node) {
-    return new Ptr(this.head, node || this.front);
+    return new Ptr(this.head, node || this.head.front);
   }
 
   popFrontNode() {
-    if (this.isHeadless) {
-      const result = pop(this, this.head);
-      this.head = result.node === result.list ? new HeadNode(this) : result.list;
-      return result.node;
-    }
-    if (!this.isEmpty) return pop(this, this.head[this.nextName]).node;
+    return this.head.popFrontNode();
   }
 
   popBackNode() {
-    if (this.isHeadless) {
-      const result = pop(this, this.head[this.prevName]);
-      if (result.node === result.list) this.head = new HeadNode(this);
-      return result.node;
-    }
-    if (!this.isEmpty) return pop(this, this.head[this.prevName]).node;
+    return this.head.popBackNode();
   }
 
   pushFrontNode(node) {
-    splice(this, this.head[this.nextName], this.adopt(node));
-    if (this.isHeadless) this.head = node;
+    this.head.pushFrontNode(node);
     return this;
   }
 
   pushBackNode(node) {
-    splice(this, this.head, this.adopt(node));
+    this.head.pushBackNode(node);
     return this;
   }
 
@@ -112,19 +78,8 @@ export class ListHead {
     if (!this.head.isCompatible(list.head)) throw new Error('Incompatible lists');
     if (list.isEmpty) return this;
 
-    let head;
-    if (list.isHeadless) {
-      list = list.head;
-      list.head = new HeadNode(list);
-    } else {
-      head = extract(this, {from: list.head[this.nextName], to: list.head[this.prevName]});
-    }
-
-    if (this.isHeadless) {
-      this.head = splice(this, head, this.head);
-    } else {
-      splice(this, this.head[this.nextName], head);
-    }
+    const head = extract(this.head, {from: list.head[this.head.nextName], to: list.head[this.head.prevName]});
+    splice(this.head, this.head[this.head.nextName], head);
 
     return this;
   }
@@ -133,15 +88,8 @@ export class ListHead {
     if (!this.head.isCompatible(list.head)) throw new Error('Incompatible lists');
     if (list.isEmpty) return this;
 
-    let head;
-    if (list.isHeadless) {
-      list = list.head;
-      list.head = new HeadNode(list);
-    } else {
-      head = extract(this, {from: list.head[this.nextName], to: list.head[this.prevName]});
-    }
-
-    splice(this, this.head, head);
+    const head = extract(this.head, {from: list.head[this.head.nextName], to: list.head[this.head.prevName]});
+    splice(this.head, this.head, head);
 
     return this;
   }
@@ -154,13 +102,8 @@ export class ListHead {
       if (!this.head.isNodeLike(node)) throw new Error('Not a compatible node');
     }
 
-    if (this.isHeadless) {
-      if (this.head === node) return this;
-      this.head = splice(this, this.head, pop(this, node).node);
-    } else {
-      if (this.head[this.nextName] === node) return this;
-      splice(this, this.head[this.nextName], pop(this, node).node);
-    }
+    if (this.head[this.head.nextName] === node) return this;
+    splice(this.head, this.head[this.head.nextName], pop(this.head, node).node);
 
     return this;
   }
@@ -173,17 +116,17 @@ export class ListHead {
       if (!this.head.isNodeLike(node)) throw new Error('Not a compatible node');
     }
 
-    if (this.head[this.prevName] === node) return this;
-    splice(this, this.head, pop(this, node).node);
+    if (this.head[this.head.prevName] === node) return this;
+    splice(this.head, this.head, pop(this.head, node).node);
 
     return this;
   }
 
   clear(drop) {
     if (drop) {
-      while (!this.isEmpty) this.popFront();
+      while (!this.head.isEmpty) this.head.popFrontNode();
     } else {
-      this.head = new HeadNode(this);
+      this.head.clear();
     }
     return this;
   }
@@ -195,7 +138,7 @@ export class ListHead {
     } else {
       if (!this.head.isNodeLike(node)) throw new Error('Not a compatible node');
     }
-    pop(this, node);
+    pop(this.head, node);
     return this;
   }
 
@@ -216,7 +159,7 @@ export class ListHead {
     }
     if (!this.head.isNodeLike(from)) throw new Error('"from" is not a compatible node');
     if (!this.head.isNodeLike(to)) throw new Error('"to" is not a compatible node');
-    return new ListHead(unsafe(splice(this, new HeadNode(this), extract(this, {from, to}))), this);
+    return new ListHead(splice(this.head, new HeadNode(this.head), extract(this.head, {from, to})), this);
   }
 
   extractBy(condition) {
@@ -226,7 +169,7 @@ export class ListHead {
     while (this.isEmpty && condition(this.front)) extracted.pushBack(this.popFront());
     if (this.isOneOrEmpty) return extracted;
 
-    for (const ptr of this.getPtrIterable(this.front[this.nextName])) {
+    for (const ptr of this.getPtrIterable(this.front[this.head.nextName])) {
       if (condition(ptr.node)) extracted.pushBack(ptr.remove());
     }
 
@@ -236,12 +179,11 @@ export class ListHead {
   reverse() {
     let current = this.head;
     do {
-      const next = current[this.nextName];
-      current[this.nextName] = current[this.prevName];
-      current[this.prevName] = next;
+      const next = current[this.head.nextName];
+      current[this.head.nextName] = current[this.head.prevName];
+      current[this.head.prevName] = next;
       current = next;
     } while (current !== this.head);
-    if (this.isHeadless) this.head = this.head[this.nextName];
     return this;
   }
 
@@ -253,62 +195,43 @@ export class ListHead {
     for (let i = 1; i < sortedNodes.length; i++) {
       const prev = sortedNodes[i - 1],
         current = sortedNodes[i];
-      prev[this.nextName] = current;
-      current[this.prevName] = prev;
+      prev[this.head.nextName] = current;
+      current[this.head.prevName] = prev;
     }
 
     const head = sortedNodes[0],
       tail = sortedNodes[sortedNodes.length - 1];
-    tail[this.nextName] = head;
-    head[this.prevName] = tail;
+    tail[this.head.nextName] = head;
+    head[this.head.prevName] = tail;
 
-    if (this.isHeadless) {
-      this.head = head;
-    } else {
-      this.head[this.nextName] = this.head[this.prevName] = this.head;
-      splice(this, this.head, head);
-    }
+    this.head[this.head.nextName] = this.head[this.head.prevName] = this.head;
+    splice(this.head, this.head, head);
 
     return this;
   }
 
-  adopt(node) {
-    if (node[this.nextName] || node[this.prevName]) {
-      if (node[this.nextName] === node && node[this.prevName] === node) return node;
-      throw new Error('node is already a part of a list, or there is a name clash');
-    }
-    node[this.nextName] = node[this.prevName] = node;
-    return node;
-  }
-
   convertToHeadlessList() {
-    if (this.isHeadless) return this;
-    this.head = extract(this, {from: this.head[this.nextName], to: this.head[this.prevName]});
+    this.head = extract(this.head, {from: this.head[this.head.nextName], to: this.head[this.head.prevName]});
     return this;
   }
 
   releaseAsHeadlessList() {
     const list = this.make();
-    if (this.isHeadless) {
-      list.head = this.head;
-      this.head = new HeadNode(this);
-    } else {
-      list.head = extract(this, {from: this.head[this.nextName], to: this.head[this.prevName]});
-    }
+    list.head = extract(this.head, {from: this.head[this.head.nextName], to: this.head[this.head.prevName]});
     return list;
   }
 
   // iterators
 
   [Symbol.iterator]() {
-    let current = this.isHeadless ? this.head : this.head[this.nextName],
+    let current = this.head[this.head.nextName],
       readyToStop = this.isEmpty;
     return {
       next: () => {
         if (readyToStop && current === this.head) return {done: true};
         readyToStop = true;
         const value = current;
-        current = current[this.nextName];
+        current = current[this.head.nextName];
         return {value};
       }
     };
@@ -329,15 +252,15 @@ export class ListHead {
 
     return {
       [Symbol.iterator]: () => {
-        let current = from || (this.isHeadless ? this.head : this.head[this.nextName]),
+        let current = from || this.head[this.head.nextName],
           readyToStop = this.isEmpty;
-        const stop = to ? to[this.nextName] : this.head;
+        const stop = to ? to[this.head.nextName] : this.head;
         return {
           next: () => {
             if (readyToStop && current === stop) return {done: true};
             readyToStop = true;
             const value = current;
-            current = current[this.nextName];
+            current = current[this.head.nextName];
             return {value};
           }
         };
@@ -375,15 +298,15 @@ export class ListHead {
 
     return {
       [Symbol.iterator]: () => {
-        let current = to || this.head[this.prevName],
+        let current = to || this.head[this.head.prevName],
           readyToStop = this.isEmpty;
-        const stop = from ? from[this.prevName] : this.head;
+        const stop = from ? from[this.head.prevName] : this.head;
         return {
           next: () => {
             if (readyToStop && current === stop) return {done: true};
             readyToStop = true;
             const value = current;
-            current = current[this.prevName];
+            current = current[this.head.prevName];
             return {value};
           }
         };
@@ -409,15 +332,15 @@ export class ListHead {
   // meta helpers
 
   clone() {
-    return ListHead.from(this);
+    return ListHead.from(this, this.head);
   }
 
   make(newHead = null) {
-    return new ListHead(newHead, this);
+    return new ListHead(newHead, this.head);
   }
 
   makeFrom(values) {
-    return ListHead.from(values, this);
+    return ListHead.from(values, this.head);
   }
 
   static from(values, options) {
@@ -427,7 +350,7 @@ export class ListHead {
   }
 }
 
-Object.assign(ListHead, {pop, extract, splice, append, isNodeLike, isStandAlone, UnsafeHead, unsafe, HeadNode, Ptr});
+Object.assign(ListHead, {pop, extract, splice, append, isNodeLike, isStandAlone, HeadNode, Ptr});
 addAliases(ListHead, {
   popFrontNode: 'popFront, pop',
   pushFrontNode: 'pushFront, push',
