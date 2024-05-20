@@ -78,22 +78,22 @@ test('Elementary List operations', t => {
     [1, 3, 2]
   );
 
-  const extract = list.extract(a, c);
+  const extracted = list.extractRange({from: a, to: c});
   t.deepEqual(
     Array.from(list).map(value => value.x),
     [2]
   );
   t.deepEqual(
-    Array.from(extract).map(value => value.x),
+    Array.from(extracted).map(value => value.x),
     [1, 3]
   );
-  extract.clear(true);
+  extracted.clear(true);
 
   list.clear(true);
   t.ok(list.isEmpty);
   t.deepEqual(Array.from(list), []);
 
-  list.appendFront(list.makeFrom([a, b, c])).remove(a, c, true);
+  list.appendFront(list.makeFrom([a, b, c])).removeRange({from: a, to: c}, true);
   t.deepEqual(Array.from(list), []);
 
   new List(a).clear(true);

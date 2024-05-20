@@ -136,12 +136,12 @@ export class List extends HeadNode {
     return this;
   }
 
-  remove(from, to = from, drop) {
-    this.extract(from, to).clear(drop);
+  removeRange(range, drop) {
+    this.extractRange(range).clear(drop);
     return this;
   }
 
-  extract(from, to = from) {
+  extractRange({from, to = from} = {}) {
     if (from instanceof Ptr) {
       if (to instanceof Ptr) {
         if (from.list !== to.list) throw new Error('Range specified by pointers must belong to the same list');

@@ -103,17 +103,17 @@ test('Elementary ValueList operations', t => {
   t.deepEqual(Array.from(list.getReverseIterator()), []);
 });
 
-test('ValueList.remove()', t => {
+test('ValueList.removeRange()', t => {
   const list = ValueList.from([1, 2, 3, 4, 5]);
-  list.remove(list.front.next, list.back.prev);
+  list.removeRange({from: list.front.next, to: list.back.prev});
   t.deepEqual(Array.from(list), [1, 5]);
 });
 
-test('ValueList.extract()', t => {
+test('ValueList.extractRange()', t => {
   const list = ValueList.from([1, 2, 3, 4, 5]),
-    extract = list.extract(list.front.next, list.back.prev);
+    extracted = list.extractRange({from: list.front.next, to: list.back.prev});
   t.deepEqual(Array.from(list), [1, 5]);
-  t.deepEqual(Array.from(extract), [2, 3, 4]);
+  t.deepEqual(Array.from(extracted), [2, 3, 4]);
 });
 
 test('ValueList.reverse()', t => {
