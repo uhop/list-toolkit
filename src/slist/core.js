@@ -57,7 +57,7 @@ export class SList extends HeadNode {
   }
 
   pushFrontNode(node) {
-    this.adopt(node);
+    node = this.adopt(node);
     node[this.nextName] = this[this.nextName];
     this[this.nextName] = node;
     if (node[this.nextName] === this) this.last = node;
@@ -65,7 +65,7 @@ export class SList extends HeadNode {
   }
 
   pushBackNode(node) {
-    this.adopt(node);
+    node = this.adopt(node);
     node[this.nextName] = this;
     this.last = this.last[this.nextName] = node;
     return this;
@@ -179,7 +179,7 @@ export class SList extends HeadNode {
   sort(compareFn) {
     if (this.isOneOrEmpty) return this;
 
-    const sortedNodes = Array.from(this).sort(compareFn);
+    const sortedNodes = Array.from(this.getNodeIterable()).sort(compareFn);
 
     for (let i = 1; i < sortedNodes.length; i++) {
       const prev = sortedNodes[i - 1],
@@ -252,7 +252,6 @@ export class SList extends HeadNode {
       if (fromPtr.list !== to.list) throw new Error('Range specified by pointers must belong to the same list');
       to = to.node;
     }
-    from = from.node;
     if (to && !this.isNodeLike(to)) throw new Error('"to" is not a compatible node');
 
     return {

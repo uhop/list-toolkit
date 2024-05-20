@@ -85,6 +85,10 @@ export class ValueList extends List {
   }
 }
 
-addAliases(ValueList, {popFront: 'pop', getValueIterable: 'getIterable', getReverseValueIterable: 'getReverseIterable'});
+addAliases(ValueList, {
+  popFront: 'pop',
+  getValueIterable: 'getIterable',
+  getReverseValueIterable: 'getReverseIterable'
+});
 
 export default ValueList;

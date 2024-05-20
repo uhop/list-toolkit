@@ -32,7 +32,7 @@ test('General SList tests', t => {
   oddsAndEvens.reverse();
 
   t.deepEqual(Array.from(oddsAndEvens), [1, 3, 5, 7, 9, 2, 4, 6, 8]);
-  t.deepEqual(Array.from(oddsAndEvens.sort((a, b) => a - b)), [1, 2, 3, 4, 5, 6, 7, 8, 9]);
+  t.deepEqual(Array.from(oddsAndEvens.sort((a, b) => a.value - b.value)), [1, 2, 3, 4, 5, 6, 7, 8, 9]);
 });
 
 test('Elementary SList operations', t => {
@@ -91,9 +91,9 @@ test('SList.reverse()', t => {
 
 test('SList.sort()', t => {
   const list = SList.from([3, 1, 5, 4, 2]);
-  list.sort((a, b) => b - a);
+  list.sort((a, b) => b.value - a.value);
   t.deepEqual(Array.from(list), [5, 4, 3, 2, 1]);
-  list.sort((a, b) => a - b);
+  list.sort((a, b) => a.value - b.value);
   t.deepEqual(Array.from(list), [1, 2, 3, 4, 5]);
 });
 
@@ -191,19 +191,19 @@ test('SList.SListPtr', t => {
   list.moveToFront(getPtrByValue(list, 4));
   t.deepEqual(Array.from(list), [4, 1, 2, 3, 5]);
 
-  list.sort((a, b) => a - b);
+  list.sort((a, b) => a.value - b.value);
   list.remove(getPtrByValue(list, 2), getPtrByValue(list, 4));
   t.deepEqual(Array.from(list), [1, 5]);
 
   pushValuesFront(list, [2, 3, 4]);
-  list.sort((a, b) => a - b);
+  list.sort((a, b) => a.value - b.value);
   const extract = list.extract(getPtrByValue(list, 2), getPtrByValue(list, 4));
   t.deepEqual(Array.from(list), [1, 5]);
   t.deepEqual(Array.from(extract), [2, 3, 4]);
 
   {
     pushValuesFront(list, [2, 3, 4]);
-    list.sort((a, b) => a - b);
+    list.sort((a, b) => a.value - b.value);
     const array = [];
     for (const value of list.getIterable(getPtrByValue(list, 2), getPtrByValue(list, 4))) array.push(value);
     t.deepEqual(array, [2, 3, 4]);
