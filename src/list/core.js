@@ -199,7 +199,7 @@ export class List extends HeadNode {
     return this;
   }
 
-  releaseCircledList() {
+  releaseCircularList() {
     return pop(this, this).list;
   }
 
