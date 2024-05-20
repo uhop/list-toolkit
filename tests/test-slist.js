@@ -198,3 +198,23 @@ test("SList's Ptr", t => {
     [6, 7, 1, 9, 5, 2, 3]
   );
 });
+
+test('SList.releaseCircularList()', t => {
+  const list = SList.from([{x: 1}, {x: 2}, {x: 3}]);
+
+  t.equal(list.getLength(), 3);
+
+  const circularList = list.releaseCircularList();
+
+  t.ok(list.isEmpty);
+  t.ok(!!circularList);
+
+  const array = [];
+  let current = circularList;
+  do {
+    array.push(current.x);
+    current = current[list.nextName];
+  } while (current !== circularList);
+
+  t.deepEqual(array, [1, 2, 3]);
+});

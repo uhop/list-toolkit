@@ -31,11 +31,11 @@ export class SList extends HeadNode {
   }
 
   get range() {
-    return {prevFrom: this, to: this.last};
+    return this.isEmpty ? null : {prevFrom: this, to: this.last};
   }
 
   get rangePtr() {
-    return {prevFrom: new Ptr(this), to: this.last};
+    return this.isEmpty ? null : {prevFrom: new Ptr(this), to: this.last};
   }
 
   getLength() {
@@ -195,6 +195,15 @@ export class SList extends HeadNode {
     this.last = tail;
 
     return this;
+  }
+
+  releaseCircularListAsRange() {
+    const range = this.range;
+    return range ? extract(this, range) : null;
+  }
+
+  releaseCircularList() {
+    return this.releaseCircularListAsRange()?.prevFrom[this.nextName];
   }
 
   // iterators
