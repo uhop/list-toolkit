@@ -29,8 +29,8 @@ export class ValueSList extends List {
     };
   }
 
-  getValueIterable(from, to) {
-    return mapIterator(this.getNodeIterable(from, to), node => node.value);
+  getValueIterator(from, to) {
+    return mapIterator(this.getNodeIterator(from, to), node => node.value);
   }
 
   // meta helpers
@@ -56,7 +56,7 @@ export class ValueSList extends List {
 
 addAliases(ValueSList, {
   popFront: 'pop',
-  getValueIterable: 'getIterable'
+  getValueIterator: 'getIterator'
 });
 
 export default ValueSList;

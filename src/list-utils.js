@@ -29,21 +29,21 @@ export const appendValuesBack = (list, values) => {
 }
 
 export const findNodeBy = (list, condition) => {
-  for (const node of list.getNodeIterable()) {
+  for (const node of list.getNodeIterator()) {
     if (condition(node)) return node;
   }
   return null;
 };
 
 export const findPtrBy = (list, condition) => {
-  for (const ptr of list.getPtrIterable()) {
+  for (const ptr of list.getPtrIterator()) {
     if (condition(ptr.node)) return ptr;
   }
   return null;
 };
 
 export const removeNodeBy = (list, condition) => {
-  for (const ptr of list.getPtrIterable()) {
+  for (const ptr of list.getPtrIterator()) {
     if (condition(ptr.node)) return ptr.remove();
   }
   return null;

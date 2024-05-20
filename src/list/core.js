@@ -158,7 +158,7 @@ export class List extends HeadNode {
     while (this.isEmpty && condition(this.front)) extracted.pushBack(this.popFront());
     if (this.isOneOrEmpty) return extracted;
 
-    for (const ptr of this.getPtrIterable(this.front[this.nextName])) {
+    for (const ptr of this.getPtrIterator(this.front[this.nextName])) {
       if (condition(ptr.node)) extracted.pushBack(ptr.remove());
     }
 
@@ -179,7 +179,7 @@ export class List extends HeadNode {
   sort(compareFn) {
     if (this.isOneOrEmpty) return this;
 
-    const sortedNodes = Array.from(this.getNodeIterable()).sort(compareFn);
+    const sortedNodes = Array.from(this.getNodeIterator()).sort(compareFn);
 
     for (let i = 1; i < sortedNodes.length; i++) {
       const prev = sortedNodes[i - 1],
@@ -219,7 +219,7 @@ export class List extends HeadNode {
     };
   }
 
-  getNodeIterable(from, to) {
+  getNodeIterator(from, to) {
     if (from instanceof Ptr) {
       if (to instanceof Ptr) {
         if (from.list !== to.list) throw new Error('Range specified by pointers must belong to the same list');
@@ -250,11 +250,11 @@ export class List extends HeadNode {
     };
   }
 
-  getPtrIterable(from, to) {
-    return mapIterator(this.getNodeIterable(from, to), node => new Ptr(this, node));
+  getPtrIterator(from, to) {
+    return mapIterator(this.getNodeIterator(from, to), node => new Ptr(this, node));
   }
 
-  getReverseNodeIterable(from, to) {
+  getReverseNodeIterator(from, to) {
     if (from instanceof Ptr) {
       if (to instanceof Ptr) {
         if (from.list !== to.list) throw new Error('Range specified by pointers must belong to the same list');
@@ -285,8 +285,8 @@ export class List extends HeadNode {
     };
   }
 
-  getReversePtrIterable(from, to) {
-    return mapIterator(this.getReverseNodeIterable(from, to), node => new Ptr(this, node));
+  getReversePtrIterator(from, to) {
+    return mapIterator(this.getReverseNodeIterator(from, to), node => new Ptr(this, node));
   }
 
   // meta helpers
@@ -324,8 +324,8 @@ addAliases(List, {
   pushFrontNode: 'pushFront, push',
   popBackNode: 'popBack',
   pushBackNode: 'pushBack',
-  getNodeIterable: 'getIterable',
-  getReverseNodeIterable: 'getReverseIterable',
+  getNodeIterator: 'getIterator',
+  getReverseNodeIterator: 'getReverseIterator',
   appendBack: 'append'
 });
 

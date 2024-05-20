@@ -40,7 +40,7 @@ test('Cache', t => {
   t.equal(cache.list.back.value.value, 42);
 
   t.deepEqual(Array.from(cache).map(x => x.value), [44, 42]);
-  t.deepEqual(Array.from(cache.getReverseIterable()).map(x => x.value), [42, 44]);
+  t.deepEqual(Array.from(cache.getReverseIterator()).map(x => x.value), [42, 44]);
 
   cache.clear();
   t.equal(cache.size, 0);

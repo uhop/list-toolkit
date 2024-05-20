@@ -108,25 +108,25 @@ test('ValueSList iterators', t => {
 
   {
     const array = [];
-    for (const value of list.getIterable()) array.push(value);
+    for (const value of list.getIterator()) array.push(value);
     t.deepEqual(array, [1, 2, 3, 4, 5]);
   }
 
   {
     const array = [];
-    for (const value of list.getIterable(list.front.next, list.front.next.next.next)) array.push(value);
+    for (const value of list.getIterator(list.front.next, list.front.next.next.next)) array.push(value);
     t.deepEqual(array, [2, 3, 4]);
   }
 
   {
     const array = [];
-    for (const node of list.getNodeIterable()) array.push(node.value);
+    for (const node of list.getNodeIterator()) array.push(node.value);
     t.deepEqual(array, [1, 2, 3, 4, 5]);
   }
 
   {
     const array = [];
-    for (const node of list.getNodeIterable(list.front.next, list.front.next.next.next)) array.push(node.value);
+    for (const node of list.getNodeIterator(list.front.next, list.front.next.next.next)) array.push(node.value);
     t.deepEqual(array, [2, 3, 4]);
   }
 });
@@ -182,7 +182,7 @@ test('ValueSList.SListPtr', t => {
 
   {
     const array = [];
-    for (const ptr of list.getPtrIterable()) array.push(ptr.node.value);
+    for (const ptr of list.getPtrIterator()) array.push(ptr.node.value);
     t.deepEqual(array, [1, 2, 3, 4, 5]);
   }
 
@@ -205,7 +205,7 @@ test('ValueSList.SListPtr', t => {
     pushValuesFront(list, [2, 3, 4]);
     list.sort((a, b) => a.value - b.value);
     const array = [];
-    for (const value of list.getIterable(getPtrByValue(list, 2), getPtrByValue(list, 4))) array.push(value);
+    for (const value of list.getIterator(getPtrByValue(list, 2), getPtrByValue(list, 4))) array.push(value);
     t.deepEqual(array, [2, 3, 4]);
   }
 

@@ -53,8 +53,8 @@ export class Cache {
   [Symbol.iterator]() {
     return this.list[Symbol.iterator]();
   }
-  getReverseIterable() {
-    return this.list.getReverseIterable();
+  getReverseIterator() {
+    return this.list.getReverseIterator();
   }
 }
 

@@ -34,12 +34,12 @@ export class ValueList extends List {
     };
   }
 
-  getValueIterable(from, to) {
-    return mapIterator(this.getNodeIterable(from, to), node => node.value);
+  getValueIterator(from, to) {
+    return mapIterator(this.getNodeIterator(from, to), node => node.value);
   }
 
-  getReverseValueIterable(from, to) {
-    return mapIterator(this.getReverseNodeIterable(from, to), node => node.value);
+  getReverseValueIterator(from, to) {
+    return mapIterator(this.getReverseNodeIterator(from, to), node => node.value);
   }
 
   // meta helpers
@@ -65,8 +65,8 @@ export class ValueList extends List {
 
 addAliases(ValueList, {
   popFront: 'pop',
-  getValueIterable: 'getIterable',
-  getReverseValueIterable: 'getReverseIterable'
+  getValueIterator: 'getIterator',
+  getReverseValueIterator: 'getReverseIterator'
 });
 
 export default ValueList;

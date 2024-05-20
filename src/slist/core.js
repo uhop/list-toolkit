@@ -179,7 +179,7 @@ export class SList extends HeadNode {
   sort(compareFn) {
     if (this.isOneOrEmpty) return this;
 
-    const sortedNodes = Array.from(this.getNodeIterable()).sort(compareFn);
+    const sortedNodes = Array.from(this.getNodeIterator()).sort(compareFn);
 
     for (let i = 1; i < sortedNodes.length; i++) {
       const prev = sortedNodes[i - 1],
@@ -222,7 +222,7 @@ export class SList extends HeadNode {
     };
   }
 
-  getNodeIterable(from, to) {
+  getNodeIterator(from, to) {
     if (from instanceof Ptr) {
       if (to instanceof Ptr) {
         if (from.list !== to.list) throw new Error('Range specified by pointers must belong to the same list');
@@ -253,7 +253,7 @@ export class SList extends HeadNode {
     };
   }
 
-  getPtrIterable(fromPtr, to) {
+  getPtrIterator(fromPtr, to) {
     fromPtr ??= this.frontPtr;
     if (!this.isCompatible(fromPtr.list)) throw new Error('"fromPtr" is not compatible with this list');
 
@@ -306,7 +306,7 @@ addAliases(SList, {
   popFrontNode: 'popFront, pop',
   pushFrontNode: 'pushFront, push',
   pushBackNode: 'pushBack',
-  getNodeIterable: 'getIterable',
+  getNodeIterator: 'getIterator',
   pushBackNode: 'pushBack'
 });
 

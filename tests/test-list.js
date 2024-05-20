@@ -125,25 +125,25 @@ test('List iterators', t => {
 
   {
     const array = [];
-    for (const value of list.getIterable()) array.push(value.x);
+    for (const value of list.getIterator()) array.push(value.x);
     t.deepEqual(array, [1, 2, 3]);
   }
 
   {
     const array = [];
-    for (const value of list.getIterable(b, b)) array.push(value.x);
+    for (const value of list.getIterator(b, b)) array.push(value.x);
     t.deepEqual(array, [2]);
   }
 
   {
     const array = [];
-    for (const value of list.getReverseIterable()) array.push(value.x);
+    for (const value of list.getReverseIterator()) array.push(value.x);
     t.deepEqual(array, [3, 2, 1]);
   }
 
   {
     const array = [];
-    for (const value of list.getReverseIterable(b, b)) array.push(value.x);
+    for (const value of list.getReverseIterator(b, b)) array.push(value.x);
     t.deepEqual(array, [2]);
   }
 });

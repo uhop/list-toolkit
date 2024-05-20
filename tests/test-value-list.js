@@ -9,7 +9,7 @@ test('General ValueList tests', t => {
     odds = new ValueList(),
     evens = new ValueList();
 
-  for (const value of numbers.getReverseIterable()) {
+  for (const value of numbers.getReverseIterator()) {
     if (value & 1) {
       odds.pushFront(value);
     } else {
@@ -43,7 +43,7 @@ test('Elementary ValueList operations', t => {
   t.equal(list.back.value, 1);
   t.equal(list.getLength(), 1);
   t.deepEqual(Array.from(list), [1]);
-  t.deepEqual(Array.from(list.getReverseIterable()), [1]);
+  t.deepEqual(Array.from(list.getReverseIterator()), [1]);
 
   list.pushFront(2);
   t.notOk(list.isEmpty);
@@ -51,7 +51,7 @@ test('Elementary ValueList operations', t => {
   t.equal(list.back.value, 1);
   t.equal(list.getLength(), 2);
   t.deepEqual(Array.from(list), [2, 1]);
-  t.deepEqual(Array.from(list.getReverseIterable()), [1, 2]);
+  t.deepEqual(Array.from(list.getReverseIterator()), [1, 2]);
 
   list.pushBack(3);
   t.notOk(list.isEmpty);
@@ -59,35 +59,35 @@ test('Elementary ValueList operations', t => {
   t.equal(list.back.value, 3);
   t.equal(list.getLength(), 3);
   t.deepEqual(Array.from(list), [2, 1, 3]);
-  t.deepEqual(Array.from(list.getReverseIterable()), [3, 1, 2]);
+  t.deepEqual(Array.from(list.getReverseIterator()), [3, 1, 2]);
 
   t.equal(list.popFront(), 2);
   t.equal(list.front.value, 1);
   t.equal(list.back.value, 3);
   t.equal(list.getLength(), 2);
   t.deepEqual(Array.from(list), [1, 3]);
-  t.deepEqual(Array.from(list.getReverseIterable()), [3, 1]);
+  t.deepEqual(Array.from(list.getReverseIterator()), [3, 1]);
 
   t.equal(list.popBack(), 3);
   t.equal(list.front.value, 1);
   t.equal(list.back.value, 1);
   t.equal(list.getLength(), 1);
   t.deepEqual(Array.from(list), [1]);
-  t.deepEqual(Array.from(list.getReverseIterable()), [1]);
+  t.deepEqual(Array.from(list.getReverseIterator()), [1]);
 
   list.appendFront(ValueList.from([2, 3]));
   t.equal(list.front.value, 2);
   t.equal(list.back.value, 1);
   t.equal(list.getLength(), 3);
   t.deepEqual(Array.from(list), [2, 3, 1]);
-  t.deepEqual(Array.from(list.getReverseIterable()), [1, 3, 2]);
+  t.deepEqual(Array.from(list.getReverseIterator()), [1, 3, 2]);
 
   list.appendBack(ValueList.from([4, 5]));
   t.equal(list.front.value, 2);
   t.equal(list.back.value, 5);
   t.equal(list.getLength(), 5);
   t.deepEqual(Array.from(list), [2, 3, 1, 4, 5]);
-  t.deepEqual(Array.from(list.getReverseIterable()), [5, 4, 1, 3, 2]);
+  t.deepEqual(Array.from(list.getReverseIterator()), [5, 4, 1, 3, 2]);
 
   const two = list.front,
     five = list.back;
@@ -100,7 +100,7 @@ test('Elementary ValueList operations', t => {
   t.ok(list.isEmpty);
   t.equal(list.getLength(), 0);
   t.deepEqual(Array.from(list), []);
-  t.deepEqual(Array.from(list.getReverseIterable()), []);
+  t.deepEqual(Array.from(list.getReverseIterator()), []);
 });
 
 test('ValueList.remove()', t => {
@@ -142,49 +142,49 @@ test('ValueList iterators', t => {
 
   {
     const array = [];
-    for (const value of list.getIterable()) array.push(value);
+    for (const value of list.getIterator()) array.push(value);
     t.deepEqual(array, [1, 2, 3, 4, 5]);
   }
 
   {
     const array = [];
-    for (const value of list.getIterable(list.front.next, list.back.prev)) array.push(value);
+    for (const value of list.getIterator(list.front.next, list.back.prev)) array.push(value);
     t.deepEqual(array, [2, 3, 4]);
   }
 
   {
     const array = [];
-    for (const value of list.getReverseIterable()) array.push(value);
+    for (const value of list.getReverseIterator()) array.push(value);
     t.deepEqual(array, [5, 4, 3, 2, 1]);
   }
 
   {
     const array = [];
-    for (const value of list.getReverseIterable(list.front.next, list.back.prev)) array.push(value);
+    for (const value of list.getReverseIterator(list.front.next, list.back.prev)) array.push(value);
     t.deepEqual(array, [4, 3, 2]);
   }
 
   {
     const array = [];
-    for (const node of list.getNodeIterable()) array.push(node.value);
+    for (const node of list.getNodeIterator()) array.push(node.value);
     t.deepEqual(array, [1, 2, 3, 4, 5]);
   }
 
   {
     const array = [];
-    for (const node of list.getNodeIterable(list.front.next, list.back.prev)) array.push(node.value);
+    for (const node of list.getNodeIterator(list.front.next, list.back.prev)) array.push(node.value);
     t.deepEqual(array, [2, 3, 4]);
   }
 
   {
     const array = [];
-    for (const node of list.getReverseNodeIterable()) array.push(node.value);
+    for (const node of list.getReverseNodeIterator()) array.push(node.value);
     t.deepEqual(array, [5, 4, 3, 2, 1]);
   }
 
   {
     const array = [];
-    for (const node of list.getReverseNodeIterable(list.front.next, list.back.prev)) array.push(node.value);
+    for (const node of list.getReverseNodeIterator(list.front.next, list.back.prev)) array.push(node.value);
     t.deepEqual(array, [4, 3, 2]);
   }
 });
