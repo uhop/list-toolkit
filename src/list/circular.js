@@ -343,7 +343,7 @@ export class CircularList {
     return mapIterator(this.getNodeIterator(from, to), node => new Ptr(this, node));
   }
 
-  getReversedNodeIterator(from, to) {
+  getReverseNodeIterator(from, to) {
     if (from && !this.isNodeLike(from)) throw new Error('"from" is not a compatible node');
     if (to && !this.isNodeLike(to)) throw new Error('"to" is not a compatible node');
 
@@ -365,8 +365,8 @@ export class CircularList {
     };
   }
 
-  getReversedPtrIterator(from, to) {
-    return mapIterator(this.getReversedNodeIterator(from, to), node => new Ptr(this, node));
+  getReversePtrIterator(from, to) {
+    return mapIterator(this.getReverseNodeIterator(from, to), node => new Ptr(this, node));
   }
 
   // meta helpers

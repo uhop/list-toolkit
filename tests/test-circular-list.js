@@ -276,13 +276,13 @@ test('CircularList iterators', t => {
 
   {
     const array = [];
-    for (const value of circularList.getReversedNodeIterator()) array.push(value.x);
+    for (const value of circularList.getReverseNodeIterator()) array.push(value.x);
     t.deepEqual(array, [3, 2, 1]);
   }
 
   {
     const array = [];
-    for (const value of circularList.getReversedNodeIterator(b, c)) array.push(value.x);
+    for (const value of circularList.getReverseNodeIterator(b, c)) array.push(value.x);
     t.deepEqual(array, [3, 2]);
   }
 });
