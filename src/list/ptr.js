@@ -1,7 +1,7 @@
 'use strict';
 
-import {HeadNode} from './list-nodes.js';
-import {pop, splice} from './list-basics.js';
+import {HeadNode} from './nodes.js';
+import {pop, splice} from './basics.js';
 
 export class Ptr {
   constructor(list, node) {

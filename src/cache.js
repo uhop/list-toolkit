@@ -19,7 +19,7 @@ export class Cache {
     const node = this.dict[key];
     if (typeof node == 'object') {
       delete this.dict[key];
-      List.pop(this.list, node);
+      this.list.remove(node);
       --this.size;
     }
     return this;

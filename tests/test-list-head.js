@@ -21,8 +21,8 @@ test('Elementary ListHead operations', t => {
 
   list.pushFront(b);
   t.notOk(list.isEmpty);
-  t.ok(b[list.head.nextName] === a);
-  t.ok(a[list.head.prevName] === b);
+  t.ok(b[list.nextName] === a);
+  t.ok(a[list.prevName] === b);
   t.equal(list.getLength(), 2);
   t.ok(list.front === b);
   t.ok(list.back === a);
@@ -52,7 +52,7 @@ test('Elementary ListHead operations', t => {
     [1]
   );
 
-  list.appendFront(ListHead.from([b, c]));
+  list.appendFront(list.makeFrom([b, c]));
   t.deepEqual(
     Array.from(list).map(value => value.x),
     [2, 3, 1]
@@ -187,7 +187,7 @@ test('ListHead with custom next/prev', t => {
   const a = {x: 1},
     b = {x: 2},
     c = {x: 3};
-  const list = new ListHead(null, {nextName: Symbol(), prevName: Symbol()});
+  const list = new ListHead({nextName: Symbol(), prevName: Symbol()});
   pushValuesFront(list, [a, b, c]);
   t.deepEqual(
     Array.from(list).map(value => value.x),
