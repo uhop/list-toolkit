@@ -20,6 +20,9 @@ export class HeadNode extends Node {
     const next = node[this.nextName];
     return (next && typeof next == 'object');
   }
+  isCompatibleNames({nextName}) {
+    return this.nextName === nextName;
+  }
   isCompatible(list) {
     return list instanceof HeadNode && this.nextName === list.nextName;
   }
@@ -44,3 +47,6 @@ export class ValueNode extends Node {
     this.value = value;
   }
 }
+
+export const CIRCULAR_SLIST_MARKER = Symbol('CIRCULAR_SLIST_MARKER');
+export const isCircularSList = list => list?.[CIRCULAR_SLIST_MARKER] === CIRCULAR_SLIST_MARKER;
