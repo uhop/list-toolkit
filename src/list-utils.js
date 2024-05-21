@@ -15,18 +15,48 @@ export const pushValuesBack = (list, values) => {
 };
 
 export const appendValuesFront = (list, values) => {
+  // TODO: if values is a compatible list, don't copy, append it directly.
+  // the same goes to other methods
   if (typeof list.appendFront == 'function') return list.appendFront(list.makeFrom(values));
   if (!Array.isArray(values)) values = Array.from(values);
   for (let i = values.length - 1; i >= 0; --i) {
     list.pushFront(values[i]);
   }
   return list;
-}
+};
 
 export const appendValuesBack = (list, values) => {
   if (typeof list.appendBack == 'function') return list.appendBack(list.makeFrom(values));
   return pushValuesBack(list, values);
-}
+};
+
+export const addValuesBefore = (ptr, values) => {
+  for (const value of values) {
+    ptr.addBefore(value);
+  }
+  return ptr;
+};
+
+export const addValuesAfter = (ptr, values) => {
+  for (const value of values) {
+    ptr.addAfter(value);
+  }
+  return ptr;
+};
+
+export const insertValuesBefore = (ptr, values) => {
+  if (typeof ptr.insertBefore == 'function') return ptr.insertBefore(ptr.list.makeFrom(values));
+  return addValuesBefore(ptr, values);
+};
+
+export const insertValuesAfter = (ptr, values) => {
+  if (typeof ptr.insertAfter == 'function') return ptr.insertAfter(ptr.list.makeFrom(values));
+  if (!Array.isArray(values)) values = Array.from(values);
+  for (let i = values.length - 1; i >= 0; --i) {
+    ptr.addAfter(values[i]);
+  }
+  return ptr;
+};
 
 export const findNodeBy = (list, condition) => {
   for (const node of list.getNodeIterator()) {
