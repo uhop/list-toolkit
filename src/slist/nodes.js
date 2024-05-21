@@ -140,6 +140,10 @@ export class CircularListBase {
     this.adoptHead(head);
   }
 
+  isCompatible(list) {
+    return list instanceof CircularListBase && this.nextName === list.nextName;
+  }
+
   get isEmpty() {
     return !this.head;
   }
@@ -195,6 +199,6 @@ export class CircularListBase {
 
 copyDescriptors(
   CircularListBase,
-  ['isNodeLike', 'isCompatible', 'isCompatibleNames', 'isRangeLike', 'normalizeNode', 'normalizeRange', 'normalizeRangePtr'],
+  ['isNodeLike', 'isCompatibleNames', 'isRangeLike', 'normalizeNode', 'normalizeRange', 'normalizeRangePtr'],
   HeadNode
 );
