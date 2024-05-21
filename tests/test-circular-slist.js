@@ -88,14 +88,16 @@ test('CircularSList', t => {
   circularList.clear(true);
   t.ok(circularList.isEmpty);
 
-  circularList.addAfter(a).insertAfter(new CircularSList(SList.from([c, b]).releaseCircularList()));
+  circularList.addAfter(a);
+  circularList.insertAfter(new CircularSList(SList.from([c, b]).releaseCircularList()));
   t.deepEqual(
     Array.from(circularList).map(value => value.x),
     [1, 2, 3]
   );
   circularList.clear(true);
 
-  circularList.addAfter(a).insertAfter(new CircularSList(SList.from([b, c]).releaseCircularList()));
+  circularList.addAfter(a);
+  circularList.insertAfter(new CircularSList(SList.from([b, c]).releaseCircularList()));
   t.deepEqual(
     Array.from(circularList).map(value => value.x),
     [1, 3, 2]
@@ -125,7 +127,9 @@ test('CircularSList', t => {
     []
   );
 
-  circularList.addAfter(a).addAfter(c).addAfter(b);
+  circularList.addAfter(a);
+  circularList.addAfter(c);
+  circularList.addAfter(b);
   t.deepEqual(
     Array.from(circularList).map(value => value.x),
     [1, 2, 3]
@@ -137,7 +141,8 @@ test('CircularSList', t => {
     [1, 3]
   );
 
-  circularList.addAfter(b).removeAfter();
+  circularList.addAfter(b);
+  circularList.removeAfter();
   t.deepEqual(
     Array.from(circularList).map(value => value.x),
     [1, 3]
@@ -168,7 +173,8 @@ test('CircularSList.extractRange() and CircularSList.removeRange()', t => {
     [2, 3]
   );
 
-  circularList.addAfter(extracted.removeAfter()).addAfter(extracted.removeAfter());
+  circularList.addAfter(extracted.removeAfter());
+  circularList.addAfter(extracted.removeAfter());
   t.deepEqual(
     Array.from(circularList).map(value => value.x),
     [1, 2, 3]
@@ -184,7 +190,8 @@ test('CircularSList.extractRange() and CircularSList.removeRange()', t => {
     [3]
   );
 
-  circularList.addAfter(a).addAfter(b);
+  circularList.addAfter(a);
+  circularList.addAfter(b);
   t.deepEqual(
     Array.from(circularList).map(value => value.x),
     [3, 2, 1]

@@ -88,14 +88,16 @@ test('CircularList', t => {
   circularList.clear(true);
   t.ok(circularList.isEmpty);
 
-  circularList.addAfter(a).insertAfter(new CircularList(List.from([c, b]).releaseCircularList()));
+  circularList.addAfter(a);
+  circularList.insertAfter(new CircularList(List.from([c, b]).releaseCircularList()));
   t.deepEqual(
     Array.from(circularList).map(value => value.x),
     [1, 3, 2]
   );
   circularList.clear(true);
 
-  circularList.addAfter(a).insertBefore(new CircularList(List.from([b, c]).releaseCircularList()));
+  circularList.addAfter(a);
+  circularList.insertBefore(new CircularList(List.from([b, c]).releaseCircularList()));
   t.deepEqual(
     Array.from(circularList).map(value => value.x),
     [1, 2, 3]
@@ -131,7 +133,9 @@ test('CircularList', t => {
     []
   );
 
-  circularList.addBefore(a).addBefore(b).addBefore(c);
+  circularList.addBefore(a);
+  circularList.addBefore(b);
+  circularList.addBefore(c);
   t.deepEqual(
     Array.from(circularList).map(value => value.x),
     [1, 2, 3]
@@ -143,7 +147,8 @@ test('CircularList', t => {
     [1, 3]
   );
 
-  circularList.addBefore(b).removeBefore();
+  circularList.addBefore(b);
+  circularList.removeBefore();
   t.deepEqual(
     Array.from(circularList).map(value => value.x),
     [1, 3]
@@ -174,7 +179,8 @@ test('CircularList.extractRange() and CircularList.removeRange()', t => {
     [2, 3]
   );
 
-  circularList.addBefore(extracted.remove()).addBefore(extracted.remove());
+  circularList.addBefore(extracted.remove());
+  circularList.addBefore(extracted.remove());
   t.deepEqual(
     Array.from(circularList).map(value => value.x),
     [1, 2, 3]
@@ -190,7 +196,8 @@ test('CircularList.extractRange() and CircularList.removeRange()', t => {
     [3]
   );
 
-  circularList.addAfter(a).addAfter(b);
+  circularList.addAfter(a);
+  circularList.addAfter(b);
   t.deepEqual(
     Array.from(circularList).map(value => value.x),
     [3, 2, 1]

@@ -16,6 +16,7 @@ export class Ptr extends PtrBase {
 
 export class CircularList extends CircularListBase {
   makePtr(node) {
+    if (node && !this.isNodeLike(node)) throw new Error('"node" is not a compatible node');
     node ||= this.head;
     return node ? new Ptr(this, node) : null;
   }
@@ -49,7 +50,7 @@ export class CircularList extends CircularListBase {
     } else {
       this.head = node;
     }
-    return this;
+    return this.makePtr(node);
   }
 
   addNodeAfter(node) {
@@ -59,7 +60,7 @@ export class CircularList extends CircularListBase {
     } else {
       this.head = node;
     }
-    return this;
+    return this.makePtr(node);
   }
 
   insertBefore(circularList) {
@@ -71,7 +72,7 @@ export class CircularList extends CircularListBase {
       circularList.head = null;
     }
 
-    return this;
+    return this.makePtr(head);
   }
 
   insertAfter(circularList) {
@@ -83,7 +84,7 @@ export class CircularList extends CircularListBase {
       circularList.head = null;
     }
 
-    return this;
+    return this.makePtr(head);
   }
 
   moveBefore(node) {
