@@ -47,3 +47,7 @@ export class ValueNode extends Node {
 
 export const CIRCULAR_LIST_MARKER = Symbol('CIRCULAR_LIST_MARKER');
 export const isCircularList = list => list?.[CIRCULAR_LIST_MARKER] === CIRCULAR_LIST_MARKER;
+
+export const isNodeLike = ({nextName, prevName}, node) => node && node[prevName] && node[nextName];
+export const isStandAlone = ({nextName, prevName}, node) => node && node[prevName] === node && node[nextName] === node;
+export const isRangeLike = (options, range) => !range || ((!range.from || isNodeLike(options, range.from)) && (!range.to || isNodeLike(options, range.to)));

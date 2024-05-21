@@ -53,6 +53,3 @@ export const append = ({nextName, prevName}, target, {from, to = from}) => {
 
   return target;
 };
-
-export const isNodeLike = ({nextName, prevName}, node) => node && node[prevName] && node[nextName];
-export const isStandAlone = ({nextName, prevName}, node) => node && node[prevName] === node && node[nextName] === node;

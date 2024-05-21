@@ -1,8 +1,8 @@
 'use strict';
 
 import {addAliases} from '../meta-utils.js';
-import {HeadNode, isCircularSList} from './nodes.js';
-import {extract, append, splice, isRangeLike} from './basics.js';
+import {HeadNode, isCircularSList, isRangeLike} from './nodes.js';
+import {extract, append, splice} from './basics.js';
 import Ptr from './ptr.js';
 
 export class SList extends HeadNode {

@@ -39,8 +39,3 @@ export const append = ({nextName}, target, {prevFrom, to = prevFrom[nextName]}) 
   to[nextName] = next;
   return target;
 };
-
-export const isNodeLike = ({nextName}, node) => node && node[nextName];
-export const isStandAlone = ({nextName}, node) => node && node[nextName] === node;
-export const isRangeLike = (options, range) =>
-  !range || ((!range.prevFrom || isNodeLike(options, range.prevFrom)) && (!range.to || isNodeLike(options, range.to)));

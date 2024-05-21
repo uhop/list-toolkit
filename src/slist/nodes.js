@@ -50,3 +50,8 @@ export class ValueNode extends Node {
 
 export const CIRCULAR_SLIST_MARKER = Symbol('CIRCULAR_SLIST_MARKER');
 export const isCircularSList = list => list?.[CIRCULAR_SLIST_MARKER] === CIRCULAR_SLIST_MARKER;
+
+export const isNodeLike = ({nextName}, node) => node && node[nextName];
+export const isStandAlone = ({nextName}, node) => node && node[nextName] === node;
+export const isRangeLike = (options, range) =>
+  !range || ((!range.prevFrom || isNodeLike(options, range.prevFrom)) && (!range.to || isNodeLike(options, range.to)));
