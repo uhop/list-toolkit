@@ -2,7 +2,7 @@
 
 import {addAliases} from '../meta-utils.js';
 import {HeadNode, isCircularSList} from './nodes.js';
-import {extract, append, splice} from './basics.js';
+import {extract, append, splice, isRangeLike} from './basics.js';
 import Ptr from './ptr.js';
 
 export class SList extends HeadNode {
@@ -64,11 +64,20 @@ export class SList extends HeadNode {
     return this;
   }
 
+  pushFrontNodeGetPtr(node) {
+    return this.pushFrontNode(node).frontPtr;
+  }
+
   pushBackNode(node) {
     node = this.adoptNode(node);
     node[this.nextName] = this;
     this.last = this.last[this.nextName] = node;
     return this;
+  }
+
+  pushBackNodeGetPtr(node) {
+    const last = this.last;
+    return this.pushBackNode(node).makePtr(last);
   }
 
   appendFront(list) {
@@ -83,6 +92,10 @@ export class SList extends HeadNode {
     return this;
   }
 
+  appendFrontGetPtr(list) {
+    return this.appendFront(list).frontPtr;
+  }
+
   appendBack(list) {
     if (!this.isCompatible(list)) throw new Error('Incompatible lists');
     if (list.isEmpty) return this;
@@ -95,10 +108,16 @@ export class SList extends HeadNode {
     return this;
   }
 
+  appendBackGetPtr(list) {
+    const last = this.last;
+    return this.appendBack(list).makePtr(last);
+  }
+
   moveToFront(ptr) {
     if (!this.isCompatible(ptr.list)) throw new Error('Incompatible lists');
     if (ptr.isHead) return this;
     const node = ptr.remove();
+    ptr.prev = this;
     return this.pushFrontNode(node);
   }
 
@@ -106,6 +125,7 @@ export class SList extends HeadNode {
     if (!this.isCompatible(ptr.list)) throw new Error('Incompatible lists');
     if (ptr.isHead) return this;
     const node = ptr.remove();
+    ptr.prev = this.last;
     return this.pushBackNode(node);
   }
 
@@ -298,9 +318,21 @@ export class SList extends HeadNode {
     return SList.from(values, this);
   }
 
+  makeFromRange(range) {
+    if (!isRangeLike(this, range)) throw new Error('"range" is not a compatible range');
+    return SList.fromRange(range, this);
+  }
+
   static from(values, options) {
     const list = new SList(options);
     for (const value of values) list.pushBack(value);
+    return list;
+  }
+
+  static fromRange(range, options) {
+    const list = new SList(options);
+    if (!isRangeLike(list, range)) throw new Error('"range" is not a compatible range');
+    if (range) splice(list, list, range);
     return list;
   }
 
