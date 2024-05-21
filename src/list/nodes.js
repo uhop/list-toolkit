@@ -51,3 +51,31 @@ export const isCircularList = list => list?.[CIRCULAR_LIST_MARKER] === CIRCULAR_
 export const isNodeLike = ({nextName, prevName}, node) => node && node[prevName] && node[nextName];
 export const isStandAlone = ({nextName, prevName}, node) => node && node[prevName] === node && node[nextName] === node;
 export const isRangeLike = (options, range) => !range || ((!range.from || isNodeLike(options, range.from)) && (!range.to || isNodeLike(options, range.to)));
+
+export class PtrBase {
+  constructor(list, node, ListClass) {
+    if (list instanceof PtrBase) {
+      this.list = list.list;
+      this.node = list.node;
+      return;
+    }
+    if (!(list instanceof ListClass)) throw new Error('"list" is not a compatible list');
+    if (node instanceof PtrBase) {
+      if (list !== node.list) throw new Error('Node specified by a pointer must belong to the same list');
+      this.list = list;
+      this.node = node.node;
+    } else {
+      this.list = list;
+      this.node = node;
+    }
+    if (this.node && !isNodeLike(this.list, this.node)) throw new Error('"node" is not a compatible node');
+  }
+  next() {
+    this.node = this.node[this.list.nextName];
+    return this;
+  }
+  prev() {
+    this.node = this.node[this.list.prevName];
+    return this;
+  }
+}

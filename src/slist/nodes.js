@@ -55,3 +55,30 @@ export const isNodeLike = ({nextName}, node) => node && node[nextName];
 export const isStandAlone = ({nextName}, node) => node && node[nextName] === node;
 export const isRangeLike = (options, range) =>
   !range || ((!range.prevFrom || isNodeLike(options, range.prevFrom)) && (!range.to || isNodeLike(options, range.to)));
+
+export class PtrBase {
+  constructor(list, prev, ListClass) {
+    if (list instanceof PtrBase) {
+      this.list = list.list;
+      this.prev = list.prev;
+      return;
+    }
+    if (!(list instanceof ListClass)) throw new Error('"list" is not a compatible list');
+    if (prev instanceof PtrBase) {
+      if (list !== prev.list) throw new Error('Node specified by a pointer must belong to the same list');
+      this.list = list;
+      this.prev = prev.prev;
+    } else {
+      this.list = list;
+      this.prev = prev;
+    }
+    if (this.prev && !isNodeLike(this.list, this.prev)) throw new Error('"prev" is not a compatible node');
+  }
+  get node() {
+    return this.prev[this.list.nextName];
+  }
+  next() {
+    this.prev = this.prev[this.list.nextName];
+    return this;
+  }
+}

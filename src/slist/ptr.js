@@ -1,35 +1,16 @@
 'use strict';
 
-import {HeadNode} from './nodes.js';
+import {HeadNode, PtrBase} from './nodes.js';
 import {splice} from './basics.js';
 
-export class Ptr {
+export class Ptr extends PtrBase {
   constructor(list, prev) {
-    if (list instanceof Ptr) {
-      this.list = list.list;
-      this.prev = list.prev;
-      return;
-    }
-    if (!(list instanceof HeadNode)) throw new Error('List must be a HeadNode');
-    if (prev instanceof Ptr) {
-      if (list !== prev.list) throw new Error('Node specified by a pointer must belong to the same list');
-      this.list = list;
-      this.prev = prev.prev;
-    } else {
-      this.list = list;
-      this.prev = prev || list;
-    }
+    super(list, prev, HeadNode);
+    this.prev ||= this.list;
   }
 
-  get node() {
-    return this.prev[this.list.nextName];
-  }
   get isHead() {
     return this.prev[this.list.nextName] === this.list;
-  }
-  next() {
-    this.prev = this.prev[this.list.nextName];
-    return this;
   }
   clone() {
     return new Ptr(this);

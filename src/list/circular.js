@@ -1,33 +1,13 @@
 'use strict';
 
-import {CIRCULAR_LIST_MARKER, HeadNode} from './nodes.js';
+import {CIRCULAR_LIST_MARKER, HeadNode, PtrBase} from './nodes.js';
 import {pop, extract, splice} from './basics.js';
 import {addAliases, copyDescriptors} from '../meta-utils.js';
 
-export class Ptr {
+export class Ptr extends PtrBase {
   constructor(list, node) {
-    if (list instanceof Ptr) {
-      this.list = list.list;
-      this.node = list.node;
-      return;
-    }
-    if (!(list instanceof CircularList)) throw new Error('List must be a CircularList');
-    if (node instanceof Ptr) {
-      if (list !== node.list) throw new Error('Node specified by a pointer must belong to the same list');
-      this.list = list;
-      this.node = node.node;
-    } else {
-      this.list = list;
-      this.node = node;
-    }
-  }
-  next() {
-    this.node = this.node[this.list.nextName];
-    return this;
-  }
-  prev() {
-    this.node = this.node[this.list.prevName];
-    return this;
+    super(list, node, CircularList);
+    this.node ||= this.list.head;
   }
   clone() {
     return new Ptr(this);
