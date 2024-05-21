@@ -14,6 +14,7 @@ export class Ptr extends PtrBase {
   }
 }
 
+// TODO: create CircularListBase, add it to nodes.js
 export class CircularList {
   constructor(head = null, {nextName = 'next', prevName = 'prev'} = {}) {
     this[CIRCULAR_LIST_MARKER] = CIRCULAR_LIST_MARKER;

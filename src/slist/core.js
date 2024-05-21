@@ -93,6 +93,7 @@ export class SList extends HeadNode {
     return this;
   }
 
+  // TODO: replace all appendXXX() methods with appendXXXGetPtr() methods everywhere
   appendFrontGetPtr(list) {
     return this.appendFront(list).frontPtr;
   }
