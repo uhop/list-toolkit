@@ -100,8 +100,7 @@ export class SList extends HeadNode {
   }
 
   removeRange(range, drop) {
-    this.extractRange(range).clear(drop);
-    return this;
+    return this.extractRange(range).clear(drop);
   }
 
   extractRange(range) {
@@ -149,7 +148,7 @@ export class SList extends HeadNode {
 
     const sortedNodes = Array.from(this.getNodeIterator()).sort(compareFn);
 
-    for (let i = 1; i < sortedNodes.length; i++) {
+    for (let i = 1; i < sortedNodes.length; ++i) {
       const prev = sortedNodes[i - 1],
         current = sortedNodes[i];
       prev[this.nextName] = current;
@@ -281,6 +280,8 @@ export class SList extends HeadNode {
     return list;
   }
 }
+
+SList.Ptr = Ptr;
 
 addAliases(SList, {
   popFrontNode: 'popFront, pop',

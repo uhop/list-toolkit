@@ -197,8 +197,4 @@ export class CircularListBase {
   }
 }
 
-copyDescriptors(
-  CircularListBase,
-  ['isNodeLike', 'isCompatibleNames', 'isRangeLike', 'normalizeNode', 'normalizeRange', 'normalizeRangePtr'],
-  HeadNode
-);
+copyDescriptors(CircularListBase, ['isNodeLike', 'isCompatibleNames', 'isRangeLike', 'normalizeNode', 'normalizeRange', 'normalizePtrRange'], HeadNode);

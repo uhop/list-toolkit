@@ -163,7 +163,7 @@ test('CircularSList.extractRange() and CircularSList.removeRange()', t => {
     [1, 2, 3]
   );
 
-  const extracted = circularList.extractRange({from: b, to: c});
+  const extracted = circularList.extractRange({from: circularList.makePtr(a), to: c});
   t.deepEqual(
     Array.from(circularList).map(value => value.x),
     [1]
@@ -184,7 +184,7 @@ test('CircularSList.extractRange() and CircularSList.removeRange()', t => {
     []
   );
 
-  circularList.removeRange({prevFrom: c, to: b}, true);
+  circularList.removeRange({from: circularList.makePtr(c), to: b}, true);
   t.deepEqual(
     Array.from(circularList).map(value => value.x),
     [3]
@@ -197,7 +197,7 @@ test('CircularSList.extractRange() and CircularSList.removeRange()', t => {
     [3, 2, 1]
   );
 
-  circularList.removeRange({prevFrom: a, to: a}, true);
+  circularList.removeRange({from: circularList.makePtr(a), to: a}, true);
   t.deepEqual(
     Array.from(circularList).map(value => value.x),
     []

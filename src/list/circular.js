@@ -151,8 +151,7 @@ export class CircularList extends CircularListBase {
   }
 
   removeRange(range, drop) {
-    this.extractRange(range).clear(drop);
-    return this;
+    return this.extractRange(range).clear(drop);
   }
 
   extractRange(range = {}) {
@@ -293,6 +292,8 @@ export class CircularList extends CircularListBase {
     return new CircularList(head, this);
   }
 }
+
+CircularList.Ptr = Ptr;
 
 copyDescriptors(CircularList, 'adoptNode, isCompatibleNames, isNodeLike', HeadNode);
 

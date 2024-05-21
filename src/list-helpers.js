@@ -73,7 +73,7 @@ export const isPtrRangeLike = (listHost, range, PtrBase) => {
 
 export const normalizePtrRange = (listHost, range, PtrBase) => {
   if (!range) return null;
-  if (!isPtrRangeLike(listHost, range, PtrBase)) throw new Error('Not a compatible range');
+  if (!isPtrRangeLike(listHost, range, PtrBase)) throw new Error('Not a compatible ptr range');
   let {from, to} = range;
   if (to instanceof PtrBase) to = to.node;
   return {...range, from, to};

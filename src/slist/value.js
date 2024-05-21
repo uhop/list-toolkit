@@ -54,6 +54,8 @@ export class ValueSList extends List {
   }
 }
 
+ValueSList.Ptr = List.Ptr;
+
 addAliases(ValueSList, {
   popFront: 'pop',
   getValueIterator: 'getIterator'

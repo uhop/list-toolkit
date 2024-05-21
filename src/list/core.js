@@ -83,8 +83,7 @@ export class List extends HeadNode {
   }
 
   removeRange(range, drop) {
-    this.extractRange(range).clear(drop);
-    return this;
+    return this.extractRange(range).clear(drop);
   }
 
   extractRange(range) {
@@ -258,6 +257,8 @@ export class List extends HeadNode {
     return list;
   }
 }
+
+List.Ptr = Ptr;
 
 addAliases(List, {
   popFrontNode: 'popFront, pop',
