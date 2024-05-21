@@ -93,12 +93,14 @@ test('Elementary List operations', t => {
   t.ok(list.isEmpty);
   t.deepEqual(Array.from(list), []);
 
-  list.appendFront(list.makeFrom([a, b, c])).removeRange({from: a, to: c}, true);
+  list.appendFront(list.makeFrom([a, b, c]));
+  list.removeRange({from: a, to: c}, true);
   t.deepEqual(Array.from(list), []);
 
   new List(a).clear(true);
 
-  list.appendFront(list.makeFrom([a, b, c])).reverse();
+  list.appendFront(list.makeFrom([a, b, c]));
+  list.reverse();
   t.deepEqual(
     Array.from(list).map(value => value.x),
     [3, 2, 1]

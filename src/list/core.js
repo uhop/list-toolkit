@@ -14,6 +14,11 @@ export class List extends HeadNode {
     return new Ptr(this, this.back);
   }
 
+  makePtr(node) {
+    if (node && !this.isNodeLike(node)) throw new Error('Not a compatible node');
+    return new Ptr(this, node || this.front);
+  }
+
   popFrontNode() {
     if (!this.isEmpty) return pop(this, this[this.nextName]).extracted;
   }
@@ -23,38 +28,31 @@ export class List extends HeadNode {
   }
 
   pushFrontNode(node) {
-    splice(this, this[this.nextName], this.adoptNode(node));
-    return this;
+    return this.makePtr(splice(this, this[this.nextName], this.adoptNode(node)));
   }
 
   pushBackNode(node) {
-    splice(this, this, this.adoptNode(node));
-    return this;
-  }
-
-  makePtr(node) {
-    if (node && !this.isNodeLike(node)) throw new Error('Not a compatible node');
-    return new Ptr(this, node || this.front);
+    return this.makePtr(splice(this, this, this.adoptNode(node)));
   }
 
   appendFront(list) {
     if (!this.isCompatible(list)) throw new Error('Incompatible lists');
     if (list.isEmpty) return this;
 
-    const head = extract(this, {from: list[this.nextName], to: list[this.prevName]}).extracted;
-    splice(this, this[this.nextName], head);
+    const head = list[this.nextName];
+    append(this, this, {from: head, to: list[this.prevName]});
 
-    return this;
+    return this.makePtr();
   }
 
   appendBack(list) {
     if (!this.isCompatible(list)) throw new Error('Incompatible lists');
     if (list.isEmpty) return this;
 
-    const head = extract(this, {from: list[this.nextName], to: list[this.prevName]}).extracted;
-    splice(this, this, head);
+    const head = list[this.nextName];
+    append(this, this[this.prevName], {from: head, to: list[this.prevName]});
 
-    return this;
+    return this.makePtr(head);
   }
 
   moveToFront(node) {

@@ -17,7 +17,10 @@ export const pushValuesBack = (list, values) => {
 export const appendValuesFront = (list, values) => {
   // TODO: if values is a compatible list, don't copy, append it directly.
   // the same goes to other methods
-  if (typeof list.appendFront == 'function') return list.appendFront(list.makeFrom(values));
+  if (typeof list.appendFront == 'function') {
+    list.appendFront(list.makeFrom(values));
+    return list;
+  }
   if (!Array.isArray(values)) values = Array.from(values);
   for (let i = values.length - 1; i >= 0; --i) {
     list.pushFront(values[i]);
@@ -26,7 +29,10 @@ export const appendValuesFront = (list, values) => {
 };
 
 export const appendValuesBack = (list, values) => {
-  if (typeof list.appendBack == 'function') return list.appendBack(list.makeFrom(values));
+  if (typeof list.appendBack == 'function') {
+    list.appendBack(list.makeFrom(values));
+    return list;
+  }
   return pushValuesBack(list, values);
 };
 

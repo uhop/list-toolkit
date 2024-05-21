@@ -15,7 +15,7 @@ export class SList extends HeadNode {
   }
 
   makePtr(prev) {
-    if (!this.isNodeLike(prev)) throw new Error('"prev" is not a compatible node');
+    if (prev && !this.isNodeLike(prev)) throw new Error('"prev" is not a compatible node');
     return new Ptr(this, prev || this);
   }
 
@@ -32,23 +32,15 @@ export class SList extends HeadNode {
     node[this.nextName] = this[this.nextName];
     this[this.nextName] = node;
     if (node[this.nextName] === this) this.last = node;
-    return this;
-  }
-
-  pushFrontNodeGetPtr(node) {
-    return this.pushFrontNode(node).frontPtr;
+    return this.makePtr();
   }
 
   pushBackNode(node) {
     node = this.adoptNode(node);
     node[this.nextName] = this;
-    this.last = this.last[this.nextName] = node;
-    return this;
-  }
-
-  pushBackNodeGetPtr(node) {
     const last = this.last;
-    return this.pushBackNode(node).makePtr(last);
+    this.last = this.last[this.nextName] = node;
+    return this.makePtr(last);
   }
 
   appendFront(list) {
@@ -60,12 +52,7 @@ export class SList extends HeadNode {
     if (list.last[this.nextName] === this) this.last = list.last;
 
     list[this.nextName] = list.last = list;
-    return this;
-  }
-
-  // TODO: replace all appendXXX() methods with appendXXXGetPtr() methods everywhere
-  appendFrontGetPtr(list) {
-    return this.appendFront(list).frontPtr;
+    return this.makePtr();
   }
 
   appendBack(list) {
@@ -74,15 +61,12 @@ export class SList extends HeadNode {
 
     this.last[this.nextName] = list[this.nextName];
     list.last[this.nextName] = this;
+
+    const last = this.last;
     this.last = list.last;
 
     list[this.nextName] = list.last = list;
-    return this;
-  }
-
-  appendBackGetPtr(list) {
-    const last = this.last;
-    return this.appendBack(list).makePtr(last);
+    return this.makePtr(last);
   }
 
   moveToFront(ptr) {

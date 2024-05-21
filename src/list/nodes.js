@@ -6,10 +6,42 @@ export const isNodeLike = ({nextName, prevName}, node) => node && node[prevName]
 export const isStandAlone = ({nextName, prevName}, node) => node && node[prevName] === node && node[nextName] === node;
 export const isCompatible = (options1, options2) => options1.nextName === options2.nextName && options1.prevName === options2.prevName;
 
-export const isRangeLike = (options, range) =>
-  !range ||
-  ((!range.from || (range.from instanceof PtrBase && isCompatible(options, range.from.list)) || isNodeLike(options, range.from)) &&
-    (!range.to || (range.to instanceof PtrBase && isCompatible(options, range.to.list)) || isNodeLike(options, range.to)));
+export const isRangeLike = (options, range) => {
+  if (!range) return true;
+  if (range.list) {
+    if (!isCompatible(options, range.list)) return false;
+    if (range.from) {
+      if (range.from instanceof PtrBase) {
+        if (range.from.list !== range.list) return false;
+      } else {
+        if (!isNodeLike(options, range.from)) return false;
+      }
+    }
+    if (range.to) {
+      if (range.to instanceof PtrBase) {
+        if (range.to.list !== range.list) return false;
+      } else {
+        if (!isNodeLike(options, range.to)) return false;
+      }
+    }
+    return true;
+  }
+  if (range.from) {
+    if (range.from instanceof PtrBase) {
+      if (!isCompatible(options, range.from.list)) return false;
+    } else {
+      if (!isNodeLike(options, range.from)) return false;
+    }
+  }
+  if (range.to) {
+    if (range.to instanceof PtrBase) {
+      if (!isCompatible(options, range.to.list)) return false;
+    } else {
+      if (!isNodeLike(options, range.to)) return false;
+    }
+  }
+  return true;
+};
 
 export class Node {
   constructor({nextName = 'next', prevName = 'prev'} = {}) {
@@ -64,7 +96,7 @@ export class HeadNode extends Node {
   }
 
   get range() {
-    return this[this.nextName] === this ? null : {from: this[this.nextName], to: this[this.prevName]};
+    return this[this.nextName] === this ? null : {from: this[this.nextName], to: this[this.prevName], list: this};
   }
 
   getLength() {
@@ -155,7 +187,7 @@ export class CircularListBase {
   }
 
   get range() {
-    return this.head ? {from: this.head, to: this.head[this.prevName]} : null;
+    return this.head ? {from: this.head, to: this.head[this.prevName], list: this.head} : null;
   }
 
   getLength() {

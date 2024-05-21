@@ -61,7 +61,8 @@ test('Elementary SList operations', t => {
   t.ok(list.isEmpty);
   t.deepEqual(Array.from(list), []);
 
-  appendValuesFront(list, [a, b, c]).removeRange({from: list.frontPtr, to: c}, true);
+  appendValuesFront(list, [a, b, c]);
+  list.removeRange({from: list.frontPtr, to: c}, true);
   t.deepEqual(
     Array.from(list).map(node => node.x),
     []
@@ -69,7 +70,8 @@ test('Elementary SList operations', t => {
 
   new SList(a).clear(true);
 
-  appendValuesFront(list, [a, b, c]).reverse();
+  appendValuesFront(list, [a, b, c]);
+  list.reverse();
   t.deepEqual(
     Array.from(list).map(value => value.x),
     [3, 2, 1]
