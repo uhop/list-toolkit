@@ -1,5 +1,17 @@
 'use strict';
 
+export const CIRCULAR_SLIST_MARKER = Symbol('CIRCULAR_SLIST_MARKER');
+export const isCircularSList = list => list?.[CIRCULAR_SLIST_MARKER] === CIRCULAR_SLIST_MARKER;
+
+export const isNodeLike = ({nextName}, node) => node && node[nextName];
+export const isStandAlone = ({nextName}, node) => node && node[nextName] === node;
+export const isCompatible = (options1, options2) => options1.nextName === options2.nextName;
+
+export const isRangeLike = (options, range) =>
+  !range ||
+  ((!range.from || (range.from instanceof PtrBase && isCompatible(options, range.from.list)) || isNodeLike(options, range.from)) &&
+    (!range.to || (range.to instanceof PtrBase && isCompatible(options, range.to.list)) || isNodeLike(options, range.to)));
+
 export class Node {
   constructor({nextName = 'next'} = {}) {
     this.nextName = nextName;
@@ -26,6 +38,9 @@ export class HeadNode extends Node {
   isCompatible(list) {
     return list instanceof HeadNode && this.nextName === list.nextName;
   }
+  isRangeLike(range) {
+    return isRangeLike(this, range);
+  }
   adoptNode(node) {
     if (node[this.nextName]) {
       if (node[this.nextName] === node) return node;
@@ -47,13 +62,6 @@ export class ValueNode extends Node {
     this.value = value;
   }
 }
-
-export const CIRCULAR_SLIST_MARKER = Symbol('CIRCULAR_SLIST_MARKER');
-export const isCircularSList = list => list?.[CIRCULAR_SLIST_MARKER] === CIRCULAR_SLIST_MARKER;
-
-export const isNodeLike = ({nextName}, node) => node && node[nextName];
-export const isStandAlone = ({nextName}, node) => node && node[nextName] === node;
-export const isCompatible = (options1, options2) => options1.nextName === options2.nextName;
 
 export class PtrBase {
   constructor(list, prev, ListClass) {
@@ -81,8 +89,3 @@ export class PtrBase {
     return this;
   }
 }
-
-export const isRangeLike = (options, range) =>
-  !range ||
-  ((!range.from || (range.from instanceof PtrBase && isCompatible(options, range.from.list)) || isNodeLike(options, range.from)) &&
-    (!range.to || (range.to instanceof PtrBase && isCompatible(options, range.to.list)) || isNodeLike(options, range.to)));

@@ -1,5 +1,17 @@
 'use strict';
 
+export const CIRCULAR_LIST_MARKER = Symbol('CIRCULAR_LIST_MARKER');
+export const isCircularList = list => list?.[CIRCULAR_LIST_MARKER] === CIRCULAR_LIST_MARKER;
+
+export const isNodeLike = ({nextName, prevName}, node) => node && node[prevName] && node[nextName];
+export const isStandAlone = ({nextName, prevName}, node) => node && node[prevName] === node && node[nextName] === node;
+export const isCompatible = (options1, options2) => options1.nextName === options2.nextName && options1.prevName === options2.prevName;
+
+export const isRangeLike = (options, range) =>
+  !range ||
+  ((!range.from || (range.from instanceof PtrBase && isCompatible(options, range.from.list)) || isNodeLike(options, range.from)) &&
+    (!range.to || (range.to instanceof PtrBase && isCompatible(options, range.to.list)) || isNodeLike(options, range.to)));
+
 export class Node {
   constructor({nextName = 'next', prevName = 'prev'} = {}) {
     this.nextName = nextName;
@@ -28,6 +40,10 @@ export class HeadNode extends Node {
     return list instanceof HeadNode && this.nextName === list.nextName && this.prevName === list.prevName;
   }
 
+  isRangeLike(range) {
+    return isRangeLike(this, range);
+  }
+
   adoptNode(node) {
     if (node[this.nextName] || node[this.prevName]) {
       if (node[this.nextName] === node && node[this.prevName] === node) return node;
@@ -44,13 +60,6 @@ export class ValueNode extends Node {
     this.value = value;
   }
 }
-
-export const CIRCULAR_LIST_MARKER = Symbol('CIRCULAR_LIST_MARKER');
-export const isCircularList = list => list?.[CIRCULAR_LIST_MARKER] === CIRCULAR_LIST_MARKER;
-
-export const isNodeLike = ({nextName, prevName}, node) => node && node[prevName] && node[nextName];
-export const isStandAlone = ({nextName, prevName}, node) => node && node[prevName] === node && node[nextName] === node;
-export const isCompatible = (options1, options2) => options1.nextName === options2.nextName && options1.prevName === options2.prevName;
 
 export class PtrBase {
   constructor(list, node, ListClass) {
@@ -79,8 +88,3 @@ export class PtrBase {
     return this;
   }
 }
-
-export const isRangeLike = (options, range) =>
-  !range ||
-  ((!range.from || (range.from instanceof PtrBase && isCompatible(options, range.from.list)) || isNodeLike(options, range.from)) &&
-    (!range.to || (range.to instanceof PtrBase && isCompatible(options, range.to.list)) || isNodeLike(options, range.to)));

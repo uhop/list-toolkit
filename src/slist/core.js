@@ -1,7 +1,7 @@
 'use strict';
 
 import {addAliases} from '../meta-utils.js';
-import {HeadNode, isCircularSList, isRangeLike} from './nodes.js';
+import {HeadNode, isCircularSList} from './nodes.js';
 import {extract, append, splice} from './basics.js';
 import Ptr from './ptr.js';
 
@@ -45,6 +45,7 @@ export class SList extends HeadNode {
   }
 
   makePtr(prev) {
+    if (!this.isNodeLike(prev)) throw new Error('"prev" is not a compatible node');
     return new Ptr(this, prev || this);
   }
 
@@ -319,7 +320,6 @@ export class SList extends HeadNode {
   }
 
   makeFromRange(range) {
-    if (!isRangeLike(this, range)) throw new Error('"range" is not a compatible range');
     return SList.fromRange(range, this);
   }
 
@@ -331,7 +331,7 @@ export class SList extends HeadNode {
 
   static fromRange(range, options) {
     const list = new SList(options);
-    if (!isRangeLike(list, range)) throw new Error('"range" is not a compatible range');
+    if (!list.isRangeLike(list)) throw new Error('"range" is not a compatible range');
     if (range) splice(list, list, range);
     return list;
   }

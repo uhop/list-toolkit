@@ -308,9 +308,20 @@ export class List extends HeadNode {
     return List.from(values, this);
   }
 
+  makeFromRange(range) {
+    return List.fromRange(range, this);
+  }
+
   static from(values, options) {
     const list = new List(options);
     for (const value of values) list.pushBack(value);
+    return list;
+  }
+
+  static fromRange(range, options) {
+    const list = new List(options);
+    if (!list.isRangeLike(range)) throw new Error('"range" is not a compatible range');
+    if (range) append(list, list, range);
     return list;
   }
 
