@@ -1,47 +1,17 @@
 'use strict';
 
 import {addAliases} from '../meta-utils.js';
-import {HeadNode, isCircularSList} from './nodes.js';
+import {CircularListBase, HeadNode} from './nodes.js';
 import {extract, append, splice} from './basics.js';
 import Ptr from './ptr.js';
 
 export class SList extends HeadNode {
-  get isEmpty() {
-    return this[this.nextName] === this;
-  }
-
-  get isOne() {
-    return this[this.nextName] !== this && this[this.nextName][this.nextName] === this;
-  }
-
-  get isOneOrEmpty() {
-    return this[this.nextName][this.nextName] === this;
-  }
-
-  get front() {
-    return this[this.nextName];
-  }
-
-  get back() {
-    return this.last;
-  }
-
-  get range() {
-    return this[this.nextName] === this ? null : {prevFrom: this, to: this.last};
-  }
-
   get frontPtr() {
     return new Ptr(this, this);
   }
 
   get rangePtr() {
     return this.isEmpty ? null : {prevFrom: new Ptr(this), to: this.last};
-  }
-
-  getLength() {
-    let n = 0;
-    for (let p = this[this.nextName]; p !== this; ++n, p = p[this.nextName]);
-    return n;
   }
 
   makePtr(prev) {
@@ -338,7 +308,7 @@ export class SList extends HeadNode {
   }
 
   static fromCircularList(circularList) {
-    if (!isCircularSList(circularList)) throw new Error('Not a circular list');
+    if (!(circularList instanceof CircularListBase)) throw new Error('Not a circular list');
 
     const list = new SList(circularList);
     if (circularList.isEmpty) return list;

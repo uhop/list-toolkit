@@ -1,35 +1,11 @@
 'use strict';
 
-import {HeadNode, isCircularList} from './nodes.js';
+import {CircularListBase, HeadNode} from './nodes.js';
 import {pop, extract, splice, append} from './basics.js';
 import Ptr from './ptr.js';
 import {addAliases, mapIterator} from '../meta-utils.js';
 
 export class List extends HeadNode {
-  get isEmpty() {
-    return this[this.nextName] === this;
-  }
-
-  get isOne() {
-    return this[this.nextName] !== this && this[this.nextName][this.nextName] === this;
-  }
-
-  get isOneOrEmpty() {
-    return this[this.nextName][this.nextName] === this;
-  }
-
-  get front() {
-    return this[this.nextName];
-  }
-
-  get back() {
-    return this[this.prevName];
-  }
-
-  get range() {
-    return this[this.nextName] === this ? null : {from: this[this.nextName], to: this[this.prevName]};
-  }
-
   get frontPtr() {
     return new Ptr(this, this.front);
   }
@@ -54,13 +30,6 @@ export class List extends HeadNode {
   pushBackNode(node) {
     splice(this, this, this.adoptNode(node));
     return this;
-  }
-
-  getLength() {
-    let n = 0;
-    const nextName = this.nextName;
-    for (let p = this[nextName]; p !== this; ++n, p = p[nextName]);
-    return n;
   }
 
   makePtr(node) {
@@ -326,7 +295,7 @@ export class List extends HeadNode {
   }
 
   static fromCircularList(circularList) {
-    if (!isCircularList(circularList)) throw new Error('Not a circular list');
+    if (!(circularList instanceof CircularListBase)) throw new Error('Not a circular list');
 
     const list = new List(circularList);
     if (circularList.isEmpty) return list;

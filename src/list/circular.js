@@ -1,6 +1,6 @@
 'use strict';
 
-import {CIRCULAR_LIST_MARKER, HeadNode, PtrBase} from './nodes.js';
+import {CircularListBase, HeadNode, PtrBase} from './nodes.js';
 import {pop, extract, splice} from './basics.js';
 import {addAliases, copyDescriptors} from '../meta-utils.js';
 
@@ -14,79 +14,13 @@ export class Ptr extends PtrBase {
   }
 }
 
-// TODO: create CircularListBase, add it to nodes.js
-export class CircularList {
-  constructor(head = null, {nextName = 'next', prevName = 'prev'} = {}) {
-    this[CIRCULAR_LIST_MARKER] = CIRCULAR_LIST_MARKER;
-    if (head instanceof CircularList) {
-      this.nextName = head.nextName;
-      this.prevName = head.prevName;
-      this.adoptHead(head.head);
-      return;
-    }
-    this.nextName = nextName;
-    this.prevName = prevName;
-    this.adoptHead(head);
-  }
-
-  get isEmpty() {
-    return !this.head;
-  }
-
-  get isOne() {
-    return this.head && this.head[this.nextName] === this.head;
-  }
-
-  get isOneOrEmpty() {
-    return !this.head || this.head[this.nextName] === this.head;
-  }
-
-  get front() {
-    return this.head;
-  }
-
-  get back() {
-    return this.head?.[this.prevName];
-  }
-
-  get range() {
-    return this.head ? {from: this.head, to: this.head[this.prevName]} : null;
-  }
-
+export class CircularList extends CircularListBase {
   makePtr(node) {
     node ||= this.head;
     return node ? new Ptr(this, node) : null;
   }
 
-  getLength() {
-    if (!this.head) return 0;
-
-    let n = 0,
-      current = this.head;
-    do {
-      current = current[this.nextName];
-      ++n;
-    } while (current !== this.head);
-
-    return n;
-  }
-
-  adoptHead(head) {
-    if (head && !this.isNodeLike(head)) throw new Error('"head" is not a compatible node');
-    this.head = head;
-  }
-
   // Ptr API
-
-  next() {
-    if (this.head) this.head = this.head[this.nextName];
-    return this;
-  }
-
-  prev() {
-    if (this.head) this.head = this.head[this.prevName];
-    return this;
-  }
 
   remove() {
     if (!this.head) return null;

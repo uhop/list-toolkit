@@ -1,6 +1,6 @@
 'use strict';
 
-import {CIRCULAR_SLIST_MARKER, HeadNode, PtrBase} from './nodes.js';
+import {CircularListBase, HeadNode, PtrBase} from './nodes.js';
 import {pop, extract, splice} from './basics.js';
 import {addAliases, copyDescriptors, mapIterator} from '../meta-utils.js';
 
@@ -14,76 +14,13 @@ export class Ptr extends PtrBase {
   }
 }
 
-export class CircularSList {
-  constructor(head = null, {nextName = 'next'} = {}) {
-    this[CIRCULAR_SLIST_MARKER] = CIRCULAR_SLIST_MARKER;
-    if (head instanceof CircularSList) {
-      this.nextName = head.nextName;
-      this.adoptHead(head.head);
-      return;
-    }
-    this.nextName = nextName;
-    this.adoptHead(head);
-  }
-
-  get isEmpty() {
-    return !this.head;
-  }
-
-  get isOne() {
-    return this.head && this.head[this.nextName] === this.head;
-  }
-
-  get isOneOrEmpty() {
-    return !this.head || this.head[this.nextName] === this.head;
-  }
-
-  get front() {
-    return this.head;
-  }
-
-  get range() {
-    return this.head ? {prevFrom: this.head, to: this.head} : null;
-  }
-
+export class CircularSList extends CircularListBase {
   makePtr(prev) {
     prev ||= this.head;
     return prev ? new Ptr(this, prev) : null;
   }
 
-  getLength() {
-    if (!this.head) return 0;
-
-    let n = 0,
-      current = this.head;
-    do {
-      current = current[this.nextName];
-      ++n;
-    } while (current !== this.head);
-
-    return n;
-  }
-
-  getBack() {
-    if (!this.head) return null;
-    let current = this.head;
-    do {
-      current = current[this.nextName];
-    } while (current !== this.head);
-    return current;
-  }
-
-  adoptHead(head) {
-    if (head && !this.isNodeLike(head)) throw new Error('"head" is not a compatible node');
-    this.head = head;
-  }
-
   // Ptr API
-
-  next() {
-    if (this.head) this.head = this.head[this.nextName];
-    return this;
-  }
 
   removeNodeAfter() {
     return this.head ? this.removeNode(this.head) : null;

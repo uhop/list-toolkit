@@ -1,7 +1,6 @@
 'use strict';
 
-export const CIRCULAR_SLIST_MARKER = Symbol('CIRCULAR_SLIST_MARKER');
-export const isCircularSList = list => list?.[CIRCULAR_SLIST_MARKER] === CIRCULAR_SLIST_MARKER;
+import {copyDescriptors} from '../meta-utils.js';
 
 export const isNodeLike = ({nextName}, node) => node && node[nextName];
 export const isStandAlone = ({nextName}, node) => node && node[nextName] === node;
@@ -30,7 +29,7 @@ export class HeadNode extends Node {
   isNodeLike(node) {
     if (!node) return false;
     const next = node[this.nextName];
-    return (next && typeof next == 'object');
+    return next && typeof next == 'object';
   }
   isCompatibleNames({nextName}) {
     return this.nextName === nextName;
@@ -41,6 +40,37 @@ export class HeadNode extends Node {
   isRangeLike(range) {
     return isRangeLike(this, range);
   }
+
+  get isEmpty() {
+    return this[this.nextName] === this;
+  }
+
+  get isOne() {
+    return this[this.nextName] !== this && this[this.nextName][this.nextName] === this;
+  }
+
+  get isOneOrEmpty() {
+    return this[this.nextName][this.nextName] === this;
+  }
+
+  get front() {
+    return this[this.nextName];
+  }
+
+  get back() {
+    return this.last;
+  }
+
+  get range() {
+    return this[this.nextName] === this ? null : {prevFrom: this, to: this.last};
+  }
+
+  getLength() {
+    let n = 0;
+    for (let p = this[this.nextName]; p !== this; ++n, p = p[this.nextName]);
+    return n;
+  }
+
   adoptNode(node) {
     if (node[this.nextName]) {
       if (node[this.nextName] === node) return node;
@@ -89,3 +119,69 @@ export class PtrBase {
     return this;
   }
 }
+
+export class CircularListBase {
+  constructor(head = null, {nextName = 'next'} = {}) {
+    if (head instanceof CircularListBase) {
+      this.nextName = head.nextName;
+      this.adoptHead(head.head);
+      return;
+    }
+    this.nextName = nextName;
+    this.adoptHead(head);
+  }
+
+  get isEmpty() {
+    return !this.head;
+  }
+
+  get isOne() {
+    return this.head && this.head[this.nextName] === this.head;
+  }
+
+  get isOneOrEmpty() {
+    return !this.head || this.head[this.nextName] === this.head;
+  }
+
+  get front() {
+    return this.head;
+  }
+
+  get range() {
+    return this.head ? {prevFrom: this.head, to: this.head} : null;
+  }
+
+  getLength() {
+    if (!this.head) return 0;
+
+    let n = 0,
+      current = this.head;
+    do {
+      current = current[this.nextName];
+      ++n;
+    } while (current !== this.head);
+
+    return n;
+  }
+
+  getBack() {
+    if (!this.head) return null;
+    let current = this.head;
+    do {
+      current = current[this.nextName];
+    } while (current !== this.head);
+    return current;
+  }
+
+  adoptHead(head) {
+    if (head && !this.isNodeLike(head)) throw new Error('"head" is not a compatible node');
+    this.head = head;
+  }
+
+  next() {
+    if (this.head) this.head = this.head[this.nextName];
+    return this;
+  }
+}
+
+copyDescriptors(CircularListBase, 'isNodeLike, isCompatible, isCompatibleNames, isRangeLike', HeadNode);
