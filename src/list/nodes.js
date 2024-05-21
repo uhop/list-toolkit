@@ -50,7 +50,7 @@ export const isCircularList = list => list?.[CIRCULAR_LIST_MARKER] === CIRCULAR_
 
 export const isNodeLike = ({nextName, prevName}, node) => node && node[prevName] && node[nextName];
 export const isStandAlone = ({nextName, prevName}, node) => node && node[prevName] === node && node[nextName] === node;
-export const isRangeLike = (options, range) => !range || ((!range.from || isNodeLike(options, range.from)) && (!range.to || isNodeLike(options, range.to)));
+export const isCompatible = (options1, options2) => options1.nextName === options2.nextName && options1.prevName === options2.prevName;
 
 export class PtrBase {
   constructor(list, node, ListClass) {
@@ -79,3 +79,8 @@ export class PtrBase {
     return this;
   }
 }
+
+export const isRangeLike = (options, range) =>
+  !range ||
+  ((!range.from || (range.from instanceof PtrBase && isCompatible(options, range.from.list)) || isNodeLike(options, range.from)) &&
+    (!range.to || (range.to instanceof PtrBase && isCompatible(options, range.to.list)) || isNodeLike(options, range.to)));
