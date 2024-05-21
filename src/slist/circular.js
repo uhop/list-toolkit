@@ -99,18 +99,20 @@ export class CircularSList extends CircularListBase {
   }
 
   removeRange(range, drop) {
-    this.extractRange(range).clear(drop);
-    return this;
+    return this.extractRange(range).clear(drop);
   }
 
   extractRange(range = {}) {
-    const {prevFrom = this.head, to = prevFrom} = range;
-    if (!this.isNodeLike(prevFrom) || !this.isNodeLike(to)) throw new Error('"range" is not a compatible node range');
-    const extracted = this.make();
+    range = this.normalizePtrRange(range.from ? range : {...range, from: this.makePtr()});
+    range.to ||= this.head;
+
+    const {from: {prev: prevFrom}, to} = range,
+      extracted = this.make();
     if (!this.head) return extracted;
     if (this.head === prevFrom[this.nextName] || this.head === to) this.head = to[this.nextName];
     if (this.head === prevFrom[this.nextName]) this.head = null;
     extracted.head = extract(this, {prevFrom, to}).extracted.prevFrom[this.nextName];
+
     return extracted;
   }
 
@@ -227,6 +229,8 @@ export class CircularSList extends CircularListBase {
     return new CircularSList(head, this);
   }
 }
+
+CircularSList.Ptr = Ptr;
 
 copyDescriptors(CircularSList, 'adoptNode, isCompatibleNames, isNodeLike', HeadNode);
 
