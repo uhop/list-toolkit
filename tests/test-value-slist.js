@@ -67,7 +67,7 @@ test('ValueSList.remove()', t => {
   const list = ValueSList.from([1, 2, 3, 4, 5]);
   const ptr = list.frontPtr;
   ptr.next();
-  list.removeRange({from: ptr});
+  list.removeRange({from: ptr, to: ptr});
   t.deepEqual(Array.from(list), [1, 3, 4, 5]);
   ptr.remove();
   t.deepEqual(Array.from(list), [1, 4, 5]);

@@ -1,7 +1,7 @@
 'use strict';
 
 import {CircularListBase, HeadNode} from './nodes.js';
-import {pop, extract, splice, append} from './basics.js';
+import {pop, splice, append} from './basics.js';
 import Ptr from './ptr.js';
 import {addAliases, mapIterator} from '../meta-utils.js';
 
@@ -15,7 +15,6 @@ export class List extends HeadNode {
   }
 
   makePtr(node) {
-    if (node && !this.isNodeLike(node)) throw new Error('Not a compatible node');
     return new Ptr(this, node || this.front);
   }
 
@@ -56,30 +55,16 @@ export class List extends HeadNode {
   }
 
   moveToFront(node) {
-    if (node instanceof Ptr) {
-      if (!this.isCompatible(node.list)) throw new Error('Incompatible lists');
-      node = node.node;
-    } else {
-      if (!this.isNodeLike(node)) throw new Error('Not a compatible node');
-    }
-
+    node = this.normalizeNode(node);
     if (this[this.nextName] === node) return this;
     splice(this, this[this.nextName], pop(this, node).extracted);
-
     return this;
   }
 
   moveToBack(node) {
-    if (node instanceof Ptr) {
-      if (!this.isCompatible(node.list)) throw new Error('Incompatible lists');
-      node = node.node;
-    } else {
-      if (!this.isNodeLike(node)) throw new Error('Not a compatible node');
-    }
-
+    node = this.normalizeNode(node);
     if (this[this.prevName] === node) return this;
     splice(this, this, pop(this, node).extracted);
-
     return this;
   }
 
@@ -93,13 +78,7 @@ export class List extends HeadNode {
   }
 
   removeNode(node) {
-    if (node instanceof Ptr) {
-      if (!this.isCompatible(node.list)) throw new Error('Incompatible lists');
-      node = node.node;
-    } else {
-      if (!this.isNodeLike(node)) throw new Error('Not a compatible node');
-    }
-    pop(this, node);
+    pop(this, this.normalizeNode(node));
     return this;
   }
 
@@ -108,19 +87,11 @@ export class List extends HeadNode {
     return this;
   }
 
-  extractRange({from, to = from} = {}) {
-    if (from instanceof Ptr) {
-      if (to instanceof Ptr) {
-        if (from.list !== to.list) throw new Error('Range specified by pointers must belong to the same list');
-        to = to.node;
-      }
-      from = from.node;
-    } else {
-      if (to instanceof Ptr) to = to.node;
-    }
-    if (!this.isNodeLike(from)) throw new Error('"from" is not a compatible node');
-    if (!this.isNodeLike(to)) throw new Error('"to" is not a compatible node');
-    return append(this, this.make(), {from, to});
+  extractRange(range) {
+    range = this.normalizeRange(range);
+    range.from ||= this.front;
+    range.to ||= this.back;
+    return append(this, this.make(), range);
   }
 
   extractBy(condition) {
@@ -171,7 +142,7 @@ export class List extends HeadNode {
     return this;
   }
 
-  releaseCircularList() {
+  releaseRawCircularList() {
     return this.isEmpty ? null : pop(this, this).rest;
   }
 
@@ -191,19 +162,9 @@ export class List extends HeadNode {
     };
   }
 
-  getNodeIterator({from, to} = {}) {
-    if (from instanceof Ptr) {
-      if (to instanceof Ptr) {
-        if (from.list !== to.list) throw new Error('Range specified by pointers must belong to the same list');
-        to = to.node;
-      }
-      from = from.node;
-    } else {
-      if (to instanceof Ptr) to = to.node;
-    }
-    if (from && !this.isNodeLike(from)) throw new Error('"from" is not a compatible node');
-    if (to && !this.isNodeLike(to)) throw new Error('"to" is not a compatible node');
-
+  getNodeIterator(range = {}) {
+    range = this.normalizeRange(range);
+    const {from, to} = range;
     return {
       [Symbol.iterator]: () => {
         let current = from || this[this.nextName],
@@ -226,19 +187,9 @@ export class List extends HeadNode {
     return mapIterator(this.getNodeIterator(range), node => new Ptr(this, node));
   }
 
-  getReverseNodeIterator({from, to} = {}) {
-    if (from instanceof Ptr) {
-      if (to instanceof Ptr) {
-        if (from.list !== to.list) throw new Error('Range specified by pointers must belong to the same list');
-        to = to.node;
-      }
-      from = from.node;
-    } else {
-      if (to instanceof Ptr) to = to.node;
-    }
-    if (from && !this.isNodeLike(from)) throw new Error('"from" is not a compatible node');
-    if (to && !this.isNodeLike(to)) throw new Error('"to" is not a compatible node');
-
+  getReverseNodeIterator(range = {}) {
+    range = this.normalizeRange(range);
+    const {from, to} = range;
     return {
       [Symbol.iterator]: () => {
         let current = to || this[this.prevName],
@@ -287,9 +238,12 @@ export class List extends HeadNode {
 
   static fromRange(range, options) {
     const list = new List(options);
-    if (!list.isRangeLike(range)) throw new Error('"range" is not a compatible range');
-    if (range) append(list, list, range);
-    return list;
+    if (!range) return list;
+
+    range = list.normalizeRange(range);
+    if (!range.from || !range.to) throw new Error('"range" should be fully specified');
+
+    return append(list, list, range);
   }
 
   static fromCircularList(circularList) {

@@ -18,7 +18,7 @@ test('CircularList', t => {
 
   const list = List.from([a, b, c]);
 
-  circularList.adoptHead(list.releaseCircularList());
+  circularList.adoptHead(list.releaseRawCircularList());
   t.ok(list.isEmpty);
   t.notOk(circularList.isEmpty);
   t.equal(circularList.getLength(), 3);
@@ -89,7 +89,7 @@ test('CircularList', t => {
   t.ok(circularList.isEmpty);
 
   circularList.addAfter(a);
-  circularList.insertAfter(new CircularList(List.from([c, b]).releaseCircularList()));
+  circularList.insertAfter(new CircularList(List.from([c, b]).releaseRawCircularList()));
   t.deepEqual(
     Array.from(circularList).map(value => value.x),
     [1, 3, 2]
@@ -97,7 +97,7 @@ test('CircularList', t => {
   circularList.clear(true);
 
   circularList.addAfter(a);
-  circularList.insertBefore(new CircularList(List.from([b, c]).releaseCircularList()));
+  circularList.insertBefore(new CircularList(List.from([b, c]).releaseRawCircularList()));
   t.deepEqual(
     Array.from(circularList).map(value => value.x),
     [1, 2, 3]
@@ -162,7 +162,7 @@ test('CircularList.extractRange() and CircularList.removeRange()', t => {
 
   const options = {nextName: Symbol(), prevName: Symbol()},
     list = List.from([a, b, c], options),
-    circularList = new CircularList(list.releaseCircularList(), list);
+    circularList = new CircularList(list.releaseRawCircularList(), list);
 
   t.deepEqual(
     Array.from(circularList).map(value => value.x),
@@ -216,7 +216,7 @@ test('CircularList.extractBy()', t => {
     c = {x: 3};
 
   const list = List.from([a, b, c]),
-    circularList = new CircularList(list.releaseCircularList(), list);
+    circularList = new CircularList(list.releaseRawCircularList(), list);
 
   const extracted = circularList.extractBy(value => value.x > 1);
   t.deepEqual(
@@ -246,7 +246,7 @@ test('CircularList.reverse() and CircularList.sort()', t => {
     c = {x: 3};
 
   const list = List.from([a, b, c]),
-    circularList = new CircularList(list.releaseCircularList(), list);
+    circularList = new CircularList(list.releaseRawCircularList(), list);
 
   circularList.reverse();
   t.deepEqual(
@@ -267,7 +267,7 @@ test('CircularList iterators', t => {
     c = {x: 3};
 
   const list = List.from([a, b, c]),
-    circularList = new CircularList(list.releaseCircularList(), list);
+    circularList = new CircularList(list.releaseRawCircularList(), list);
 
   {
     const array = [];

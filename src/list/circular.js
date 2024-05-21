@@ -16,7 +16,6 @@ export class Ptr extends PtrBase {
 
 export class CircularList extends CircularListBase {
   makePtr(node) {
-    if (node && !this.isNodeLike(node)) throw new Error('"node" is not a compatible node');
     node ||= this.head;
     return node ? new Ptr(this, node) : null;
   }
@@ -88,7 +87,7 @@ export class CircularList extends CircularListBase {
   }
 
   moveBefore(node) {
-    if (!this.isNodeLike(node)) throw new Error('"node" is not a compatible node');
+    node = this.normalizeNode(node);
 
     if (this.head === node) {
       this.head = this.head[this.nextName];
@@ -106,7 +105,7 @@ export class CircularList extends CircularListBase {
   }
 
   moveAfter(node) {
-    if (!this.isNodeLike(node)) throw new Error('"node" is not a compatible node');
+    node = this.normalizeNode(node);
 
     if (this.head === node) {
       this.head = this.head[this.prevName];
@@ -137,7 +136,8 @@ export class CircularList extends CircularListBase {
 
   removeNode(node) {
     if (!this.head) return null;
-    if (!this.isNodeLike(node)) throw new Error('"node" is not a compatible node');
+
+    node = this.normalizeNode(node);
 
     if (this.head === node) {
       if (this.head[this.nextName] === this.head) {
@@ -156,15 +156,15 @@ export class CircularList extends CircularListBase {
   }
 
   extractRange(range = {}) {
+    range = this.normalizeRange(range);
     const {from = this.head, to = from} = range;
-    if (from && !this.isNodeLike(from)) throw new Error('"from" is not a compatible node');
-    if (to && !this.isNodeLike(to)) throw new Error('"to" is not a compatible node');
 
     const extracted = this.make();
     if (!this.head) return extracted;
     if (this.head === from || this.head === to) this.head = to[this.nextName];
     if (this.head === from) this.head = null;
     extracted.head = extract(this, {from, to}).extracted;
+
     return extracted;
   }
 
@@ -233,10 +233,9 @@ export class CircularList extends CircularListBase {
     };
   }
 
-  getNodeIterator({from, to} = {}) {
-    if (from && !this.isNodeLike(from)) throw new Error('"from" is not a compatible node');
-    if (to && !this.isNodeLike(to)) throw new Error('"to" is not a compatible node');
-
+  getNodeIterator(range = {}) {
+    range = this.normalizeRange(range);
+    const {from, to} = range;
     return {
       [Symbol.iterator]: () => {
         let readyToStop = this.isEmpty,
@@ -259,10 +258,9 @@ export class CircularList extends CircularListBase {
     return mapIterator(this.getNodeIterator(range), node => new Ptr(this, node));
   }
 
-  getReverseNodeIterator({from, to} = {}) {
-    if (from && !this.isNodeLike(from)) throw new Error('"from" is not a compatible node');
-    if (to && !this.isNodeLike(to)) throw new Error('"to" is not a compatible node');
-
+  getReverseNodeIterator(range = {}) {
+    range = this.normalizeRange(range);
+    const {from, to} = range;
     return {
       [Symbol.iterator]: () => {
         let readyToStop = this.isEmpty,

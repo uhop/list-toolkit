@@ -11,7 +11,7 @@ export class SList extends HeadNode {
   }
 
   get rangePtr() {
-    return this.isEmpty ? null : {prevFrom: new Ptr(this), to: this.last};
+    return this.isEmpty ? null : {from: new Ptr(this), to: this.last};
   }
 
   makePtr(prev) {
@@ -104,23 +104,13 @@ export class SList extends HeadNode {
     return this;
   }
 
-  extractRange({from, to = from} = {}) {
-    const fromPtr = from;
-    if (!(fromPtr instanceof Ptr)) throw new Error('"from" is not a compatible pointer');
-    if (!this.isCompatible(fromPtr.list)) throw new Error('Incompatible "fromPtr" list');
-    if (to instanceof Ptr) {
-      if (!this.isCompatible(to.list)) throw new Error('Incompatible "to" list');
-      if (fromPtr.list !== to.list) throw new Error('Range specified by pointers must belong to the same list');
-      to = to.node;
-    } else {
-      if (!this.isNodeLike(to)) throw new Error('"to" is not a compatible node');
-    }
-
-    if (this.last === to) this.last = fromPtr.prev;
+  extractRange(range) {
+    range = this.normalizePtrRange(range.from ? range : {...range, from: this.frontPtr});
+    range.to ||= this.last;
 
     const extracted = this.make();
-    append(this, extracted, {prevFrom: fromPtr.prev, to});
-    extracted.last = to;
+    append(this, extracted, {prevFrom: range.from.prev, to: range.to});
+    extracted.last = range.to;
 
     return extracted;
   }
@@ -175,13 +165,15 @@ export class SList extends HeadNode {
     return this;
   }
 
-  releaseCircularListAsRange() {
-    const range = this.range;
-    return range ? extract(this, range).extracted : null;
+  releaseAsPtrRange() {
+    const range = this.rangePtr;
+    if (!range) return null;
+    const rawRange = extract(this, {prevFrom: range.from.prev, to: range.to}).extracted;
+    return {from: new Ptr(this, rawRange.prevFrom), to: rawRange.to};
   }
 
-  releaseCircularList() {
-    return this.releaseCircularListAsRange()?.prevFrom[this.nextName];
+  releaseRawCircularList() {
+    return this.releaseAsPtrRange()?.from.node;
   }
 
   // iterators
@@ -200,19 +192,9 @@ export class SList extends HeadNode {
     };
   }
 
-  getNodeIterator({from, to} = {}) {
-    if (from instanceof Ptr) {
-      if (to instanceof Ptr) {
-        if (from.list !== to.list) throw new Error('Range specified by pointers must belong to the same list');
-        to = to.node;
-      }
-      from = from.node;
-    } else {
-      if (to instanceof Ptr) to = to.node;
-    }
-    if (from && !this.isNodeLike(from)) throw new Error('"from" is not a compatible node');
-    if (to && !this.isNodeLike(to)) throw new Error('"to" is not a compatible node');
-
+  getNodeIterator(range = {}) {
+    range = this.normalizeRange(range);
+    const {from, to} = range;
     return {
       [Symbol.iterator]: () => {
         let current = from || this[this.nextName],
@@ -231,17 +213,10 @@ export class SList extends HeadNode {
     };
   }
 
-  getPtrIterator({from, to} = {}) {
-    const fromPtr = from || this.frontPtr;
-    if (!(fromPtr instanceof Ptr)) throw new Error('"fromPtr" is not a compatible pointer');
-    if (!this.isCompatible(fromPtr.list)) throw new Error('"fromPtr" is not compatible with this list');
-
-    if (to instanceof Ptr) {
-      if (fromPtr.list !== to.list) throw new Error('Range specified by pointers must belong to the same list');
-      to = to.node;
-    }
-    if (to && !this.isNodeLike(to)) throw new Error('"to" is not a compatible node');
-
+  getPtrIterator(range = {}) {
+    if (!range.from) range = Object.assign({from: this.frontPtr}, range);
+    range = this.normalizePtrRange(range);
+    const {from: fromPtr, to} = range;
     return {
       [Symbol.iterator]: () => {
         let current = fromPtr.clone(),

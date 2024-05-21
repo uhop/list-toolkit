@@ -1,47 +1,11 @@
 'use strict';
 
+import {isRangeLike, normalizeNode, normalizeRange, normalizePtrRange} from '../list-helpers.js';
 import {copyDescriptors} from '../meta-utils.js';
 
 export const isNodeLike = ({nextName}, node) => node && node[nextName];
 export const isStandAlone = ({nextName}, node) => node && node[nextName] === node;
 export const isCompatible = (options1, options2) => options1.nextName === options2.nextName;
-
-export const isRangeLike = (options, range) => {
-  if (!range) return true;
-  if (range.list) {
-    if (!isCompatible(options, range.list)) return false;
-    if (range.from) {
-      if (range.from instanceof PtrBase) {
-        if (range.from.list !== range.list) return false;
-      } else {
-        if (!isNodeLike(options, range.from)) return false;
-      }
-    }
-    if (range.to) {
-      if (range.to instanceof PtrBase) {
-        if (range.to.list !== range.list) return false;
-      } else {
-        if (!isNodeLike(options, range.to)) return false;
-      }
-    }
-    return true;
-  }
-  if (range.from) {
-    if (range.from instanceof PtrBase) {
-      if (!isCompatible(options, range.from.list)) return false;
-    } else {
-      if (!isNodeLike(options, range.from)) return false;
-    }
-  }
-  if (range.to) {
-    if (range.to instanceof PtrBase) {
-      if (!isCompatible(options, range.to.list)) return false;
-    } else {
-      if (!isNodeLike(options, range.to)) return false;
-    }
-  }
-  return true;
-};
 
 export class Node {
   constructor({nextName = 'next'} = {}) {
@@ -94,7 +58,7 @@ export class HeadNode extends Node {
   }
 
   get range() {
-    return this[this.nextName] === this ? null : {prevFrom: this, to: this.last, list: this};
+    return this[this.nextName] === this ? null : {from: this[this.nextName], to: this.last, list: this};
   }
 
   getLength() {
@@ -111,6 +75,19 @@ export class HeadNode extends Node {
     node[this.nextName] = node;
     return node;
   }
+
+  normalizeNode(node) {
+    return normalizeNode(this, node, PtrBase);
+  }
+
+  normalizeRange(range) {
+    return normalizeRange(this, range, PtrBase);
+  }
+
+  normalizePtrRange(range) {
+    return normalizePtrRange(this, range, PtrBase);
+  }
+
   syncLast() {
     this.last = this;
     while (this.last[this.nextName] !== this) this.last = this.last[this.nextName];
@@ -180,7 +157,7 @@ export class CircularListBase {
   }
 
   get range() {
-    return this.head ? {prevFrom: this.head, to: this.head, list: this.head} : null;
+    return this.head ? {from: this.head[this.nextName], to: this.head, list: this.head} : null;
   }
 
   getLength() {
@@ -216,4 +193,8 @@ export class CircularListBase {
   }
 }
 
-copyDescriptors(CircularListBase, 'isNodeLike, isCompatible, isCompatibleNames, isRangeLike', HeadNode);
+copyDescriptors(
+  CircularListBase,
+  ['isNodeLike', 'isCompatible', 'isCompatibleNames', 'isRangeLike', 'normalizeNode', 'normalizeRange', 'normalizeRangePtr'],
+  HeadNode
+);

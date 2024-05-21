@@ -259,12 +259,12 @@ test("List's Ptr", t => {
   );
 });
 
-test('List.releaseCircularList()', t => {
+test('List.releaseRawCircularList()', t => {
   const list = List.from([{x: 1}, {x: 2}, {x: 3}]);
 
   t.equal(list.getLength(), 3);
 
-  const circularList = list.releaseCircularList();
+  const circularList = list.releaseRawCircularList();
 
   t.ok(list.isEmpty);
   t.ok(!!circularList);

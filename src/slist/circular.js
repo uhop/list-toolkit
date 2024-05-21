@@ -15,6 +15,10 @@ export class Ptr extends PtrBase {
 }
 
 export class CircularSList extends CircularListBase {
+  get rangePtr() {
+    return this.head ? {from: this.makePtr(), to: this.head, list: this.head} : null;
+  }
+
   makePtr(prev) {
     if (prev && !this.isNodeLike(prev)) throw new Error('"prev" is not a compatible node');
     prev ||= this.head;

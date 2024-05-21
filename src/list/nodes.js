@@ -1,47 +1,11 @@
 'use strict';
 
+import {isRangeLike, normalizeNode, normalizeRange} from '../list-helpers.js';
 import {copyDescriptors} from '../meta-utils.js';
 
 export const isNodeLike = ({nextName, prevName}, node) => node && node[prevName] && node[nextName];
 export const isStandAlone = ({nextName, prevName}, node) => node && node[prevName] === node && node[nextName] === node;
 export const isCompatible = (options1, options2) => options1.nextName === options2.nextName && options1.prevName === options2.prevName;
-
-export const isRangeLike = (options, range) => {
-  if (!range) return true;
-  if (range.list) {
-    if (!isCompatible(options, range.list)) return false;
-    if (range.from) {
-      if (range.from instanceof PtrBase) {
-        if (range.from.list !== range.list) return false;
-      } else {
-        if (!isNodeLike(options, range.from)) return false;
-      }
-    }
-    if (range.to) {
-      if (range.to instanceof PtrBase) {
-        if (range.to.list !== range.list) return false;
-      } else {
-        if (!isNodeLike(options, range.to)) return false;
-      }
-    }
-    return true;
-  }
-  if (range.from) {
-    if (range.from instanceof PtrBase) {
-      if (!isCompatible(options, range.from.list)) return false;
-    } else {
-      if (!isNodeLike(options, range.from)) return false;
-    }
-  }
-  if (range.to) {
-    if (range.to instanceof PtrBase) {
-      if (!isCompatible(options, range.to.list)) return false;
-    } else {
-      if (!isNodeLike(options, range.to)) return false;
-    }
-  }
-  return true;
-};
 
 export class Node {
   constructor({nextName = 'next', prevName = 'prev'} = {}) {
@@ -107,12 +71,21 @@ export class HeadNode extends Node {
   }
 
   adoptNode(node) {
+    if (node instanceof PtrBase) node = node.node;
     if (node[this.nextName] || node[this.prevName]) {
       if (node[this.nextName] === node && node[this.prevName] === node) return node;
       throw new Error('node is already a part of a list, or there is a name clash');
     }
     node[this.nextName] = node[this.prevName] = node;
     return node;
+  }
+
+  normalizeNode(node) {
+    return normalizeNode(this, node, PtrBase);
+  }
+
+  normalizeRange(range) {
+    return normalizeRange(this, range, PtrBase);
   }
 }
 
@@ -204,8 +177,14 @@ export class CircularListBase {
   }
 
   adoptHead(head) {
-    if (head && !this.isNodeLike(head)) throw new Error('"head" is not a compatible node');
-    this.head = head;
+    if (head instanceof PtrBase) {
+      if (!this.isCompatible(head.list)) throw new Error('Incompatible lists');
+      this.head = head.node;
+    } else {
+      if (head && !this.isNodeLike(head)) throw new Error('"head" is not a compatible node');
+      this.head = head;
+    }
+    return this;
   }
 
   next() {
@@ -219,4 +198,4 @@ export class CircularListBase {
   }
 }
 
-copyDescriptors(CircularListBase, 'isNodeLike, isCompatible, isCompatibleNames, isRangeLike', HeadNode);
+copyDescriptors(CircularListBase, ['isNodeLike', 'isCompatible', 'isCompatibleNames', 'isRangeLike', 'normalizeNode', 'normalizeRange'], HeadNode);
