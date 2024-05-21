@@ -18,7 +18,7 @@ export const directlyToObject = Class => ({prototype: Class});
 export const addDescriptor = (Class, names, descriptor, force) => {
   const target = Class.prototype || Class;
   if (!descriptor) return target;
-  if (typeof names == 'string') names = names.split(/\s*,\s*/);
+  if (typeof names == 'string') names = names.trim().split(/\s*,\s*/);
   for (const name of names) {
     if (!force && target.hasOwnProperty(name)) continue;
     Object.defineProperty(target, name, descriptor);
@@ -54,7 +54,7 @@ export const addAliases = (Class, aliases, force) => {
 export const copyDescriptors = (Class, names, SourceClass, force) => {
   const target = Class.prototype || Class,
     source = SourceClass.prototype || SourceClass;
-  if (typeof names == 'string') names = names.split(/\s*,\s*/);
+  if (typeof names == 'string') names = names.trim().split(/\s*,\s*/);
   for (const name of names) {
     if (!force && target.hasOwnProperty(name)) continue;
     const descriptor = Object.getOwnPropertyDescriptor(source, name);
