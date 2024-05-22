@@ -100,8 +100,13 @@ export class SList extends HeadNode {
   }
 
   removeNode(ptr) {
-    // TODO: implement
-    return this;
+    if (!this.isCompatible(ptr.list)) throw new Error('Incompatible lists');
+    const node = ptr.prev[this.nextName];
+    if (node === this || node === ptr.prev) return null;
+    if (this.last === node) this.last = ptr.prev;
+    ptr.prev[this.nextName] = node[this.nextName];
+    node[this.nextName] = node;
+    return node;
   }
 
   removeRange(ptrRange, drop) {
