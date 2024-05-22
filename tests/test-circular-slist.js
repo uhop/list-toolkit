@@ -103,25 +103,25 @@ test('CircularSList', t => {
     [1, 3, 2]
   );
 
-  circularList.moveAfter(c);
+  circularList.moveAfter(circularList.makePtr(c));
   t.deepEqual(
     Array.from(circularList).map(value => value.x),
     [1, 2, 3]
   );
 
-  circularList.removeNode(a);
+  circularList.removeNode(circularList.makePtr(a));
   t.deepEqual(
     Array.from(circularList).map(value => value.x),
     [1, 3]
   );
 
-  circularList.removeNode(c);
+  circularList.removeNode(circularList.makePtr(c));
   t.deepEqual(
     Array.from(circularList).map(value => value.x),
     [3]
   );
 
-  circularList.removeNode(c);
+  circularList.removeNode(circularList.makePtr(c));
   t.deepEqual(
     Array.from(circularList).map(value => value.x),
     []

@@ -28,7 +28,7 @@ export class CircularSList extends CircularListBase {
   // Ptr API
 
   removeNodeAfter() {
-    return this.head ? this.removeNode(this.head) : null;
+    return this.head ? this.removeNode(this.makePtr()) : null;
   }
 
   addNodeAfter(node) {
@@ -53,24 +53,22 @@ export class CircularSList extends CircularListBase {
     return this.makePtr();
   }
 
-  // TODO: convert all methods taking a previous node to a method taking a pointer
-
-  moveAfter(prev) {
-    if (!this.isNodeLike(prev)) throw new Error('"prev" is not a compatible node');
+  moveAfter(ptr) {
+    if (!this.isCompatible(ptr.list)) throw new Error('Incompatible lists');
 
     if (!this.head) {
-      this.head = pop(this, prev).extracted.to;
+      this.head = pop(this, ptr.prev).extracted.to;
       return this;
     }
 
-    if (this.head === prev) return this;
+    if (this.head === ptr.prev) return this;
 
-    if (this.head === prev[this.nextName]) {
+    if (this.head === ptr.prev[this.nextName]) {
       if (this.head === this.head[this.nextName]) return this;
       this.head = this.head[this.nextName];
     }
 
-    splice(this, this.head, {prevFrom: pop(this, prev).extracted.to});
+    ptr.prev = splice(this, this.head, {prevFrom: pop(this, ptr.prev).extracted.to});
 
     return this;
   }
@@ -87,17 +85,17 @@ export class CircularSList extends CircularListBase {
     return this;
   }
 
-  removeNode(prev) {
+  removeNode(ptr) {
     if (!this.head) return null;
-    if (!this.isNodeLike(prev)) throw new Error('"prev" is not a compatible node');
-    if (this.head === prev[this.nextName]) {
+    if (!this.isCompatible(ptr.list)) throw new Error('Incompatible lists');
+    if (this.head === ptr.prev[this.nextName]) {
       if (this.head === this.head[this.nextName]) {
         this.head = null;
-        return prev[this.nextName];
+        return ptr.prev[this.nextName];
       }
       this.head = this.head[this.nextName];
     }
-    return pop(this, prev).extracted.to;
+    return pop(this, ptr.prev).extracted.to;
   }
 
   removeRange(ptrRange, drop) {
@@ -195,10 +193,9 @@ export class CircularSList extends CircularListBase {
     };
   }
 
-  getNodeIterator({from, to} = {}) {
-    if (from && !this.isNodeLike(from)) throw new Error('"from" is not a compatible node');
-    if (to && !this.isNodeLike(to)) throw new Error('"to" is not a compatible node');
-
+  getNodeIterator(range = {}) {
+    range = this.normalizeRange(range);
+    const {from, to} = range;
     return {
       [Symbol.iterator]: () => {
         let readyToStop = this.isEmpty,
@@ -218,8 +215,25 @@ export class CircularSList extends CircularListBase {
   }
 
   getPtrIterator(range) {
-    // TODO: check if using ptrRange will make it more efficient
-    return mapIterator(this.getNodeIterator(range), node => new Ptr(this, node));
+    if (!ptrRange.from) ptrRange = Object.assign({from: this.frontPtr}, ptrRange);
+    ptrRange = this.normalizePtrRange(ptrRange);
+    const {from: fromPtr, to} = ptrRange;
+    return {
+      [Symbol.iterator]: () => {
+        let current = fromPtr.clone(),
+          readyToStop = this.isEmpty;
+        const stop = to ? to[this.nextName] : this;
+        return {
+          next: () => {
+            if (readyToStop && current.node === stop) return {done: true};
+            readyToStop = true;
+            const value = current.clone();
+            current = current.next();
+            return {value};
+          }
+        };
+      }
+    };
   }
 
   // meta helpers
