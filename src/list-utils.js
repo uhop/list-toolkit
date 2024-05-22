@@ -15,10 +15,8 @@ export const pushValuesBack = (list, values) => {
 };
 
 export const appendValuesFront = (list, values) => {
-  // TODO: if values is a compatible list, don't copy, append it directly.
-  // the same goes to other methods
-  if (typeof list.appendFront == 'function') {
-    list.appendFront(list.makeFrom(values));
+  if (typeof list.appendFront == 'function' && list.isCompatible(values)) {
+    list.appendFront(values);
     return list;
   }
   if (!Array.isArray(values)) values = Array.from(values);
@@ -29,8 +27,8 @@ export const appendValuesFront = (list, values) => {
 };
 
 export const appendValuesBack = (list, values) => {
-  if (typeof list.appendBack == 'function') {
-    list.appendBack(list.makeFrom(values));
+  if (typeof list.appendBack == 'function' && list.isCompatible(values)) {
+    list.appendBack(values);
     return list;
   }
   return pushValuesBack(list, values);
@@ -51,12 +49,18 @@ export const addValuesAfter = (ptr, values) => {
 };
 
 export const insertValuesBefore = (ptr, values) => {
-  if (typeof ptr.insertBefore == 'function') return ptr.insertBefore(ptr.list.makeFrom(values));
+  if (typeof ptr.insertBefore == 'function' && ptr.list.isCompatible(values)) {
+    ptr.insertBefore(ptr.list.makeFrom(values));
+    return ptr;
+  }
   return addValuesBefore(ptr, values);
 };
 
 export const insertValuesAfter = (ptr, values) => {
-  if (typeof ptr.insertAfter == 'function') return ptr.insertAfter(ptr.list.makeFrom(values));
+  if (typeof ptr.insertAfter == 'function' && ptr.list.isCompatible(values)) {
+    ptr.insertAfter(ptr.list.makeFrom(values));
+    return ptr;
+  }
   if (!Array.isArray(values)) values = Array.from(values);
   for (let i = values.length - 1; i >= 0; --i) {
     ptr.addAfter(values[i]);
