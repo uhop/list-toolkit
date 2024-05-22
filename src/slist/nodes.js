@@ -178,13 +178,13 @@ export class CircularListBase {
   }
 
   getBack() {
-    // TODO: implement correctly
     if (!this.head) return null;
-    let current = this.head;
-    do {
-      current = current[this.nextName];
-    } while (current !== this.head);
-    return current;
+    for (let current = this.head; ; ) {
+      const next = current[this.nextName];
+      if (next === this.head) return current;
+      current = next;
+    }
+    // unreachable
   }
 
   attach(head) {
