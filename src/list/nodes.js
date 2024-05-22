@@ -145,6 +145,12 @@ export class CircularListBase {
       this.attach(head.head);
       return;
     }
+    if (head instanceof PtrBase) {
+      this.nextName = head.list.nextName;
+      this.prevName = head.list.prevName;
+      this.attach(head.node);
+      return;
+    }
     this.nextName = nextName;
     this.prevName = prevName;
     this.attach(head);
