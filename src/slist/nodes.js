@@ -195,8 +195,13 @@ export class CircularListBase {
   }
 
   attach(head) {
-    if (head && !this.isNodeLike(head)) throw new Error('"head" is not a compatible node');
-    this.head = head;
+    if (head instanceof PtrBase) {
+      if (!this.isCompatible(head.list)) throw new Error('Incompatible lists');
+      this.head = head.node;
+    } else {
+      if (head && !this.isNodeLike(head)) throw new Error('"head" is not a compatible node');
+      this.head = head;
+    }
     return this;
   }
 
