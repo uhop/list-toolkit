@@ -3,6 +3,7 @@
 import test from 'tape-six';
 import CircularList from 'list-toolkit/circular-list.js';
 import List from 'list-toolkit/list.js';
+import {isStandAlone} from 'list-toolkit/list/nodes.js';
 
 test('CircularList', t => {
   t.equal(typeof CircularList, 'function');
@@ -141,11 +142,14 @@ test('CircularList', t => {
     [1, 2, 3]
   );
 
-  circularList.removeAfter();
-  t.deepEqual(
-    Array.from(circularList).map(value => value.x),
-    [1, 3]
-  );
+  {
+    const removed = circularList.removeAfter();
+    t.deepEqual(
+      Array.from(circularList).map(value => value.x),
+      [1, 3]
+    );
+    t.ok(isStandAlone(circularList, removed));
+  }
 
   circularList.addBefore(b);
   circularList.removeBefore();

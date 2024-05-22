@@ -1,7 +1,7 @@
 'use strict';
 
 import {CircularListBase, HeadNode, PtrBase} from './nodes.js';
-import {pop, extract, splice} from './basics.js';
+import {pop, extract, splice, append} from './basics.js';
 import {addAliases, copyDescriptors} from '../meta-utils.js';
 
 export class Ptr extends PtrBase {
@@ -45,7 +45,7 @@ export class CircularList extends CircularListBase {
   addNodeBefore(node) {
     node = this.adoptNode(node);
     if (this.head) {
-      splice(this, this.head, node);
+      splice(this, this.head[this.prevName], node);
     } else {
       this.head = node;
     }
@@ -55,7 +55,7 @@ export class CircularList extends CircularListBase {
   addNodeAfter(node) {
     node = this.adoptNode(node);
     if (this.head) {
-      splice(this, this.head[this.nextName], node);
+      splice(this, this.head, node);
     } else {
       this.head = node;
     }
@@ -63,11 +63,11 @@ export class CircularList extends CircularListBase {
   }
 
   insertBefore(circularList) {
-    if (!(circularList instanceof CircularList) || !this.isCompatibleNames(circularList)) throw new Error('Incompatible lists');
+    if (!this.isCompatible(circularList)) throw new Error('Incompatible lists');
 
     const head = circularList.head;
     if (head) {
-      splice(this, this.head, head);
+      splice(this, this.head[this.prevName], head);
       circularList.head = null;
     }
 
@@ -75,11 +75,11 @@ export class CircularList extends CircularListBase {
   }
 
   insertAfter(circularList) {
-    if (!(circularList instanceof CircularList) || !this.isCompatibleNames(circularList)) throw new Error('Incompatible lists');
+    if (!this.isCompatible(circularList)) throw new Error('Incompatible lists');
 
     const head = circularList.head;
     if (head) {
-      splice(this, this.head[this.nextName], head);
+      splice(this, this.head, head);
       circularList.head = null;
     }
 
@@ -94,10 +94,10 @@ export class CircularList extends CircularListBase {
       return this;
     }
 
-    pop(this, node);
     if (this.head) {
-      splice(this, this.head, node);
+      append(this, this.head[this.prevName], {from: node});
     } else {
+      pop(this, node);
       this.head = node;
     }
 
@@ -112,10 +112,10 @@ export class CircularList extends CircularListBase {
       return this;
     }
 
-    pop(this, node);
     if (this.head) {
-      splice(this, this.head[this.nextName], node);
+      append(this, this.head, {from: node});
     } else {
+      pop(this, node);
       this.head = node;
     }
 
@@ -140,7 +140,9 @@ export class CircularList extends CircularListBase {
     node = this.normalizeNode(node);
 
     if (this.head === node) {
+      // remove head
       if (this.head[this.nextName] === this.head) {
+        // single node
         this.head = null;
         return node;
       }

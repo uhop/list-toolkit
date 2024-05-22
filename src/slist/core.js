@@ -2,12 +2,12 @@
 
 import {addAliases} from '../meta-utils.js';
 import {CircularListBase, HeadNode} from './nodes.js';
-import {extract, append, splice} from './basics.js';
+import {extract, append} from './basics.js';
 import Ptr from './ptr.js';
 
 export class SList extends HeadNode {
   get frontPtr() {
-    return new Ptr(this, this);
+    return new Ptr(this);
   }
 
   get rangePtr() {
@@ -271,7 +271,7 @@ export class SList extends HeadNode {
   static fromRange(range, options) {
     const list = new SList(options);
     if (!list.isRangeLike(list)) throw new Error('"range" is not a compatible range');
-    if (range) splice(list, list, range);
+    if (range) append(list, list, range);
     return list;
   }
 
@@ -283,7 +283,7 @@ export class SList extends HeadNode {
 
     const range = circularList.range;
     if (range) {
-      splice(list, list, range);
+      append(list, list, range);
       circularList.clear();
     }
 

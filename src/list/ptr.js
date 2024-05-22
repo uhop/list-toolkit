@@ -22,26 +22,26 @@ export class Ptr extends PtrBase {
   }
   addBefore(value) {
     const node = this.list.adoptNode(value);
-    splice(this.list, this.node, node);
+    splice(this.list, this.node[this.list.prevName], node);
     return this.list.makePtr(node);
   }
   addAfter(value) {
     const node = this.list.adoptNode(value);
-    splice(this.list, this.node[this.list.nextName], node);
+    splice(this.list, this.node, node);
     return this.list.makePtr(node);
   }
   insertBefore(list) {
     if (!this.list.isCompatible(list)) throw new Error('Incompatible lists');
     if (list.isEmpty) return null;
     const head = pop(list, list).rest;
-    splice(this.list, this.node, head);
+    splice(this.list, this.node[this.list.prevName], head);
     return this.list.makePtr(head);
   }
   insertAfter(list) {
     if (!this.list.isCompatible(list)) throw new Error('Incompatible lists');
     if (list.isEmpty) return null;
     const head = pop(list, list).rest;
-    splice(this.list, this.node[this.list.nextName], head);
+    splice(this.list, this.node, head);
     return this.list.makePtr(head);
   }
 }

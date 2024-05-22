@@ -27,11 +27,15 @@ export class List extends HeadNode {
   }
 
   pushFrontNode(node) {
-    return this.makePtr(splice(this, this[this.nextName], this.adoptNode(node)));
+    node = this.adoptNode(node);
+    splice(this, this, node);
+    return this.makePtr(node);
   }
 
   pushBackNode(node) {
-    return this.makePtr(splice(this, this, this.adoptNode(node)));
+    node = this.adoptNode(node);
+    splice(this, this[this.prevName], node);
+    return this.makePtr(node);
   }
 
   appendFront(list) {
@@ -56,16 +60,14 @@ export class List extends HeadNode {
 
   moveToFront(node) {
     node = this.normalizeNode(node);
-    if (this[this.nextName] === node) return this;
-    splice(this, this[this.nextName], pop(this, node).extracted);
-    return this;
+    if (this[this.nextName] !== node) splice(this, this, pop(this, node).extracted);
+    return this.frontPtr;
   }
 
   moveToBack(node) {
     node = this.normalizeNode(node);
-    if (this[this.prevName] === node) return this;
-    splice(this, this, pop(this, node).extracted);
-    return this;
+    if (this[this.prevName] !== node) splice(this, this[this.prevName], pop(this, node).extracted);
+    return this.backPtr;
   }
 
   clear(drop) {
@@ -251,7 +253,7 @@ export class List extends HeadNode {
     const list = new List(circularList);
     if (circularList.isEmpty) return list;
 
-    splice(circularList, list, circularList.head);
+    splice(list, list, circularList.head);
     circularList.clear();
 
     return list;
@@ -270,5 +272,5 @@ addAliases(List, {
   appendBack: 'append'
 });
 
-export {Ptr}
+export {Ptr};
 export default List;
