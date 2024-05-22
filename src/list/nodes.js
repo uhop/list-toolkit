@@ -131,12 +131,12 @@ export class CircularListBase {
     if (head instanceof CircularListBase) {
       this.nextName = head.nextName;
       this.prevName = head.prevName;
-      this.adoptHead(head.head);
+      this.attach(head.head);
       return;
     }
     this.nextName = nextName;
     this.prevName = prevName;
-    this.adoptHead(head);
+    this.attach(head);
   }
 
   isCompatible(list) {
@@ -180,7 +180,7 @@ export class CircularListBase {
     return n;
   }
 
-  adoptHead(head) {
+  attach(head) {
     if (head instanceof PtrBase) {
       if (!this.isCompatible(head.list)) throw new Error('Incompatible lists');
       this.head = head.node;
@@ -188,6 +188,11 @@ export class CircularListBase {
       if (head && !this.isNodeLike(head)) throw new Error('"head" is not a compatible node');
       this.head = head;
     }
+    return this;
+  }
+
+  detach() {
+    this.head = null;
     return this;
   }
 

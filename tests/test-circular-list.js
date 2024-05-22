@@ -18,7 +18,7 @@ test('CircularList', t => {
 
   const list = List.from([a, b, c]);
 
-  circularList.adoptHead(list.releaseRawCircularList());
+  circularList.attach(list.releaseRawCircularList());
   t.ok(list.isEmpty);
   t.notOk(circularList.isEmpty);
   t.equal(circularList.getLength(), 3);

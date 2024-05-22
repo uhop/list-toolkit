@@ -133,11 +133,11 @@ export class CircularListBase {
   constructor(head = null, {nextName = 'next'} = {}) {
     if (head instanceof CircularListBase) {
       this.nextName = head.nextName;
-      this.adoptHead(head.head);
+      this.attach(head.head);
       return;
     }
     this.nextName = nextName;
-    this.adoptHead(head);
+    this.attach(head);
   }
 
   isCompatible(list) {
@@ -187,10 +187,15 @@ export class CircularListBase {
     return current;
   }
 
-  adoptHead(head) {
-    // TODO: rename to attach(), add detach()
+  attach(head) {
     if (head && !this.isNodeLike(head)) throw new Error('"head" is not a compatible node');
     this.head = head;
+    return this;
+  }
+
+  detach() {
+    this.head = null;
+    return this;
   }
 
   next() {
