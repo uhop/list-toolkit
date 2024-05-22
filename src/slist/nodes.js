@@ -106,25 +106,25 @@ export class PtrBase {
   constructor(list, prev, ListClass) {
     if (list instanceof PtrBase) {
       this.list = list.list;
-      this.prev = list.prev;
+      this.previousNode = list.previousNode;
       return;
     }
     if (!(list instanceof ListClass)) throw new Error('"list" is not a compatible list');
     if (prev instanceof PtrBase) {
       if (list !== prev.list) throw new Error('Node specified by a pointer must belong to the same list');
       this.list = list;
-      this.prev = prev.prev;
+      this.previousNode = prev.previousNode;
     } else {
       this.list = list;
-      this.prev = prev;
+      this.previousNode = prev;
     }
-    if (this.prev && !isNodeLike(this.list, this.prev)) throw new Error('"prev" is not a compatible node');
+    if (this.previousNode && !isNodeLike(this.list, this.previousNode)) throw new Error('"prev" is not a compatible node');
   }
   get node() {
-    return this.prev[this.list.nextName];
+    return this.previousNode[this.list.nextName];
   }
   next() {
-    this.prev = this.prev[this.list.nextName];
+    this.previousNode = this.previousNode[this.list.nextName];
     return this;
   }
 }

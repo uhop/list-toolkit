@@ -115,6 +115,10 @@ export class PtrBase {
     if (this.node && !isNodeLike(this.list, this.node)) throw new Error('"node" is not a compatible node');
   }
 
+  get previousNode() {
+    return this.node[this.list.prevName];
+  }
+
   next() {
     this.node = this.node[this.list.nextName];
     return this;

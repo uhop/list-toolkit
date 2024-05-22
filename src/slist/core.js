@@ -73,7 +73,7 @@ export class SList extends HeadNode {
     if (!this.isCompatible(ptr.list)) throw new Error('Incompatible lists');
     if (ptr.isHead) return this;
     const node = ptr.remove();
-    ptr.prev = this;
+    ptr.previousNode = this;
     return this.pushFrontNode(node);
   }
 
@@ -81,7 +81,7 @@ export class SList extends HeadNode {
     if (!this.isCompatible(ptr.list)) throw new Error('Incompatible lists');
     if (ptr.isHead) return this;
     const node = ptr.remove();
-    ptr.prev = this.last;
+    ptr.previousNode = this.last;
     return this.pushBackNode(node);
   }
 
@@ -101,10 +101,10 @@ export class SList extends HeadNode {
 
   removeNode(ptr) {
     if (!this.isCompatible(ptr.list)) throw new Error('Incompatible lists');
-    const node = ptr.prev[this.nextName];
-    if (node === this || node === ptr.prev) return null;
-    if (this.last === node) this.last = ptr.prev;
-    ptr.prev[this.nextName] = node[this.nextName];
+    const node = ptr.previousNode[this.nextName];
+    if (node === this || node === ptr.previousNode) return null;
+    if (this.last === node) this.last = ptr.previousNode;
+    ptr.previousNode[this.nextName] = node[this.nextName];
     node[this.nextName] = node;
     return node;
   }
@@ -118,7 +118,7 @@ export class SList extends HeadNode {
     ptrRange.to ||= this.last;
 
     const extracted = this.make();
-    append(this, extracted, {prevFrom: ptrRange.from.prev, to: ptrRange.to});
+    append(this, extracted, {prevFrom: ptrRange.from.previousNode, to: ptrRange.to});
     extracted.last = ptrRange.to;
 
     return extracted;
@@ -177,7 +177,7 @@ export class SList extends HeadNode {
   releaseAsPtrRange() {
     const range = this.rangePtr;
     if (!range) return null;
-    const rawRange = extract(this, {prevFrom: range.from.prev, to: range.to}).extracted;
+    const rawRange = extract(this, {prevFrom: range.from.previousNode, to: range.to}).extracted;
     return {from: new Ptr(this, rawRange.prevFrom), to: rawRange.to};
   }
 

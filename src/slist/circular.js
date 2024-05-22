@@ -7,7 +7,7 @@ import {addAliases, copyDescriptors, mapIterator} from '../meta-utils.js';
 export class Ptr extends PtrBase {
   constructor(list, prev) {
     super(list, prev, CircularSList);
-    this.prev ||= this.list.head;
+    this.previousNode ||= this.list.head;
   }
   clone() {
     return new Ptr(this);
@@ -57,18 +57,18 @@ export class CircularSList extends CircularListBase {
     if (!this.isCompatible(ptr.list)) throw new Error('Incompatible lists');
 
     if (!this.head) {
-      this.head = pop(this, ptr.prev).extracted.to;
+      this.head = pop(this, ptr.previousNode).extracted.to;
       return this;
     }
 
-    if (this.head === ptr.prev) return this;
+    if (this.head === ptr.previousNode) return this;
 
-    if (this.head === ptr.prev[this.nextName]) {
+    if (this.head === ptr.previousNode[this.nextName]) {
       if (this.head === this.head[this.nextName]) return this;
       this.head = this.head[this.nextName];
     }
 
-    ptr.prev = splice(this, this.head, {prevFrom: pop(this, ptr.prev).extracted.to});
+    ptr.previousNode = splice(this, this.head, {prevFrom: pop(this, ptr.previousNode).extracted.to});
 
     return this;
   }
@@ -88,14 +88,14 @@ export class CircularSList extends CircularListBase {
   removeNode(ptr) {
     if (!this.head) return null;
     if (!this.isCompatible(ptr.list)) throw new Error('Incompatible lists');
-    if (this.head === ptr.prev[this.nextName]) {
+    if (this.head === ptr.previousNode[this.nextName]) {
       if (this.head === this.head[this.nextName]) {
         this.head = null;
-        return ptr.prev[this.nextName];
+        return ptr.previousNode[this.nextName];
       }
       this.head = this.head[this.nextName];
     }
-    return pop(this, ptr.prev).extracted.to;
+    return pop(this, ptr.previousNode).extracted.to;
   }
 
   removeRange(ptrRange, drop) {
@@ -106,7 +106,8 @@ export class CircularSList extends CircularListBase {
     ptrRange = this.normalizePtrRange(ptrRange.from ? ptrRange : {...ptrRange, from: this.makePtr()});
     ptrRange.to ||= this.head;
 
-    const {from: {prev: prevFrom}, to} = ptrRange,
+    const prevFrom = ptrRange.from.previousNode,
+      to = ptrRange.to,
       extracted = this.make();
     if (!this.head) return extracted;
     if (this.head === prevFrom[this.nextName] || this.head === to) this.head = to[this.nextName];
