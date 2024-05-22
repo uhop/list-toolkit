@@ -99,17 +99,22 @@ export class SList extends HeadNode {
     return this;
   }
 
-  removeRange(range, drop) {
-    return this.extractRange(range).clear(drop);
+  removeNode(ptr) {
+    // TODO: implement
+    return this;
   }
 
-  extractRange(range) {
-    range = this.normalizePtrRange(range.from ? range : {...range, from: this.frontPtr});
-    range.to ||= this.last;
+  removeRange(ptrRange, drop) {
+    return this.extractRange(ptrRange).clear(drop);
+  }
+
+  extractRange(ptrRange = {}) {
+    ptrRange = this.normalizePtrRange(ptrRange.from ? ptrRange : {...ptrRange, from: this.frontPtr});
+    ptrRange.to ||= this.last;
 
     const extracted = this.make();
-    append(this, extracted, {prevFrom: range.from.prev, to: range.to});
-    extracted.last = range.to;
+    append(this, extracted, {prevFrom: ptrRange.from.prev, to: ptrRange.to});
+    extracted.last = ptrRange.to;
 
     return extracted;
   }
@@ -212,10 +217,10 @@ export class SList extends HeadNode {
     };
   }
 
-  getPtrIterator(range = {}) {
-    if (!range.from) range = Object.assign({from: this.frontPtr}, range);
-    range = this.normalizePtrRange(range);
-    const {from: fromPtr, to} = range;
+  getPtrIterator(ptrRange = {}) {
+    if (!ptrRange.from) ptrRange = Object.assign({from: this.frontPtr}, ptrRange);
+    ptrRange = this.normalizePtrRange(ptrRange);
+    const {from: fromPtr, to} = ptrRange;
     return {
       [Symbol.iterator]: () => {
         let current = fromPtr.clone(),
@@ -291,4 +296,5 @@ addAliases(SList, {
   pushBackNode: 'pushBack'
 });
 
+export {Ptr};
 export default SList;

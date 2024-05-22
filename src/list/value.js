@@ -1,6 +1,6 @@
 'use strict';
 
-import List from './core.js';
+import List, {Ptr} from './core.js';
 import {ValueNode} from './nodes.js';
 import {pop} from './basics.js';
 import {addAliases, mapIterator} from '../meta-utils.js';
@@ -63,7 +63,8 @@ export class ValueList extends List {
   }
 }
 
-ValueList.Ptr = List.Ptr;
+ValueList.Ptr = Ptr;
+ValueList.ValueNode = ValueNode;
 
 addAliases(ValueList, {
   popFront: 'pop',
@@ -71,4 +72,5 @@ addAliases(ValueList, {
   getReverseValueIterator: 'getReverseIterator'
 });
 
+export {ValueNode, Ptr};
 export default ValueList;

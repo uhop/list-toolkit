@@ -53,6 +53,8 @@ export class CircularSList extends CircularListBase {
     return this.makePtr();
   }
 
+  // TODO: convert all methods taking a previous node to a method taking a pointer
+
   moveAfter(prev) {
     if (!this.isNodeLike(prev)) throw new Error('"prev" is not a compatible node');
 
@@ -98,15 +100,15 @@ export class CircularSList extends CircularListBase {
     return pop(this, prev).extracted.to;
   }
 
-  removeRange(range, drop) {
-    return this.extractRange(range).clear(drop);
+  removeRange(ptrRange, drop) {
+    return this.extractRange(ptrRange).clear(drop);
   }
 
-  extractRange(range = {}) {
-    range = this.normalizePtrRange(range.from ? range : {...range, from: this.makePtr()});
-    range.to ||= this.head;
+  extractRange(ptrRange = {}) {
+    ptrRange = this.normalizePtrRange(ptrRange.from ? ptrRange : {...ptrRange, from: this.makePtr()});
+    ptrRange.to ||= this.head;
 
-    const {from: {prev: prevFrom}, to} = range,
+    const {from: {prev: prevFrom}, to} = ptrRange,
       extracted = this.make();
     if (!this.head) return extracted;
     if (this.head === prevFrom[this.nextName] || this.head === to) this.head = to[this.nextName];
@@ -216,6 +218,7 @@ export class CircularSList extends CircularListBase {
   }
 
   getPtrIterator(range) {
+    // TODO: check if using ptrRange will make it more efficient
     return mapIterator(this.getNodeIterator(range), node => new Ptr(this, node));
   }
 

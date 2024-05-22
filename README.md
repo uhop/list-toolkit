@@ -9,14 +9,41 @@ suitable to use in all environments including browsers.
 
 The toolkit provides the following data structures with a full set of efficiently implemented operations:
 
-* **List**: a doubly linked list implemented as a container.
-* **ListHead**: a doubly linked list that uses custom properties on external objects to link them around.
-  * Using different custom properties the same object can be linked in different ways.
-* **SList**: a singly linked list implemented as a container.
-* **SListHead**: a singly linked list that uses custom properties on external objects to link them around.
-  * Using different custom properties the same object can be linked in different ways.
-* **Cache**: a List-based container with a limited capacity and an LRU policy of evicting old entries.
+* Doubly linked circular lists:
+  * **List**: a list that uses custom properties on external objects to link them around.
+    * Using different custom properties the same object can be linked in different ways.
+  * **ValueList**: a doubly linked list implemented as a container, which can hold/reference external values.
+    * Based on `List`.
+  * **CircularList**: an external handler of a headless list.
+* Singly linked lists:
+  * **SList**: a list that uses custom properties on external objects to link them around.
+    * Using different custom properties the same object can be linked in different ways.
+    * Based on `SList`.
+  * **ValueSList**: a singly linked list implemented as a container, which can hold/reference external values.
+* **Cache**: a `ValueList`-based container with a specified capacity and an LRU policy of evicting old entries.
 * **MinHeap**: a classic heap data structure (a priority queue).
+
+All lists can be used without the toolkit. Your existing lists, either doubly or singly linked,
+can be used. The toolkit provides a few utilities that you would write yourself if you wanted to use them.
+
+The implementation philosophy was very simple:
+
+* Flexibility, efficiency, and simplicity.
+* No dependencies. No unexpected surprises.
+* You never pay for what you don't use.
+* Suitable for all environments.
+* Should be usable with already existing lists.
+* Could be used as a foundation for other list-based data structures.
+
+All lists support similar intuitive interfaces:
+
+* Creating from existing objects.
+* Adding, inserting, extracting and removing nodes.
+* Forward and reverse iterators.
+* General manipulations like reversing and sorting.
+* Link names for the next and previous links (for doubly linked lists) are customizable.
+
+All facilities are efficient, well-debugged, and battle-tested.
 
 ## Installation
 
@@ -28,348 +55,444 @@ npm install list-toolkit
 
 The full documentation is available in the project's [wiki](https://github.com/uhop/list-toolkit/wiki). Below is a cheat sheet of the API.
 
-### List
+The concepts of pointers and ranges are explained at the end of this document.
 
-`List` implements a circular doubly linked list. Its head is a node with two properties: `next` and `prev`.
-Other nodes of the list are value nodes (`List.ValueNode`) that have a `value` property.
+### List (list.js)
+
+`List` implements a circular doubly linked list with customizable names of "next" and "prev" links.
+Any strings or symbols can be used. The defaults are `"next"` and `"prev"` respectively.
+
+Internally `List` is implemented as a special head node and the whole list is circular.
 
 ```js
-import List from 'list-toolkit/List.js';
+import List from 'list-toolkit/list.js';
 // or
-// const List = require('list-toolkit/List.js').default; // CJS
+// const List = require('list-toolkit/list.js').default; // CJS
 
-const list1 = new List();
-const list2 = List.from([1, 2, 3]);
+// sample data
+const a = {x: 1}, b = {x: 2}, c = {x: 3};
+
+// the main list with default link names
+const list = new List.from([a, b, c]);
+
+// iterate over the list
+for (const node of list) {
+  console.log(node.x); // 1, 2, 3
+}
+
+// iterate manually
+for (let node = list.front; node !== list; node = node.next) {
+  console.log(node.x); // 1, 2, 3
+}
+
+// iterate in reverse order
+for (const node of list.getReverseIterator()) {
+  console.log(node.x); // 3, 2, 1
+}
+
+// auxiliary lists with custom link names
+const odd = new List({nextName: 'nextOdd', prevName: 'prevOdd'}),
+  even = new List({nextName: Symbol(), prevName: Symbol()});
+
+// let's populate them
+for (const node of list) {
+  (node.x % 2 ? odd : even).pushBack(node);
+}
+
+// let's reverse the odd list
+odd.reverse();
+
+// let's iterate over them
+for (const node of odd) console.log(node.x); // 3, 1
+for (const node of even) console.log(node.x); // 2
+
+// let's drop the last odd node:
+odd.popBack();
+for (let node = odd.front; node !== odd; node = node.nextOdd) {
+  console.log(node.x); // 3
+}
+
+// the main list is unchanged
+console.log(Array.from(list).map(n => n.x)); // [1, 2, 3]
+
+// let's iterate manually using a range
+let node = a;
+do {
+  console.log(node.x);
+  node = node.next;
+} while (node !== c);
+// 1, 2
+
+const extracted = list.extract({from: b, to: c});
+console.log(Array.from(extracted).map(n => n.x)); // [2, 3]
+console.log(Array.from(list).map(n => n.x)); // [1]
 ```
 
-Main operations are:
+As you can see, the API is very simple and intuitive. Objects are used directly as nodes.
+They can be used directly for manual iterations or to specify ranges.
+
+If you want to use a list as a container, you can use `ValueList` or `ValueSList` instead.
+This way you can keep numbers, strings and other primitives in the same list.
+Objects that in the link are not unmodified.
+
+The main inspection operations are:
 
 | Method | Description | Complexity |
 |------|-----------|-----|
-| `new List()` | create a new List | *O(1)* |
-| `List.from(values)` | create a new List from an iterable or an array | *O(k)* |
+| `new List(options)` | create a new List | *O(1)* |
+| `List.from(values, options)` | create a new List from an iterable | *O(k)* |
 | `isEmpty` | check if the list is empty | *O(1)* |
-| `front` | get the first element | *O(1)* |
-| `back` | get the last element | *O(1)* |
+| `front` | get the first node | *O(1)* |
+| `back` | get the last node | *O(1)* |
 | `getLength()` | get the length of the list | *O(n)* |
+
+The simple manipulations are (all *O(1)*):
+
+| Method | Description | Complexity |
+|------|-----------|-----|
+| `pushFront(value)` | add a new node at the beginning | *O(1)* |
+| `pushBack(value)` | add a new node at the end | *O(1)* |
 | `popFront()` | remove and return the first element | *O(1)* |
 | `popBack()` | remove and return the last element | *O(1)* |
-| `pushFront(value)` | add a new element at the beginning | *O(1)* |
-| `pushBack(value)` | add a new element at the end | *O(1)* |
 | `appendFront(list)` | add a list at the beginning | *O(1)* |
 | `appendBack(list)` | add a list at the end | *O(1)* |
 | `moveToFront(node)` | move a node to the front | *O(1)* |
 | `moveToBack(node)` | move a node to the back | *O(1)* |
-| `clear()` | remove all elements | *O(1)* |
-| `findNodeBy(condition)` | find the first node that satisfies the condition | *O(n)* |
-| `remove(from, to = from)` | remove a range of elements | *O(1)* |
-| `removeNodeBy(condition)` | remove and return the first node that satisfies the condition | *O(n)* |
-| `extract(from, to)` | remove and return a range of elements as a new List | *O(1)* |
-| `extractBy(condition)` | remove and return elements as a new List that satisfy the condition | *O(n)* |
-| `reverse()` | reverse the list inline | *O(n)* |
-| `sort(compareFn)` | sort the list inline | *O(n * log(n))* |
 
-Here and everywhere `n` is a number of elements in the list, while `k` is the size of an argument.
+Removing:
 
-Useful aliases are:
+| Method | Description | Complexity |
+|------|-----------|-----|
+| `removeNode(node)` | remove and return a node | *O(1)* |
+| `removeRange(range, drop)` | remove nodes | |
+| `removeRange(range, false)` | remove nodes | *O(1)* |
+| `removeRange(range, true)` | remove and isolate nodes | *O(k)* |
+| `clear(drop)` | remove all nodes |  |
+| `clear(false)` | remove all nodes | *O(1)* |
+| `clear(true)` | remove and isolate all nodes | *O(k)* |
 
-| Method | Alias of |
-|------|-----------|
-| `pop()` | `popFront()` |
-| `push()` | `pushFront()` |
-| `append()` | `appendBack()` |
+The extraction methods are:
 
-List can be used as an iterable:
+| Method | Description | Complexity |
+|------|-----------|-----|
+| `extractRange(range)` | extract a range of nodes | *O(1)* |
+| `extractBy(condition)` | extract nodes by a condition | *O(n)* |
+
+The list-wide manipulation methods are:
+
+| Method | Description | Complexity |
+|------|-----------|-----|
+| `reverse()` | reverse the list | *O(n)* |
+| `sort(compareFn)` | sort the list | *O(n * log(n))* |
+
+Iterators are:
+
+| Method | Description | Complexity |
+|------|-----------|-----|
+| `[Symbol.iterator]()` | the default iterator | *O(1)* |
+| `getNodeIterator(range)` | create an iterator with an optional range | *O(1)* |
+| `getIterator(range)` | an alias of `getNodeIterator(range)` | *O(1)* |
+| `getPtrIterator(range)` | create a pointer iterator with an optional range | *O(1)* |
+| `getReverseNodeIterator(range)` | create a reverse iterator with an optional range | *O(1)* |
+| `getReverseIterator(range)` | an alias of `getReverseNodeIterator(range)` | *O(1)* |
+| `getReversePtrIterator(range)` | create a reverse pointer iterator with an optional range | *O(1)* |
+
+For more details and to learn about other methods, see the [wiki](https://github.com/uhop/list-toolkit/wiki).
+
+### ValueList (value-list.js)
+
+`ValueList` is a specialization of `List` that holds values instead of nodes. Internally, it uses `ValueNode` objects with the `value` property to store the values.
+
+It supports the same operations as `List`. The difference is:
+
+* `pushFront(value)` and `pushBack(value)` take values and `ValueNode` objects as nodes.
+* `popFront()` and `popBack()` return values, not nodes.
+* The default iterator, `getValueIterator(range)` and `getReverseValueIterator(range)` return values, not nodes.
+* `getIterator(range)` is an alias of `getValueIterator(range)`.
+* `getReverseIterator(range)` is an alias of `getReverseValueIterator(range)`.
 
 ```js
-const list = List.from([1, 2, 3]);
+import ValueList from 'list-toolkit/value-list.js';
+// or
+// const ValueList = require('list-toolkit/value-list.js').default; // CJS
+
+const list = ValueList.from([1, 2, 3]);
+
+console.log(Array.from(list)); // [1, 2, 3]
 
 for (const value of list) {
-  console.log(value);
+  console.log(value); // 1, 2, 3
+}
+
+for (let node = list.front; node !== list; node = node.next) {
+  console.log(node.value); // 1, 2, 3
+}
+
+for (let node = list.back; node !== list; node = node.prev) {
+  console.log(node.value); // 3, 2, 1
+}
+
+for (const value of list.getReverseValueIterator()) {
+  console.log(value); // 3, 2, 1
 }
 ```
 
-Additional iterator-related methods are:
+### CircularList (circular-list.js)
+
+While `List` implemented as a head node, `CircularList` is implemented as a pointer
+to an external headless circular list. It can be added and removed from the outside
+at any point. When attached it provides a rich functionality that is similar to `List`'s pointer.
+
+```js
+import CircularList from 'list-toolkit/circular-list.js';
+// or
+// const CircularList = require('list-toolkit/circular-list.js').default; // CJS
+
+import ValueList, {ValueNode} from 'list-toolkit/value-list.js';
+
+const detachedList = ValueList.from([1, 2, 3]).releaseRawCircularList();
+
+let node = detachedList.front;
+do {
+  console.log(node.value);
+  node = node.next;
+} while (node !== detachedList);
+// 1, 2, 3
+
+const list = new CircularList(detachedList);
+
+for (const node of list) {
+  console.log(node.value); // 1, 2, 3
+}
+
+// list points to 1, we add 4 before 1 in a circular list
+// effectively it adds 4 after 1
+list.addBefore(node, new ValueNode(4));
+
+console.log(Array.from(list.getReverseIterator())); // [4, 3, 2, 1]
+
+// let's move list to 2, add 2.5 after 2, and move back to 1
+list.next();
+const ptr = list.addAfter(node, new ValueNode(2.5));
+list.prev();
+console.log(Array.from(list)); // [1, 2, 2.5, 3, 4]
+
+// let's remove 2.5 using its pointer
+list.removeNode(ptr);
+console.log(Array.from(list)); // [1, 2, 3, 4]
+```
+
+The main inspection operations are:
 
 | Method | Description | Complexity |
 |------|-----------|-----|
-| `getIterable(from, to)` | get an iterable of a range | *O(1)* |
-| `getReverseIterable(from, to)` | get an iterable of a range in reverse order | *O(1)* |
-| `getNodeIterable(from, to)` | get an iterable of a range by nodes | *O(1)* |
-| `getNodeReverseIterable(from, to)` | get an iterable of a range by nodes in reverse order | *O(1)* |
+| `CircularList(head, options)` | attach an external circular list | *O(1)* |
+| `isEmpty()` | check if the list is empty (unattached) | *O(1)* |
+| `front` | get the front node | *O(1)* |
+| `back` | get the last node | *O(1)* |
+| `getLength()` | get the length | *O(n)* |
 
-Helper methods are:
-
-| Method | Description | Complexity |
-|------|-----------|-----|
-| `make()` | (a meta helper) create a new List | *O(1)* |
-| `makeFrom(values)` | (a meta helper) create a new list from an iterable or an array | *O(k)* |
-| `clone()` | (a meta helper) clone the list | *O(n)* |
-| `pushValuesFront(values)` | add values at the beginning | *O(k)* |
-| `pushValuesBack(values)` | add values at the end | *O(k)* |
-| `appendValuesFront(values)` | add values as a list at the beginning | *O(k)* |
-| `appendValuesBack(values)` | add values as a list at the end | *O(k)* |
-
-Value node (`List.ValueNode`) methods are:
+The movement methods are:
 
 | Method | Description | Complexity |
 |------|-----------|-----|
-| `pop()` | remove and return the value | *O(1)* |
-| `addBefore(value)` | add a new value before the current node | *O(1)* |
-| `addAfter(value)` | add a new value after the current node | *O(1)* |
+| `next()` | move the pointer forward | *O(1)* |
+| `prev()` | move the pointer backward | *O(1)* |
+
+The removal methods are:
+
+| Method | Description | Complexity |
+|------|-----------|-----|
+| `remove()` | remove the current node and move forward | *O(1)* |
+| `removeNode(node)` | remove a node | *O(1)* |
+| `removeNodeBefore(node)` | remove a node before the current one | *O(1)* |
+| `removeNodeAfter(node)` | remove a node after the current one | *O(1)* |
+| `removeRange(range, drop)` | remove a range of nodes | |
+| `removeRange(range, false)` | remove a range of nodes | *O(1)* |
+| `removeRange(range, true)` | remove and isolate nodes | *O(k)* |
+| `clear(drop)` | clear the list | |
+| `clear(false)` | clear the list | *O(1)* |
+| `clear(true)` | clear the list and isolate nodes | *O(n)* |
+
+The insertion methods are:
+
+| Method | Description | Complexity |
+|------|-----------|-----|
+| `addBefore(node)` | add a node before the current one | *O(1)* |
+| `addAfter(node)` | add a node after the current one | *O(1)* |
 | `insertBefore(list)` | insert a list before the current node | *O(1)* |
 | `insertAfter(list)` | insert a list after the current node | *O(1)* |
 
-Stand-alone methods for nodes (`List.Node`) are:
+The simple manipulation methods are:
 
 | Method | Description | Complexity |
 |------|-----------|-----|
-| `List.pop(node)` | remove the node from its list and return `{node, list}` | *O(1)* |
-| `List.extract(from, to = from)` | remove nodes from their list and return the first node of the extracted list | *O(1)* |
-| `List.splice(head1, head2)` | combine two lists and return the first node of the combined list | *O(1)* |
-| `List.move(target, from, to = from)` | move a range of nodes to another list after a target node | *O(1)* |
+| `moveBefore(node)` | move a node before the current one | *O(1)* |
+| `moveAfter(node)` | move a node after the current one | *O(1)* |
 
-### ListHead
+The extraction methods are:
 
-`ListHead` implements a circular doubly linked list. Its head is an object with the following properties:
+| Method | Description | Complexity |
+|------|-----------|-----|
+| `extractRange(range)` | extract a range of nodes | *O(1)* |
+| `extractBy(condition)` | extract nodes that satisfy the condition | *O(n)* |
 
-* `nextName`: the property name of the next node. It can be a string or a symbol. Default: `"next"`.
-* `prevName`: the property name of the previous node. It can be a string or a symbol. Default: `"prev"`.
-* `head`: the head node of a circular doubly linked list. Default: `{}`.
+The list-wide manipulation methods are:
 
-All values of the list are objects that can be used as nodes. When adopted by a list,
-objects are modified in-place by adding the properties defined by `nextName` and `prevName`.
+| Method | Description | Complexity |
+|------|-----------|-----|
+| `reverse()` | reverse the list | *O(n)* |
+| `sort(compareFn)` | sort the list | *O(n * log(n))* |
 
-While a value can belong to multiple `List` instances, we never know which one it belongs to.
-If we know `nextName` and `prevName`, we can always find its `ListHead` instances from the value,
-and we can manipulate the node without accessing its lists directly.
+Iterators are:
 
-Because lists are circular structures, we can have multiple `ListHead` instances pointing to
-different nodes of the same list. In fact, creating a new `ListHead` instance is cheap and can be done
-when needed using any node/value.
+| Method | Description | Complexity |
+|------|-----------|-----|
+| `[Symbol.iterator]()` | the default iterator | *O(1)* |
+| `getNodeIterator(range)` | create an iterator with an optional range | *O(1)* |
+| `getIterator(range)` | an alias of `getNodeIterator(range)` | *O(1)* |
+| `getPtrIterator(range)` | create a pointer iterator with an optional range | *O(1)* |
+| `getReverseNodeIterator(range)` | create a reverse iterator with an optional range | *O(1)* |
+| `getReverseIterator(range)` | an alias of `getReverseNodeIterator(range)` | *O(1)* |
+| `getReversePtrIterator(range)` | create a reverse pointer iterator with an optional range | *O(1)* |
 
-An empty `ListHead` instance is created with an empty node that plays the role of a head of the list.
-Alternatively a `ListHead` can be created by pointing to an existing node. In this case,
-any valid node can be used as a head.
+### SList (slist.js)
 
-Some methods use nodes to manipulate the list. In `List`, they are usually found by iterations.
-`ListHead` methods can use named objects for that.
+`SList` is modelled after `List` but being implemented as a circular singly linked list.
+It supports a customizable name of "next". Any strings or symbols can be used.
+The default is `"next"`.
+
+Internally `SList` is implemented as a special head node and the whole list is circular.
+
+Being a singly linked list, some `List` operations are not supported due to the efficiency concerns.
+For example, it doesn't provide reverse iterations and `popBack()`,
+and some method signatures are different:
+
+| Method | Description | Complexity |
+|------|-----------|-----|
+| `moveToFront(ptr)` | move a node to the front | *O(1)* |
+| `moveToBack(ptr)` | move a node to the back | *O(1)* |
+| `removeNode(ptr)` | remove a node | *O(1)* |
+| `removeRange(ptrRange, drop)` | remove a range of nodes | |
+| `removeRange(ptrRange, false)` | remove a range of nodes | *O(1)* |
+| `removeRange(ptrRange, true)` | remove and isolate nodes | *O(k)* |
+| `extractRange(ptrRange)` | extract a range of nodes | *O(1)* |
+| `getPtrIterator(ptrRange)` | create a pointer iterator with an optional range | *O(1)* |
+
+Let's recreate the initial example with `SList`:
 
 ```js
-import ListHead from 'list-toolkit/ListHead.js';
+import SList from 'list-toolkit/slist.js';
 // or
-// const ListHead = require('list-toolkit/ListHead.js').default; // CJS
+// const SList = require('list-toolkit/slist.js').default; // CJS
 
-const list1 = new ListHead();
-const list2 = new ListHead(null, {nextName: Symbol('next'), prevName:Symbol('prev')});
+// sample data
+const a = {x: 1}, b = {x: 2}, c = {x: 3};
 
-const value = {a: 1};
+// the main list with default link names
+const list = new SList.from([a, b, c]);
 
-list1.push(value);
-list2.push(value);
-
-ListHead.pop({nextName: 'next', prevName: 'prev'}, value);
-ListHead.pop(list2, value);
-```
-
-Almost all APIs are the same as for `List` and have the same semantics and complexity.
-The differences are:
-
-| Method | Description | Complexity |
-|------|-----------|-----|
-| `new ListHead(head = null, {nextName = 'next', prevName = 'prev'})` | create a new List optionally adopting a list by `head` | *O(1)* |
-| `ListHead.from(values, next, prev)` | create a new List from an iterable | *O(k)* |
-| `ListHead.pop({nextName, prevName}, node)` | remove the node from its list and return `{node, list}` | *O(1)* |
-| `ListHead.extract({nextName, prevName}, from, to)` | remove nodes from their list and return the first node of the extracted list | *O(1)* |
-| `ListHead.splice({nextName, prevName}, head1, head2)` | combine two lists and return the first node of the combined list | *O(1)* |
-| `makeNode()` | return an otherwise empty object with proper `next` and `prev` properties as circular doubly linked list node | *O(1)* |
-| `adopt(node)` | make sure that a node is already a circular doubly linked list or make it so | *O(1)* |
-| `makeList(head)` | return a new list pointing to `head` with the same `nextName` and `prevName` properties as this list | *O(1)* |
-| `clear(true)` | remove all elements and breaks circular references | *O(n)* |
-| `clear()` | remove all elements | *O(1)* |
-
-`ListHead` defines a helper class `ListHead.Unsafe` that can be used to create lists without checking
-their `nextName` and `prevName` properties:
-
-```js
-const item1 = {a: 1}, item2 = {b: 2};
-item1.next = item2;
-item2.prev = item1;
-item1.prev = item2;
-item2.next = item1;
-
-const list = new ListHead(new ListHead.Unsafe(item1));
-```
-
-### SList
-
-`SList` implements a circular singly linked list. Its head is a node with one property: `next`.
-Other nodes of the list are value nodes (`SList.ValueNode`) that have a `value` property.
-
-```js
-import SList from 'list-toolkit/SList.js';
-// or
-// const SList = require('list-toolkit/SList.js').default; // CJS
-
-const list1 = new SList();
-const list2 = SList.from([1, 2, 3]);
-```
-
-`SList` API is modelled on `List`. The main difference is that `SList` is cheaper in general
-but some operations have higher complexity, e.g., any operations that need to access the back of the list.
-`SList` does not implement some operations, e.g., a reverse iterator, due to their complexity.
-If you need these operations frequently, use `List` instead.
-
-Note that for efficiency reasons some methods accept a previous node as a pointer to a required node.
-
-Main operations are:
-
-| Method | Description | Complexity |
-|------|-----------|-----|
-| `new SList()` | create a new List | *O(1)* |
-| `SList.from(values)` | create a new List from an iterable or an array | *O(k)* |
-| `isEmpty` | check if the list is empty | *O(1)* |
-| `front` | get the first element | *O(1)* |
-| `getBack()` | get the last element | *O(n)* |
-| `getLength()` | get the length of the list | *O(n)* |
-| `getPtr()` | get a special pointer value (see below) | *O(1)* |
-| `popFront()` | remove and return the first element | *O(1)* |
-| `popBack()` | remove and return the last element | *O(n)* |
-| `pushFront(value)` | add a new element at the beginning | *O(1)* |
-| `pushBack(value)` | add a new element at the end | *O(n)* |
-| `appendFront(list)` | add a list at the beginning | *O(nk* |
-| `appendBack(list)` | add a list at the end | *O(n + k)* |
-| `moveToFront(node)` | move a node to the front | *O(n)* |
-| `moveToFront(ptr)` | move a node by pointer (see below) to the front | *O(1)* |
-| `moveToBack(node)` | move a node to the back | *O(n)* |
-| `moveToBack(ptr)` | move a node by pointer (see below) to the back | *O(1)* |
-| `clear()` | remove all elements | *O(1)* |
-| `findPtrBy(condition)` | find a pointer to the first node that satisfies the condition | *O(n)* |
-| `remove(from, to = from)` | remove a range of elements | *O(n)* |
-| `remove(fromPtr, to = from)` | remove a range of elements using a pointer (see below) | *O(1)* |
-| `removeNodeBy(condition)` | remove the first node that satisfies the condition | *O(n)* |
-| `extract(from, to)` | remove and return a range of elements as a new list | *O(n)* |
-| `extract(fromPtr, to)` | remove and return a range of elements as a new list using a pointer (see below) | *O(1)* |
-| `extractBy(condition)` | remove and return elements as a new List that satisfy the condition | *O(n)* |
-| `reverse()` | reverse the list inline | *O(n)* |
-| `sort(compareFn)` | sort the list inline | *O(n * log(n))* |
-
-Useful aliases are:
-
-| Method | Alias of |
-|------|-----------|
-| `pop()` | `popFront()` |
-| `push()` | `pushFront()` |
-| `append()` | `appendBack()` |
-
-List can be used as an iterable:
-
-```js
-const list = SList.from([1, 2, 3]);
-
-for (const value of list) {
-  console.log(value);
+// iterate over the list
+for (const node of list) {
+  console.log(node.x); // 1, 2, 3
 }
+
+// iterate manually
+for (let node = list.front; node !== list; node = node.next) {
+  console.log(node.x); // 1, 2, 3
+}
+
+// iterate in reverse order: not possible
+
+// auxiliary lists with custom link names
+const odd = new List({nextName: 'nextOdd'}),
+  even = new List({nextName: Symbol()});
+
+// let's populate them
+for (const node of list) {
+  (node.x % 2 ? odd : even).pushBack(node);
+}
+
+// let's reverse the odd list
+odd.reverse();
+
+// let's iterate over them
+for (const node of odd) console.log(node.x); // 3, 1
+for (const node of even) console.log(node.x); // 2
+
+// let's drop the last odd node: not possible
+
+// the main list is unchanged
+console.log(Array.from(list).map(n => n.x)); // [1, 2, 3]
+
+// let's iterate manually using a range
+let node = a;
+do {
+  console.log(node.x);
+  node = node.next;
+} while (node !== c);
+// 1, 2
+
+const extracted = list.extract({from: list.frontPtr.next(), to: c});
+console.log(Array.from(extracted).map(n => n.x)); // [2, 3]
+console.log(Array.from(list).map(n => n.x)); // [1]
 ```
 
-Additional iterator-related methods are:
+### ValueSList (value-slist.js)
 
-| Method | Description | Complexity |
-|------|-----------|-----|
-| `getIterable(from, to)` | get an iterable of a range | *O(1)* |
-| `getPtrIterable(from, to)` | get an iterable of a range using a pointer (see below) | *O(n)* |
-| `getPtrIterable(fromPtr, to)` | get an iterable of a range using a pointer (see below) | *O(1)* |
-
-Helper methods are:
-
-| Method | Description | Complexity |
-|------|-----------|-----|
-| `make()` | (a meta helper) create a new list | *O(1)* |
-| `makeFrom(values)` | (a meta helper) create a new list from an iterable or an array | *O(k)* |
-| `clone()` | (a meta helper) clone a list | *O(n)* |
-| `pushValuesFront(values)` | add values at the beginning | *O(k)* |
-| `appendValuesFront(values)` | add values as a list at the beginning | *O(k)* |
-
-Value node (`SList.ValueNode`) methods are:
-
-| Method | Description | Complexity |
-|------|-----------|-----|
-| `addAfter(value)` | add a new value after the current node | *O(1)* |
-| `insertAfter(list)` | insert a list after the current node | *O(k)* |
-
-Stand-alone methods for nodes (`SList.Node`) are:
-
-| Method | Description | Complexity |
-|------|-----------|-----|
-| `SList.pop(prev)` | remove the node from its list and return `{node, list}` | *O(1)* |
-| `SList.extract(prevFrom, nodeTo)` | remove nodes from their list and return `{prev, node}`, where `node` is the first node of the extracted list, and `prev` is the previous node | *O(1)* |
-| `SList.splice(prev1, {prev, node})` | combine two lists and return the first node of the combined list | *O(1)* |
-| `SList.move(target, prevFrom, nodeTo)` | move a range of nodes to another list after a target node | *O(1)* |
-| `SList.getPrev(list, node)` | get a previous node of the given node | *O(n)* |
-
-`SList` provides a special pointer: `SList.SListPtr`. It can be used to create a pointer to a node in a list. It is constructed using a previous node, which makes some operations more efficient.
-
-Its methods are:
-
-| Method | Description | Complexity |
-|------|-----------|-----|
-| `new SList.SListPtr(list, prev = list)` | create a new pointer | *O(1)* |
-| `list` | the head node | *O(1)* |
-| `prev` | the previous node | *O(1)* |
-| `isHead` | check if the pointer is at the head of the list | *O(1)* |
-| `next()` | move the pointer to the next node | *O(1)* |
-| `clone()` | make a copy of the pointer | *O(1)* |
-
-Every method of `SList` that accepts a node can accept a pointer too.
-Using pointers is frequently more efficient than using nodes directly.
-
-### SListHead
-
-`SListHead` is modelled after `ListHead` but it is specialized for `SList` instances.
-Just like `ListHead`, it works with naked objects.
-
-`SListHead` implements a circular singly linked list. Its head is an object with the following properties:
-
-* `nextName`: the property name of the next node. It can be a string or a symbol. Default: `"next"`.
-* `head`: the head node of a circular singly linked list. Default: `{}`.
-
-All notes related to `ListHead` apply here too.
+`ValueSList` is a subclass of `SList` that is modelled after `ValueList`. It supports
+the same operations as `SList`, but the nodes are value nodes (`ValueNode`) and
+it differs from `SList` in the same way as `ValueList` from `List`.
 
 ```js
-import SListHead from 'list-toolkit/SListHead.js';
+import ValueSList from 'list-toolkit/value-slist.js';
 // or
-// const SListHead = require('list-toolkit/SListHead.js').default; // CJS
+// const ValueSList = require('list-toolkit/value-slist.js').default; // CJS
 
-const list1 = new SListHead();
-const list2 = new SListHead(null, {nextName: Symbol('next')});
+const list = ValueSList.from([1, 2, 3]);
 
-const value = {a: 1};
-
-list1.push(value);
-list2.push(value);
-
-SListHead.pop({nextName: 'next'}, value);
-SListHead.pop(list2, value);
+console.log(Array.from(list)); // [1, 2, 3]
 ```
 
-Almost all APIs are the same as for `SList` and have the same semantics and complexity.
-The differences are:
+### CircularSList (circular-slist.js)
+
+`CircularSList` is modelled after `CircularList`, but operates on external circular singly linked lists.
+
+```js
+import CircularSList from 'list-toolkit/circular-slist.js';
+// or
+// const CircularSList = require('list-toolkit/circular-slist.js').default; // CJS
+
+import ValueSList, {ValueNode} from 'list-toolkit/value-slist.js';
+
+const detachedList = ValueSList.from([1, 2, 3]).releaseRawCircularList();
+
+let node = detachedList.front;
+do {
+  console.log(node.value);
+  node = node.next;
+} while (node !== detachedList);
+// 1, 2, 3
+
+const list = new CircularSList(detachedList);
+console.log(Array.from(list)); // [1, 2, 3]
+```
+
+`CircularSList` differs from `CircularList` in the following ways:
+
+* Some methods are not supported due to the efficiency concerns:
+  * All "back" operations: `back`, `prev()`, `removeNodeBefore()`, `addBefore()`, `insertBefore()`, `moveBefore()`.
+  * All reverse iterators: `getReverseIterator()`, `getReverseNodeIterator()`, `getReversePtrIterator()`.
+* Some methods have a slightly different signatures.
 
 | Method | Description | Complexity |
 |------|-----------|-----|
-| `new SListHead(head = null, next = 'next')` | create a new `SListHead` optionally adopting a list by `head` | *O(1)* |
-| `SListHead.from(values, next)` | create a new `SListHead` from an iterable | *O(k)* |
-| `SListHead.pop({nextName}, prev)` | remove the node by its previous node from its list and return `{node, list}` | *O(1)* |
-| `SListHead.extract({nextName}, prevFrom, nodeTo)` | remove nodes from its list and return `{prev, node}` | *O(1)* |
-| `SListHead.splice({nextName}, prev1, {prev, node})` | combine two lists and return the first node of the combined list | *O(1)* |
-| `SListHead.getPrev({nextName}, list, node)` | get a previous node of the given node | *O(n)* |
-| `make(newHead = null)` | return a new `SListHead` pointing to `newHead` with the same `nextName` property as this list | *O(1)* |
-| `makeFrom(values)` | (a meta helper) create a new `SListHead` from an iterable with the same `nextName` property as this list | *O(k)* |
-| `clear(true)` | remove all elements and breaks circular references | *O(n)* |
-| `clear()` | remove all elements | *O(1)* |
-
-`SListHead.SListPtr` is a pointer-like class similar to `SList.SListPtr`
-but specialized for `SListHead` instances. It has the same API and the same semantics.
+| `moveAfter(ptr)` | move a node after the current one | *O(1)* |
+| `removeNode(ptr)` | remove a node | *O(1)* |
+| `removeRange(ptrRange, drop)` | remove a range of nodes | |
+| `removeRange(ptrRange, false)` | remove a range of nodes | *O(1)* |
+| `removeRange(ptrRange, true)` | remove and isolate nodes | *O(k)* |
+| `extractRange(ptrRange)` | extract a range of nodes | *O(1)* |
 
 ### Cache
 

@@ -178,6 +178,7 @@ export class CircularListBase {
   }
 
   getBack() {
+    // TODO: implement correctly
     if (!this.head) return null;
     let current = this.head;
     do {
@@ -187,6 +188,7 @@ export class CircularListBase {
   }
 
   adoptHead(head) {
+    // TODO: rename to attach(), add detach()
     if (head && !this.isNodeLike(head)) throw new Error('"head" is not a compatible node');
     this.head = head;
   }

@@ -86,7 +86,7 @@ export class List extends HeadNode {
     return this.extractRange(range).clear(drop);
   }
 
-  extractRange(range) {
+  extractRange(range = {}) {
     range = this.normalizeRange(range);
     range.from ||= this.front;
     range.to ||= this.back;
@@ -270,4 +270,5 @@ addAliases(List, {
   appendBack: 'append'
 });
 
+export {Ptr}
 export default List;
