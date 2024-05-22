@@ -32,7 +32,7 @@ export class HeadNode extends Node {
   }
 
   isCompatible(list) {
-    return list instanceof HeadNode && this.nextName === list.nextName && this.prevName === list.prevName;
+    return list === this || (list instanceof HeadNode && this.nextName === list.nextName && this.prevName === list.prevName);
   }
 
   isRangeLike(range) {
@@ -140,7 +140,7 @@ export class CircularListBase {
   }
 
   isCompatible(list) {
-    return list instanceof CircularListBase && this.nextName === list.nextName && this.prevName === list.prevName;
+    return list === this || (list instanceof CircularListBase && this.nextName === list.nextName && this.prevName === list.prevName);
   }
 
   get isEmpty() {
