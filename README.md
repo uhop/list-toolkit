@@ -292,10 +292,12 @@ The main inspection operations are:
 | `back` | get the last node | *O(1)* |
 | `getLength()` | get the length | *O(n)* |
 
-The movement methods are:
+The pointer manipulation methods are:
 
 | Method | Description | Complexity |
 |------|-----------|-----|
+| `attach(head)` | attach an external circular list | *O(1)* |
+| `detach()` | detach the external circular list | *O(1)* |
 | `next()` | move the pointer forward | *O(1)* |
 | `prev()` | move the pointer backward | *O(1)* |
 
