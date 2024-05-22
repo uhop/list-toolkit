@@ -42,7 +42,7 @@ export class CircularSList extends CircularListBase {
   }
 
   insertAfter(circularList) {
-    if (!(circularList instanceof CircularSList) || !this.isCompatibleNames(circularList)) throw new Error('Incompatible lists');
+    if (!this.isCompatible(circularList)) throw new Error('Incompatible lists');
 
     const head = circularList.head;
     if (head) {
