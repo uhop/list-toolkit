@@ -35,6 +35,13 @@ export class HeadNode extends Node {
     return list === this || (list instanceof HeadNode && this.nextName === list.nextName && this.prevName === list.prevName);
   }
 
+  isCompatiblePtr(ptr) {
+    return (
+      ptr instanceof PtrBase &&
+      (ptr.list === this || (ptr.list instanceof HeadNode && this.nextName === ptr.list.nextName && this.prevName === ptr.list.prevName))
+    );
+  }
+
   isRangeLike(range) {
     return isRangeLike(this, range);
   }
@@ -145,6 +152,13 @@ export class CircularListBase {
 
   isCompatible(list) {
     return list === this || (list instanceof CircularListBase && this.nextName === list.nextName && this.prevName === list.prevName);
+  }
+
+  isCompatiblePtr(ptr) {
+    return (
+      ptr instanceof PtrBase &&
+      (ptr.list === this || (ptr.list instanceof CircularListBase && this.nextName === ptr.list.nextName && this.prevName === ptr.list.prevName))
+    );
   }
 
   get isEmpty() {

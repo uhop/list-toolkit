@@ -54,7 +54,7 @@ export class CircularSList extends CircularListBase {
   }
 
   moveAfter(ptr) {
-    if (!this.isCompatible(ptr.list)) throw new Error('Incompatible lists');
+    if (!this.isCompatiblePtr(ptr)) throw new Error('Incompatible pointer');
 
     if (!this.head) {
       this.head = pop(this, ptr.previousNode).extracted.to;
@@ -87,7 +87,7 @@ export class CircularSList extends CircularListBase {
 
   removeNode(ptr) {
     if (!this.head) return null;
-    if (!this.isCompatible(ptr.list)) throw new Error('Incompatible lists');
+    if (!this.isCompatiblePtr(ptr)) throw new Error('Incompatible pointer');
     if (this.head === ptr.previousNode[this.nextName]) {
       if (this.head === this.head[this.nextName]) {
         this.head = null;
