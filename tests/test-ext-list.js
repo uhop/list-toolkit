@@ -47,7 +47,7 @@ test('ExtList', t => {
   );
 
   {
-    const node = extList.remove();
+    const node = extList.removeCurrent();
     t.deepEqual(
       Array.from(extList).map(value => value.x),
       [3, 1]
@@ -56,7 +56,7 @@ test('ExtList', t => {
 
     const array = [];
     while (!extList.isEmpty) {
-      array.push(extList.remove());
+      array.push(extList.removeCurrent());
     }
     t.ok(extList.isEmpty);
     t.deepEqual(
@@ -183,8 +183,8 @@ test('ExtList.extractRange() and ExtList.removeRange()', t => {
     [2, 3]
   );
 
-  extList.addBefore(extracted.remove());
-  extList.addBefore(extracted.remove());
+  extList.addBefore(extracted.removeCurrent());
+  extList.addBefore(extracted.removeCurrent());
   t.deepEqual(
     Array.from(extList).map(value => value.x),
     [1, 2, 3]

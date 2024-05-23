@@ -305,7 +305,7 @@ The removal methods are:
 
 | Method | Description | Complexity |
 |------|-----------|-----|
-| `remove()` | remove the current node and move forward | *O(1)* |
+| `removeCurrent()` | remove the current node and move forward | *O(1)* |
 | `removeNode(node)` | remove a node | *O(1)* |
 | `removeNodeBefore(node)` | remove a node before the current one | *O(1)* |
 | `removeNodeAfter(node)` | remove a node after the current one | *O(1)* |

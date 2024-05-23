@@ -22,7 +22,7 @@ export class ExtList extends ExtListBase {
 
   // Ptr API
 
-  remove() {
+  removeCurrent() {
     if (!this.head) return null;
     if (this.head[this.nextName] === this.head) {
       const node = this.head;
@@ -244,7 +244,7 @@ export class ExtList extends ExtListBase {
 
     // merge sublists
     while (!left.isEmpty && !right.isEmpty) {
-      this.addNodeAfter((lessFn(left.head, right.head) ? left : right).remove());
+      this.addNodeAfter((lessFn(left.head, right.head) ? left : right).removeCurrent());
       this.next();
     }
     if (!left.isEmpty) {

@@ -27,13 +27,13 @@ test('ExtValueList', t => {
   t.deepEqual(Array.from(extList), [2, 3, 1]);
 
   {
-    const node = extList.remove();
+    const node = extList.removeCurrent();
     t.deepEqual(Array.from(extList), [3, 1]);
     t.ok(node.value === 2);
 
     const array = [];
     while (!extList.isEmpty) {
-      array.push(extList.remove().value);
+      array.push(extList.removeCurrent().value);
     }
     t.ok(extList.isEmpty);
     t.deepEqual(array, [3, 1]);
@@ -112,8 +112,8 @@ test('ExtValueList.extractRange() and ExtValueList.removeRange()', t => {
   t.deepEqual(Array.from(extList), [1]);
   t.deepEqual(Array.from(extracted), [2, 3]);
 
-  extList.addBefore(extracted.remove());
-  extList.addBefore(extracted.remove());
+  extList.addBefore(extracted.removeCurrent());
+  extList.addBefore(extracted.removeCurrent());
   t.deepEqual(Array.from(extList), [1, 2, 3]);
   t.deepEqual(Array.from(extracted), []);
 

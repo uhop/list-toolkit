@@ -63,7 +63,7 @@ test('ValueSList.moveToFront()', t => {
   t.deepEqual(Array.from(list), [2, 1, 3, 4, 5]);
 });
 
-test('ValueSList.remove()', t => {
+test('ValueSList.removeXXX()', t => {
   const list = ValueSList.from([1, 2, 3, 4, 5]);
   const ptr = list.frontPtr;
   ptr.next();
