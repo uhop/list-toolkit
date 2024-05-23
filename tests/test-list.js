@@ -278,3 +278,18 @@ test('List.releaseRawCircularList()', t => {
 
   t.deepEqual(array, [1, 2, 3]);
 });
+
+test('List.sort()', t => {
+  const N = 100;
+
+  const array = new Array(N);
+  for (let i = 0; i < N; ++i) array[i] = Math.random();
+
+  const list = List.from(array.map(value => ({x: value})));
+  list.sort((a, b) => a.x < b.x);
+
+  t.deepEqual(
+    Array.from(list).map(value => value.x),
+    array.sort((a, b) => a - b)
+  );
+});

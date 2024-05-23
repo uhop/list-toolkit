@@ -253,6 +253,22 @@ test('CircularSList.reverse() and CircularSList.sort()', t => {
     Array.from(circularList).map(value => value.x),
     [1, 2, 3]
   );
+
+  {
+    const N = 100;
+
+    const array = new Array(N);
+    for (let i = 0; i < N; ++i) array[i] = Math.random();
+
+    const list = SList.from(array.map(value => ({x: value}))),
+      circularList = new CircularSList(list.releaseRawCircularList(), list);
+    circularList.sort((a, b) => a.x < b.x);
+
+    t.deepEqual(
+      Array.from(circularList).map(value => value.x),
+      array.sort((a, b) => a - b)
+    );
+  }
 });
 
 test('CircularSList iterators', t => {

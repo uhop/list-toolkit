@@ -95,6 +95,21 @@ test('ValueSList.sort()', t => {
   t.deepEqual(Array.from(list), [5, 4, 3, 2, 1]);
   list.sort((a, b) => a.value < b.value);
   t.deepEqual(Array.from(list), [1, 2, 3, 4, 5]);
+
+  {
+    const N = 100;
+
+    const array = new Array(N);
+    for (let i = 0; i < N; ++i) array[i] = Math.random();
+
+    const list = ValueSList.from(array);
+    list.sort((a, b) => a.value < b.value);
+
+    t.deepEqual(
+      Array.from(list),
+      array.sort((a, b) => a - b)
+    );
+  }
 });
 
 test('ValueSList iterators', t => {
