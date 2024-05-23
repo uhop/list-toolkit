@@ -1,6 +1,6 @@
 'use strict';
 
-import {CircularListBase, HeadNode} from './nodes.js';
+import {ExtListBase, HeadNode} from './nodes.js';
 import {pop, splice, append} from './basics.js';
 import Ptr from './ptr.js';
 import {addAliases, mapIterator} from '../meta-utils.js';
@@ -146,7 +146,7 @@ export class List extends HeadNode {
     return this;
   }
 
-  releaseRawCircularList() {
+  releaseRawList() {
     return this.isEmpty ? null : pop(this, this).rest;
   }
 
@@ -250,14 +250,14 @@ export class List extends HeadNode {
     return append(list, list, range);
   }
 
-  static fromCircularList(circularList) {
-    if (!(circularList instanceof CircularListBase)) throw new Error('Not a circular list');
+  static fromExtList(extList) {
+    if (!(extList instanceof ExtListBase)) throw new Error('Not a circular list');
 
-    const list = new List(circularList);
-    if (circularList.isEmpty) return list;
+    const list = new List(extList);
+    if (extList.isEmpty) return list;
 
-    splice(list, list, circularList.head);
-    circularList.clear();
+    splice(list, list, extList.head);
+    extList.clear();
 
     return list;
   }

@@ -137,9 +137,9 @@ export class PtrBase {
   }
 }
 
-export class CircularListBase {
+export class ExtListBase {
   constructor(head = null, {nextName = 'next', prevName = 'prev'} = {}) {
-    if (head instanceof CircularListBase) {
+    if (head instanceof ExtListBase) {
       this.nextName = head.nextName;
       this.prevName = head.prevName;
       this.attach(head.head);
@@ -157,13 +157,13 @@ export class CircularListBase {
   }
 
   isCompatible(list) {
-    return list === this || (list instanceof CircularListBase && this.nextName === list.nextName && this.prevName === list.prevName);
+    return list === this || (list instanceof ExtListBase && this.nextName === list.nextName && this.prevName === list.prevName);
   }
 
   isCompatiblePtr(ptr) {
     return (
       ptr instanceof PtrBase &&
-      (ptr.list === this || (ptr.list instanceof CircularListBase && this.nextName === ptr.list.nextName && this.prevName === ptr.list.prevName))
+      (ptr.list === this || (ptr.list instanceof ExtListBase && this.nextName === ptr.list.nextName && this.prevName === ptr.list.prevName))
     );
   }
 
@@ -231,4 +231,4 @@ export class CircularListBase {
   }
 }
 
-copyDescriptors(CircularListBase, ['isNodeLike', 'isCompatibleNames', 'isRangeLike', 'normalizeNode', 'normalizeRange'], HeadNode);
+copyDescriptors(ExtListBase, ['isNodeLike', 'isCompatibleNames', 'isRangeLike', 'normalizeNode', 'normalizeRange'], HeadNode);

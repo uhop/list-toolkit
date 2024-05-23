@@ -14,7 +14,7 @@ The toolkit provides the following data structures with a full set of efficientl
     * Using different custom properties the same object can be linked in different ways.
   * **ValueList**: a doubly linked list implemented as a container, which can hold/reference external values.
     * Based on `List`.
-  * **CircularList**: an external handler of a headless list.
+  * **ExtList**: an external handler of a headless list.
 * Singly linked lists:
   * **SList**: a list that uses custom properties on external objects to link them around.
     * Using different custom properties the same object can be linked in different ways.
@@ -237,20 +237,20 @@ for (const value of list.getReverseValueIterator()) {
 }
 ```
 
-### CircularList (circular-list.js)
+### ExtList (ext-list.js)
 
-While `List` implemented as a head node, `CircularList` is implemented as a pointer
+While `List` implemented as a head node, `ExtList` is implemented as a pointer
 to an external headless circular list. It can be added and removed from the outside
 at any point. When attached it provides a rich functionality that is similar to `List`'s pointer.
 
 ```js
-import CircularList from 'list-toolkit/circular-list.js';
+import ExtList from 'list-toolkit/circular-list.js';
 // or
-// const CircularList = require('list-toolkit/circular-list.js').default; // CJS
+// const ExtList = require('list-toolkit/circular-list.js').default; // CJS
 
 import ValueList, {ValueNode} from 'list-toolkit/value-list.js';
 
-const detachedList = ValueList.from([1, 2, 3]).releaseRawCircularList();
+const detachedList = ValueList.from([1, 2, 3]).releaseRawList();
 
 let node = detachedList.front;
 do {
@@ -259,7 +259,7 @@ do {
 } while (node !== detachedList);
 // 1, 2, 3
 
-const list = new CircularList(detachedList);
+const list = new ExtList(detachedList);
 
 for (const node of list) {
   console.log(node.value); // 1, 2, 3
@@ -286,7 +286,7 @@ The main inspection operations are:
 
 | Method | Description | Complexity |
 |------|-----------|-----|
-| `CircularList(head, options)` | attach an external circular list | *O(1)* |
+| `ExtList(head, options)` | attach an external circular list | *O(1)* |
 | `isEmpty()` | check if the list is empty (unattached) | *O(1)* |
 | `front` | get the front node | *O(1)* |
 | `back` | get the last node | *O(1)* |
@@ -456,18 +456,18 @@ const list = ValueSList.from([1, 2, 3]);
 console.log(Array.from(list)); // [1, 2, 3]
 ```
 
-### CircularSList (circular-slist.js)
+### ExtSList (ext-slist.js)
 
-`CircularSList` is modelled after `CircularList`, but operates on external circular singly linked lists.
+`ExtSList` is modelled after `ExtList`, but operates on external circular singly linked lists.
 
 ```js
-import CircularSList from 'list-toolkit/circular-slist.js';
+import ExtSList from 'list-toolkit/circular-slist.js';
 // or
-// const CircularSList = require('list-toolkit/circular-slist.js').default; // CJS
+// const ExtSList = require('list-toolkit/circular-slist.js').default; // CJS
 
 import ValueSList, {ValueNode} from 'list-toolkit/value-slist.js';
 
-const detachedList = ValueSList.from([1, 2, 3]).releaseRawCircularList();
+const detachedList = ValueSList.from([1, 2, 3]).releaseRawList();
 
 let node = detachedList.front;
 do {
@@ -476,11 +476,11 @@ do {
 } while (node !== detachedList);
 // 1, 2, 3
 
-const list = new CircularSList(detachedList);
+const list = new ExtSList(detachedList);
 console.log(Array.from(list)); // [1, 2, 3]
 ```
 
-`CircularSList` differs from `CircularList` in the following ways:
+`ExtSList` differs from `ExtList` in the following ways:
 
 * Some methods are not supported due to the efficiency concerns:
   * All "back" operations: `back`, `prev()`, `removeNodeBefore()`, `addBefore()`, `insertBefore()`, `moveBefore()`.

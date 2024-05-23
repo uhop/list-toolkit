@@ -259,22 +259,22 @@ test("List's Ptr", t => {
   );
 });
 
-test('List.releaseRawCircularList()', t => {
+test('List.releaseRawList()', t => {
   const list = List.from([{x: 1}, {x: 2}, {x: 3}]);
 
   t.equal(list.getLength(), 3);
 
-  const circularList = list.releaseRawCircularList();
+  const extList = list.releaseRawList();
 
   t.ok(list.isEmpty);
-  t.ok(!!circularList);
+  t.ok(!!extList);
 
   const array = [];
-  let current = circularList;
+  let current = extList;
   do {
     array.push(current.x);
     current = current[list.nextName];
-  } while (current !== circularList);
+  } while (current !== extList);
 
   t.deepEqual(array, [1, 2, 3]);
 });

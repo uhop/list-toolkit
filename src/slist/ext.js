@@ -1,12 +1,12 @@
 'use strict';
 
-import {CircularListBase, HeadNode, PtrBase} from './nodes.js';
+import {ExtListBase, HeadNode, PtrBase} from './nodes.js';
 import {pop, extract, splice} from './basics.js';
 import {addAliases, copyDescriptors, mapIterator} from '../meta-utils.js';
 
 export class Ptr extends PtrBase {
   constructor(list, prev) {
-    super(list, prev, CircularSList);
+    super(list, prev, ExtSList);
     this.previousNode ||= this.list.head;
   }
   clone() {
@@ -14,7 +14,7 @@ export class Ptr extends PtrBase {
   }
 }
 
-export class CircularSList extends CircularListBase {
+export class ExtSList extends ExtListBase {
   get rangePtr() {
     return this.head ? {from: this.makePtr(), to: this.head, list: this.head} : null;
   }
@@ -41,13 +41,13 @@ export class CircularSList extends CircularListBase {
     return this.makePtr();
   }
 
-  insertAfter(circularList) {
-    if (!this.isCompatible(circularList)) throw new Error('Incompatible lists');
+  insertAfter(extList) {
+    if (!this.isCompatible(extList)) throw new Error('Incompatible lists');
 
-    const head = circularList.head;
+    const head = extList.head;
     if (head) {
       splice(this, this.head, {prevFrom: head, to: head});
-      circularList.head = null;
+      extList.head = null;
     }
 
     return this.makePtr();
@@ -285,19 +285,19 @@ export class CircularSList extends CircularListBase {
   // meta helpers
 
   clone() {
-    return new CircularSList(this);
+    return new ExtSList(this);
   }
 
   make(head = null) {
-    return new CircularSList(head, this);
+    return new ExtSList(head, this);
   }
 
   makeFrom(values) {
-    return CircularSList.from(values, this);
+    return ExtSList.from(values, this);
   }
 
   static from(values, options) {
-    const list = new CircularSList(null, options);
+    const list = new ExtSList(null, options);
     for (const value of values) {
       list.addNodeAfter(value);
       list.next();
@@ -306,14 +306,14 @@ export class CircularSList extends CircularListBase {
   }
 }
 
-CircularSList.Ptr = Ptr;
+ExtSList.Ptr = Ptr;
 
-copyDescriptors(CircularSList, 'adoptNode, isCompatibleNames, isNodeLike', HeadNode);
+copyDescriptors(ExtSList, 'adoptNode, isCompatibleNames, isNodeLike', HeadNode);
 
-addAliases(CircularSList, {
+addAliases(ExtSList, {
   addNodeAfter: 'addAfter',
   removeNodeAfter: 'removeAfter',
   getNodeIterator: 'getIterator'
 });
 
-export default CircularSList;
+export default ExtSList;

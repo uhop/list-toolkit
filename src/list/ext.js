@@ -1,12 +1,12 @@
 'use strict';
 
-import {CircularListBase, HeadNode, PtrBase} from './nodes.js';
+import {ExtListBase, HeadNode, PtrBase} from './nodes.js';
 import {pop, extract, splice, append} from './basics.js';
 import {addAliases, copyDescriptors} from '../meta-utils.js';
 
 export class Ptr extends PtrBase {
   constructor(list, node) {
-    super(list, node, CircularList);
+    super(list, node, ExtList);
     this.node ||= this.list.head;
   }
   clone() {
@@ -14,7 +14,7 @@ export class Ptr extends PtrBase {
   }
 }
 
-export class CircularList extends CircularListBase {
+export class ExtList extends ExtListBase {
   makePtr(node) {
     node ||= this.head;
     return node ? new Ptr(this, node) : null;
@@ -62,25 +62,25 @@ export class CircularList extends CircularListBase {
     return this.makePtr(node);
   }
 
-  insertBefore(circularList) {
-    if (!this.isCompatible(circularList)) throw new Error('Incompatible lists');
+  insertBefore(extList) {
+    if (!this.isCompatible(extList)) throw new Error('Incompatible lists');
 
-    const head = circularList.head;
+    const head = extList.head;
     if (head) {
       splice(this, this.head[this.prevName], head);
-      circularList.head = null;
+      extList.head = null;
     }
 
     return this.makePtr(head);
   }
 
-  insertAfter(circularList) {
-    if (!this.isCompatible(circularList)) throw new Error('Incompatible lists');
+  insertAfter(extList) {
+    if (!this.isCompatible(extList)) throw new Error('Incompatible lists');
 
-    const head = circularList.head;
+    const head = extList.head;
     if (head) {
       splice(this, this.head, head);
-      circularList.head = null;
+      extList.head = null;
     }
 
     return this.makePtr(head);
@@ -310,19 +310,19 @@ export class CircularList extends CircularListBase {
   // meta helpers
 
   clone() {
-    return new CircularList(this);
+    return new ExtList(this);
   }
 
   make(head = null) {
-    return new CircularList(head, this);
+    return new ExtList(head, this);
   }
 
   makeFrom(values) {
-    return CircularList.from(values, this);
+    return ExtList.from(values, this);
   }
 
   static from(values, options) {
-    const list = new CircularList(null, options);
+    const list = new ExtList(null, options);
     for (const value of values) {
       list.addNodeAfter(value);
       list.next();
@@ -331,11 +331,11 @@ export class CircularList extends CircularListBase {
   }
 }
 
-CircularList.Ptr = Ptr;
+ExtList.Ptr = Ptr;
 
-copyDescriptors(CircularList, 'adoptNode, isCompatibleNames, isNodeLike', HeadNode);
+copyDescriptors(ExtList, 'adoptNode, isCompatibleNames, isNodeLike', HeadNode);
 
-addAliases(CircularList, {
+addAliases(ExtList, {
   addNodeBefore: 'addBefore',
   addNodeAfter: 'addAfter',
   removeNodeBefore: 'removeBefore',
@@ -344,4 +344,4 @@ addAliases(CircularList, {
   getReverseNodeIterator: 'getReverseIterator'
 });
 
-export default CircularList;
+export default ExtList;

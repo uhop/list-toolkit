@@ -132,9 +132,9 @@ export class PtrBase {
   }
 }
 
-export class CircularListBase {
+export class ExtListBase {
   constructor(head = null, {nextName = 'next'} = {}) {
-    if (head instanceof CircularListBase) {
+    if (head instanceof ExtListBase) {
       this.nextName = head.nextName;
       this.attach(head.head);
       return;
@@ -149,11 +149,11 @@ export class CircularListBase {
   }
 
   isCompatible(list) {
-    return list === this || (list instanceof CircularListBase && this.nextName === list.nextName);
+    return list === this || (list instanceof ExtListBase && this.nextName === list.nextName);
   }
 
   isCompatiblePtr(ptr) {
-    return ptr instanceof PtrBase && (ptr.list === this || (ptr.list instanceof CircularListBase && this.nextName === ptr.list.nextName));
+    return ptr instanceof PtrBase && (ptr.list === this || (ptr.list instanceof ExtListBase && this.nextName === ptr.list.nextName));
   }
 
   get isEmpty() {
@@ -221,4 +221,4 @@ export class CircularListBase {
   }
 }
 
-copyDescriptors(CircularListBase, ['isNodeLike', 'isCompatibleNames', 'isRangeLike', 'normalizeNode', 'normalizeRange', 'normalizePtrRange'], HeadNode);
+copyDescriptors(ExtListBase, ['isNodeLike', 'isCompatibleNames', 'isRangeLike', 'normalizeNode', 'normalizeRange', 'normalizePtrRange'], HeadNode);
