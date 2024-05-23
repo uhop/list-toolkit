@@ -27,6 +27,22 @@ export class SList extends HeadNode {
     return (node[this.nextName] = node);
   }
 
+  pushFront(value) {
+    const node = this.adoptValue(value);
+    node[this.nextName] = this[this.nextName];
+    this[this.nextName] = node;
+    if (node[this.nextName] === this) this.last = node;
+    return this.makePtr();
+  }
+
+  pushBack(value) {
+    const node = this.adoptValue(value);
+    node[this.nextName] = this;
+    const last = this.last;
+    this.last = this.last[this.nextName] = node;
+    return this.makePtr(last);
+  }
+
   pushFrontNode(node) {
     node = this.adoptNode(node);
     node[this.nextName] = this[this.nextName];
@@ -300,10 +316,9 @@ SList.Ptr = Ptr;
 
 addAliases(SList, {
   popFrontNode: 'popFront, pop',
-  pushFrontNode: 'pushFront, push',
-  pushBackNode: 'pushBack',
-  getNodeIterator: 'getIterator',
-  pushBackNode: 'pushBack'
+  popBackNode: 'popBack',
+  pushFront: 'push',
+  getNodeIterator: 'getIterator'
 });
 
 export {Ptr};

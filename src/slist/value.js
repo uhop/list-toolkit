@@ -9,8 +9,13 @@ export class ValueSList extends List {
     return this.popFrontNode()?.value;
   }
 
-  adoptNode(node) {
-    return node instanceof ValueNode ? super.adoptNode(node) : new ValueNode(node, this);
+  adoptValue(value) {
+    if (value instanceof Ptr) {
+      if (!this.isCompatiblePtr(value)) throw new Error('Incompatible pointer');
+      value = value.node;
+    }
+    if (value instanceof ValueNode) return super.adoptNode(value);
+    return new ValueNode(value, this);
   }
 
   // iterators

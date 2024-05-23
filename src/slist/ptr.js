@@ -21,14 +21,26 @@ export class Ptr extends PtrBase {
     if (this.list.last === node) this.list.last = this.previousNode;
     return pop(this.list, this.previousNode).extracted.to;
   }
-  addBefore(node) {
+  addBefore(value) {
+    const node = this.list.adoptValue(value),
+      prev = splice(this.list, this.previousNode, {prevFrom: node});
+    this.previousNode = node;
+    if (this.list.last === this.list) this.list.last = node;
+    return this.list.makePtr(prev);
+  }
+  addNodeBefore(node) {
     node = this.list.adoptNode(node);
     const prev = splice(this.list, this.previousNode, {prevFrom: node});
     this.previousNode = node;
     if (this.list.last === this.list) this.list.last = node;
     return this.list.makePtr(prev);
   }
-  addAfter(node) {
+  addAfter(value) {
+    const node = this.list.adoptValue(value),
+      prev = splice(this.list, this.previousNode[this.list.nextName], {prevFrom: node});
+    return this.list.makePtr(prev);
+  }
+  addNodeAfter(node) {
     node = this.list.adoptNode(node);
     const prev = splice(this.list, this.previousNode[this.list.nextName], {prevFrom: node});
     return this.list.makePtr(prev);

@@ -1,19 +1,10 @@
 'use strict';
 
-import List, {Ptr} from './core.js';
+import ExtList, {Ptr} from './ext.js';
 import {ValueNode} from './nodes.js';
-import {pop} from './basics.js';
 import {addAliases, mapIterator} from '../meta-utils.js';
 
-export class ValueList extends List {
-  popFront() {
-    if (!this.isEmpty) return pop(this, this[this.nextName]).extracted.value;
-  }
-
-  popBack() {
-    if (!this.isEmpty) return pop(this, this[this.prevName]).extracted.value;
-  }
-
+export class ExtValueList extends ExtList {
   adoptValue(value) {
     if (value instanceof Ptr) {
       if (!this.isCompatiblePtr(value)) throw new Error('Incompatible pointer');
@@ -26,11 +17,11 @@ export class ValueList extends List {
   // iterators
 
   [Symbol.iterator]() {
-    let current = this[this.nextName],
+    let current = this.head,
       readyToStop = this.isEmpty;
     return {
       next: () => {
-        if (readyToStop && current === this) return {done: true};
+        if (readyToStop && current === this.head) return {done: true};
         readyToStop = true;
         const value = current.value;
         current = current[this.nextName];
@@ -50,32 +41,33 @@ export class ValueList extends List {
   // meta helpers
 
   clone() {
-    return ValueList.from(this, this);
+    return new ExtValueList(this);
   }
 
-  make() {
-    return new ValueList(this);
+  make(head = null) {
+    return new ExtValueList(head, this);
   }
 
   makeFrom(values) {
-    return ValueList.from(values, this);
+    return ExtValueList.from(values, this);
   }
 
   static from(values, options) {
-    const list = new ValueList(options);
-    for (const value of values) list.pushBack(value);
-    return list;
+    const list = new ExtValueList(null, options);
+    for (const value of values) {
+      list.addAfter(value);
+      list.next();
+    }
+    return list.next();
   }
 }
 
-ValueList.Ptr = Ptr;
-ValueList.ValueNode = ValueNode;
+ExtValueList.Ptr = Ptr;
+ExtValueList.ValueNode = ValueNode;
 
-addAliases(ValueList, {
-  popFront: 'pop',
+addAliases(ExtValueList, {
   getValueIterator: 'getIterator',
   getReverseValueIterator: 'getReverseIterator'
-}, true);
+});
 
-export {ValueNode, Ptr};
-export default ValueList;
+export default ExtValueList;

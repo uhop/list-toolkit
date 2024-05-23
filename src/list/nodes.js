@@ -1,7 +1,7 @@
 'use strict';
 
 import {isRangeLike, normalizeNode, normalizeRange} from '../list-helpers.js';
-import {copyDescriptors} from '../meta-utils.js';
+import {addAlias, addAliases, copyDescriptors} from '../meta-utils.js';
 
 export const isNodeLike = ({nextName, prevName}, node) => node && node[prevName] && node[nextName];
 export const isStandAlone = ({nextName, prevName}, node) => node && node[prevName] === node && node[nextName] === node;
@@ -95,6 +95,8 @@ export class HeadNode extends Node {
     return normalizeRange(this, range, PtrBase);
   }
 }
+
+addAlias(HeadNode, 'adoptValue', 'adoptNode');
 
 export class ValueNode extends Node {
   constructor(value, options) {
@@ -233,4 +235,8 @@ export class ExtListBase {
   }
 }
 
-copyDescriptors(ExtListBase, ['isNodeLike', 'isCompatibleNames', 'isRangeLike', 'normalizeNode', 'normalizeRange'], HeadNode);
+copyDescriptors(
+  ExtListBase,
+  ['isNodeLike', 'isCompatibleNames', 'isRangeLike', 'normalizeNode', 'normalizeRange', 'adoptNode', 'adoptValue', 'isCompatibleNames', 'isNodeLike'],
+  HeadNode
+);

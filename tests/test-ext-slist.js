@@ -154,7 +154,7 @@ test('ExtSList.extractRange() and ExtSList.removeRange()', t => {
     b = {x: 2},
     c = {x: 3};
 
-  const options = {nextName: Symbol(), prevName: Symbol()},
+  const options = {nextName: Symbol()},
     list = SList.from([a, b, c], options),
     extList = new ExtSList(list.releaseRawList(), list);
 

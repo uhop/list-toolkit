@@ -18,6 +18,18 @@ export class List extends HeadNode {
     return new Ptr(this, node || this.front);
   }
 
+  pushFront(value) {
+    const node = this.adoptValue(value);
+    splice(this, this, node);
+    return this.makePtr(node);
+  }
+
+  pushBack(value) {
+    const node = this.adoptValue(value);
+    splice(this, this[this.prevName], node);
+    return this.makePtr(node);
+  }
+
   popFrontNode() {
     if (!this.isEmpty) return pop(this, this[this.nextName]).extracted;
   }
@@ -103,7 +115,7 @@ export class List extends HeadNode {
     if (this.isOneOrEmpty) return extracted;
 
     for (const ptr of this.getPtrIterator({from: this.front[this.nextName]})) {
-      if (condition(ptr.node)) extracted.pushBack(ptr.remove());
+      if (condition(ptr.node)) extracted.pushBack(ptr.removeNode());
     }
 
     return extracted;
@@ -267,9 +279,8 @@ List.Ptr = Ptr;
 
 addAliases(List, {
   popFrontNode: 'popFront, pop',
-  pushFrontNode: 'pushFront, push',
   popBackNode: 'popBack',
-  pushBackNode: 'pushBack',
+  pushFront: 'push',
   getNodeIterator: 'getIterator',
   getReverseNodeIterator: 'getReverseIterator',
   appendBack: 'append'

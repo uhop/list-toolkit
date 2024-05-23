@@ -1,7 +1,7 @@
 'use strict';
 
 import {isRangeLike, normalizeNode, normalizeRange, normalizePtrRange} from '../list-helpers.js';
-import {copyDescriptors} from '../meta-utils.js';
+import {addAlias, copyDescriptors} from '../meta-utils.js';
 
 export const isNodeLike = ({nextName}, node) => node && node[nextName];
 export const isStandAlone = ({nextName}, node) => node && node[nextName] === node;
@@ -71,6 +71,7 @@ export class HeadNode extends Node {
   }
 
   adoptNode(node) {
+    if (node instanceof PtrBase) node = node.node;
     if (node[this.nextName]) {
       if (node[this.nextName] === node) return node;
       throw new Error('node is already a part of a list, or there is a name clash');
@@ -97,6 +98,8 @@ export class HeadNode extends Node {
     return this;
   }
 }
+
+addAlias(HeadNode, 'adoptValue', 'adoptNode');
 
 export class ValueNode extends Node {
   constructor(value, options) {
@@ -223,4 +226,19 @@ export class ExtListBase {
   }
 }
 
-copyDescriptors(ExtListBase, ['isNodeLike', 'isCompatibleNames', 'isRangeLike', 'normalizeNode', 'normalizeRange', 'normalizePtrRange'], HeadNode);
+copyDescriptors(
+  ExtListBase,
+  [
+    'isNodeLike',
+    'isCompatibleNames',
+    'isRangeLike',
+    'normalizeNode',
+    'normalizeRange',
+    'normalizePtrRange',
+    'adoptNode',
+    'adoptValue',
+    'isCompatibleNames',
+    'isNodeLike'
+  ],
+  HeadNode
+);

@@ -1,8 +1,8 @@
 'use strict';
 
-import {ExtListBase, HeadNode, PtrBase} from './nodes.js';
+import {ExtListBase, PtrBase} from './nodes.js';
 import {pop, extract, splice, append} from './basics.js';
-import {addAliases, copyDescriptors} from '../meta-utils.js';
+import {addAliases} from '../meta-utils.js';
 
 export class Ptr extends PtrBase {
   constructor(list, node) {
@@ -40,6 +40,26 @@ export class ExtList extends ExtListBase {
 
   removeNodeAfter() {
     return this.head ? this.removeNode(this.head[this.nextName]) : null;
+  }
+
+  addBefore(value) {
+    const node = this.adoptValue(value);
+    if (this.head) {
+      splice(this, this.head[this.prevName], node);
+    } else {
+      this.head = node;
+    }
+    return this.makePtr(node);
+  }
+
+  addAfter(value) {
+    const node = this.adoptValue(value);
+    if (this.head) {
+      splice(this, this.head, node);
+    } else {
+      this.head = node;
+    }
+    return this.makePtr(node);
   }
 
   addNodeBefore(node) {
@@ -333,11 +353,8 @@ export class ExtList extends ExtListBase {
 
 ExtList.Ptr = Ptr;
 
-copyDescriptors(ExtList, 'adoptNode, isCompatibleNames, isNodeLike', HeadNode);
-
 addAliases(ExtList, {
-  addNodeBefore: 'addBefore',
-  addNodeAfter: 'addAfter',
+  addAfter: 'add',
   removeNodeBefore: 'removeBefore',
   removeNodeAfter: 'removeAfter',
   getNodeIterator: 'getIterator',
