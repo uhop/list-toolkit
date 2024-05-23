@@ -291,6 +291,19 @@ export class CircularSList extends CircularListBase {
   make(head = null) {
     return new CircularSList(head, this);
   }
+
+  makeFrom(values) {
+    return CircularSList.from(values, this);
+  }
+
+  static from(values, options) {
+    const list = new CircularSList(null, options);
+    for (const value of values) {
+      list.addNodeAfter(value);
+      list.next();
+    }
+    return list.next();
+  }
 }
 
 CircularSList.Ptr = Ptr;
