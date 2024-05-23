@@ -69,7 +69,7 @@ test('ValueSList.remove()', t => {
   ptr.next();
   list.removeRange({from: ptr, to: ptr});
   t.deepEqual(Array.from(list), [1, 3, 4, 5]);
-  ptr.remove();
+  ptr.removeNode();
   t.deepEqual(Array.from(list), [1, 4, 5]);
 });
 
@@ -257,10 +257,10 @@ test("ValueSList's Ptr", t => {
   ptr.next();
   t.equal(ptr.node.value, 8);
 
-  t.equal(ptr.remove().value, 8);
+  t.equal(ptr.removeNode().value, 8);
   t.deepEqual(Array.from(list), [4, 6, 7, 1, 9, 5, 2, 3]);
   t.equal(ptr.node.value, 9);
 
-  t.equal(list.frontPtr.remove().value, 4);
+  t.equal(list.frontPtr.removeNode().value, 4);
   t.deepEqual(Array.from(list), [6, 7, 1, 9, 5, 2, 3]);
 });

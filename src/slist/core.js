@@ -72,7 +72,7 @@ export class SList extends HeadNode {
   moveToFront(ptr) {
     if (!this.isCompatiblePtr(ptr)) throw new Error('Incompatible pointer');
     if (ptr.isHead) return this;
-    const node = ptr.remove();
+    const node = ptr.removeNode();
     ptr.previousNode = this;
     return this.pushFrontNode(node);
   }
@@ -80,7 +80,7 @@ export class SList extends HeadNode {
   moveToBack(ptr) {
     if (!this.isCompatiblePtr(ptr)) throw new Error('Incompatible pointer');
     if (ptr.isHead) return this;
-    const node = ptr.remove();
+    const node = ptr.removeNode();
     ptr.previousNode = this.last;
     return this.pushBackNode(node);
   }
@@ -130,7 +130,7 @@ export class SList extends HeadNode {
 
     for (const ptr = this.frontPtr; !ptr.isHead; ) {
       if (condition(ptr.node)) {
-        extracted.pushBackNode(ptr.remove());
+        extracted.pushBackNode(ptr.removeNode());
       } else {
         ptr.next();
       }

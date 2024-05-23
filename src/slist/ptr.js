@@ -15,7 +15,7 @@ export class Ptr extends PtrBase {
   clone() {
     return new Ptr(this);
   }
-  remove() {
+  removeNode() {
     const node = this.previousNode[this.list.nextName];
     if (node === this.list || node === this.previousNode) return null;
     if (this.list.last === node) this.list.last = this.previousNode;

@@ -104,7 +104,7 @@ export const findPtrBy = (list, condition) => {
 
 export const removeNodeBy = (list, condition) => {
   for (const ptr of list.getPtrIterator()) {
-    if (condition(ptr.node)) return ptr.remove();
+    if (condition(ptr.node)) return ptr.removeNode();
   }
   return null;
 };

@@ -190,14 +190,14 @@ test("SList's Ptr", t => {
   ptr.next();
   t.equal(ptr.node.x, 8);
 
-  t.equal(ptr.remove().x, 8);
+  t.equal(ptr.removeNode().x, 8);
   t.deepEqual(
     Array.from(list).map(value => value.x),
     [4, 6, 7, 1, 9, 5, 2, 3]
   );
   t.equal(ptr.node.x, 9);
 
-  t.equal(list.frontPtr.remove().x, 4);
+  t.equal(list.frontPtr.removeNode().x, 4);
   t.deepEqual(
     Array.from(list).map(value => value.x),
     [6, 7, 1, 9, 5, 2, 3]
