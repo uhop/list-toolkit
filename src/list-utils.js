@@ -108,3 +108,33 @@ export const removeNodeBy = (list, condition) => {
   }
   return null;
 };
+
+export const backPusher = (ExtListClass, options) => {
+  const list = new ExtListClass(null, options),
+    adapter = {
+      nextName: list.nextName,
+      prevName: list.prevName,
+
+      pushBackNode: node => {
+        const ptr = list.addNodeAfter(node);
+        list.next();
+        return ptr.node;
+      },
+
+      releaseList: () => list.make(list.next().detach())
+    };
+  return adapter;
+};
+
+export const frontPusher = (ExtListClass, options) => {
+  const list = new ExtListClass(null, options),
+    adapter = {
+      nextName: list.nextName,
+      prevName: list.prevName,
+
+      pushFrontNode: node => list.addNodeAfter(node).node,
+
+      releaseList: () => this.make(list.detach())
+    };
+  return adapter;
+};
