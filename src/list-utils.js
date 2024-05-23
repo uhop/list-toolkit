@@ -1,5 +1,25 @@
 'use strict';
 
+export const isValidList = list => {
+  let current = list;
+  do {
+    const next = current[list.nextName];
+    if (!next || next[list.prevName] !== current) return false;
+    current = next;
+  } while (current !== list);
+  return true;
+};
+
+export const isValidSList = list => {
+  let current = list;
+  do {
+    const next = current[list.nextName];
+    if (!next) return false;
+    current = next;
+  } while (current !== list);
+  return true;
+};
+
 export const pushValuesFront = (list, values) => {
   for (const value of values) {
     list.pushFront(value);
