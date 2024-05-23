@@ -204,7 +204,8 @@ export class ExtListBase {
     return n;
   }
 
-  attach(head) {
+  attach(head = null) {
+    const oldHead = this.head;
     if (head instanceof PtrBase) {
       if (!this.isCompatible(head.list)) throw new Error('Incompatible lists');
       this.head = head.node;
@@ -212,12 +213,13 @@ export class ExtListBase {
       if (head && !this.isNodeLike(head)) throw new Error('"head" is not a compatible node');
       this.head = head;
     }
-    return this;
+    return oldHead;
   }
 
   detach() {
+    const oldHead = this.head;
     this.head = null;
-    return this;
+    return oldHead;
   }
 
   next() {
