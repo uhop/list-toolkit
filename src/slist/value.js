@@ -60,7 +60,7 @@ ValueSList.ValueNode = ValueNode;
 addAliases(ValueSList, {
   popFront: 'pop',
   getValueIterator: 'getIterator'
-});
+}, true);
 
 export {ValueNode, Ptr};
 export default ValueSList;

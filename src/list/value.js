@@ -70,7 +70,7 @@ addAliases(ValueList, {
   popFront: 'pop',
   getValueIterator: 'getIterator',
   getReverseValueIterator: 'getReverseIterator'
-});
+}, true);
 
 export {ValueNode, Ptr};
 export default ValueList;
