@@ -158,24 +158,69 @@ export class CircularSList extends CircularListBase {
     return this;
   }
 
-  sort(compareFn) {
+  sort(lessFn) {
     if (this.isOneOrEmpty) return this;
 
-    const sortedNodes = Array.from(this.getNodeIterator()).sort(compareFn);
+    const leftHead = {},
+      rightHead = {};
+    leftHead[this.nextName] = leftHead;
+    rightHead[this.nextName] = rightHead;
 
-    for (let i = 1; i < sortedNodes.length; i++) {
-      const prev = sortedNodes[i - 1],
-        current = sortedNodes[i];
-      prev[this.nextName] = current;
+    const left = this.make(leftHead),
+      right = this.make(rightHead);
+
+    // split into two sublists
+    let isLeft = true;
+    for (const current of this.getNodeIterator()) {
+      current[this.nextName] = current; // make stand-alone
+      if (isLeft) {
+        left.addNodeAfter(current);
+        left.next();
+      } else {
+        right.addNodeAfter(current);
+        right.next();
+      }
+      isLeft = !isLeft;
+    }
+    left.removeNodeAfter(); // remove the head node
+    right.removeNodeAfter(); // remove the head node
+    this.clear();
+    // the list is empty now
+
+    // sort sublists
+    left.next().sort(lessFn);
+    right.next().sort(lessFn);
+
+    // merge sublists
+    const leftIterator = left.getNodeIterator()[Symbol.iterator](),
+      rightIterator = right.getNodeIterator()[Symbol.iterator]();
+    let leftItem = leftIterator.next(),
+      rightItem = rightIterator.next();
+    while (!leftItem.done && !rightItem.done) {
+      let node;
+      if (lessFn(leftItem.value, rightItem.value)) {
+        node = leftItem.value;
+        leftItem = leftIterator.next();
+      } else {
+        node = rightItem.value;
+        rightItem = rightIterator.next();
+      }
+      node[this.nextName] = node; // make stand-alone
+      this.addNodeAfter(node);
+      this.next();
+    }
+    for (; !leftItem.done; this.next(), leftItem = leftIterator.next()) {
+      const node = leftItem.value;
+      node[this.nextName] = node; // make stand-alone
+      this.addNodeAfter(node);
+    }
+    for (; !rightItem.done; this.next(), rightItem = rightIterator.next()) {
+      const node = rightItem.value;
+      node[this.nextName] = node; // make stand-alone
+      this.addNodeAfter(node);
     }
 
-    const head = sortedNodes[0],
-      tail = sortedNodes[sortedNodes.length - 1];
-    tail[this.nextName] = head;
-
-    this.head = head;
-
-    return this;
+    return this.next();
   }
 
   // iterators

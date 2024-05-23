@@ -196,26 +196,49 @@ export class CircularList extends CircularListBase {
     return this;
   }
 
-  sort(compareFn) {
+  sort(lessFn) {
     if (this.isOneOrEmpty) return this;
 
-    const sortedNodes = Array.from(this.getNodeIterator()).sort(compareFn);
+    const left = this.make(),
+      right = this.make();
 
-    for (let i = 1; i < sortedNodes.length; i++) {
-      const prev = sortedNodes[i - 1],
-        current = sortedNodes[i];
-      prev[this.nextName] = current;
-      current[this.prevName] = prev;
+    // split into two sublists
+    let isLeft = true;
+    for (const current of this.getNodeIterator()) {
+      current[this.nextName] = current[this.prevName] = current; // make stand-alone
+      if (isLeft) {
+        left.addNodeAfter(current);
+        left.next();
+      } else {
+        right.addNodeAfter(current);
+        right.next();
+      }
+      isLeft = !isLeft;
+    }
+    this.clear();
+    // the list is empty now
+
+    // sort sublists
+    left.next().sort(lessFn);
+    right.next().sort(lessFn);
+
+    // merge sublists
+    while (!left.isEmpty && !right.isEmpty) {
+      this.addNodeAfter((lessFn(left.head, right.head) ? left : right).remove());
+      this.next();
+    }
+    if (!left.isEmpty) {
+      const last = left.head[left.prevName];
+      this.insertAfter(left);
+      this.head = last;
+    }
+    if (!right.isEmpty) {
+      const last = right.head[right.prevName];
+      this.insertAfter(right);
+      this.head = last;
     }
 
-    const head = sortedNodes[0],
-      tail = sortedNodes[sortedNodes.length - 1];
-    tail[this.nextName] = head;
-    head[this.prevName] = tail;
-
-    this.head = head;
-
-    return this;
+    return this.next();
   }
 
   // iterators

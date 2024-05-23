@@ -106,7 +106,7 @@ test('Elementary List operations', t => {
     [3, 2, 1]
   );
 
-  list.sort((a, b) => a.x - b.x);
+  list.sort((a, b) => a.x < b.x);
   t.deepEqual(
     Array.from(list).map(value => value.x),
     [1, 2, 3]

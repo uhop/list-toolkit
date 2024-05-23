@@ -183,7 +183,7 @@ The list-wide manipulation methods are:
 | Method | Description | Complexity |
 |------|-----------|-----|
 | `reverse()` | reverse the list | *O(n)* |
-| `sort(compareFn)` | sort the list | *O(n * log(n))* |
+| `sort(lessFn)` | sort the list | *O(n * log(n))* |
 
 Iterators are:
 
@@ -344,7 +344,7 @@ The list-wide manipulation methods are:
 | Method | Description | Complexity |
 |------|-----------|-----|
 | `reverse()` | reverse the list | *O(n)* |
-| `sort(compareFn)` | sort the list | *O(n * log(n))* |
+| `sort(lessFn)` | sort the list | *O(n * log(n))* |
 
 Iterators are:
 

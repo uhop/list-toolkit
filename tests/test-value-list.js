@@ -30,7 +30,7 @@ test('General ValueList tests', t => {
   for (const value of evens) oddsAndEvens.pushBack(value);
 
   t.deepEqual(Array.from(oddsAndEvens), [1, 3, 5, 7, 9, 2, 4, 6, 8]);
-  t.deepEqual(Array.from(oddsAndEvens.sort((a, b) => a.value - b.value)), [1, 2, 3, 4, 5, 6, 7, 8, 9]);
+  t.deepEqual(Array.from(oddsAndEvens.sort((a, b) => a.value < b.value)), [1, 2, 3, 4, 5, 6, 7, 8, 9]);
 });
 
 test('Elementary ValueList operations', t => {
@@ -125,9 +125,9 @@ test('ValueList.reverse()', t => {
 
 test('ValueList.sort()', t => {
   const list = ValueList.from([3, 1, 5, 4, 2]);
-  list.sort((a, b) => b.value - a.value);
+  list.sort((a, b) => b.value < a.value);
   t.deepEqual(Array.from(list), [5, 4, 3, 2, 1]);
-  list.sort((a, b) => a.value - b.value);
+  list.sort((a, b) => a.value < b.value);
   t.deepEqual(Array.from(list), [1, 2, 3, 4, 5]);
 });
 

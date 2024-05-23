@@ -258,7 +258,7 @@ test('CircularList.reverse() and CircularList.sort()', t => {
     [3, 2, 1]
   );
 
-  circularList.sort((a, b) => a.x - b.x);
+  circularList.sort((a, b) => a.x < b.x);
   t.deepEqual(
     Array.from(circularList).map(value => value.x),
     [1, 2, 3]

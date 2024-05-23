@@ -153,23 +153,28 @@ export class SList extends HeadNode {
     return this;
   }
 
-  sort(compareFn) {
+  sort(lessFn) {
     if (this.isOneOrEmpty) return this;
 
-    const sortedNodes = Array.from(this.getNodeIterator()).sort(compareFn);
+    const left = this.make(),
+      right = this.make();
 
-    for (let i = 1; i < sortedNodes.length; ++i) {
-      const prev = sortedNodes[i - 1],
-        current = sortedNodes[i];
-      prev[this.nextName] = current;
+    // split into two sublists
+    for (let isLeft = true; !this.isEmpty; isLeft = !isLeft) {
+      (isLeft ? left : right).pushBackNode(this.popFrontNode());
     }
+    // the list is empty now
 
-    const head = sortedNodes[0],
-      tail = sortedNodes[sortedNodes.length - 1];
+    // sort sublists
+    left.sort(lessFn);
+    right.sort(lessFn);
 
-    this[this.nextName] = head;
-    tail[this.nextName] = this;
-    this.last = tail;
+    // merge sublists
+    while (!left.isEmpty && !right.isEmpty) {
+      this.pushBackNode((lessFn(left.front, right.front) ? left : right).popFrontNode());
+    }
+    if (!left.isEmpty) this.appendBack(left);
+    if (!right.isEmpty) this.appendBack(right);
 
     return this;
   }
