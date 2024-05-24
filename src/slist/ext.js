@@ -15,7 +15,7 @@ export class Ptr extends PtrBase {
 }
 
 export class ExtSList extends ExtListBase {
-  get rangePtr() {
+  get ptrRange() {
     return this.head ? {from: this.makePtr(), to: this.head, list: this.head} : null;
   }
 

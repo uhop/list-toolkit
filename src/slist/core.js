@@ -10,7 +10,7 @@ export class SList extends HeadNode {
     return new Ptr(this);
   }
 
-  get rangePtr() {
+  get ptrRange() {
     return this.isEmpty ? null : {from: new Ptr(this), to: this.last};
   }
 
@@ -196,7 +196,7 @@ export class SList extends HeadNode {
   }
 
   releaseAsPtrRange() {
-    const range = this.rangePtr;
+    const range = this.ptrRange;
     if (!range) return null;
     const rawRange = extract(this, {prevFrom: range.from.previousNode, to: range.to}).extracted;
     return {from: new Ptr(this, rawRange.prevFrom), to: rawRange.to};
@@ -291,7 +291,7 @@ export class SList extends HeadNode {
 
   static fromRange(range, options) {
     const list = new SList(options);
-    if (!list.isRangeLike(list)) throw new Error('"range" is not a compatible range');
+    if (!list.isCompatibleRange(list)) throw new Error('"range" is not a compatible range');
     if (range) append(list, list, range);
     return list;
   }

@@ -36,7 +36,7 @@ export class HeadNode extends Node {
   isCompatiblePtr(ptr) {
     return ptr instanceof PtrBase && (ptr.list === this || (ptr.list instanceof HeadNode && this.nextName === ptr.list.nextName));
   }
-  isRangeLike(range) {
+  isCompatibleRange(range) {
     return isRangeLike(this, range);
   }
 
