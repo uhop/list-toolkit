@@ -62,6 +62,7 @@ The legend:
 | Method | Description | Complexity | List | SList |
 |--------|-------------|:----------:|:----:|:-----:|
 | `adoptNode(node)` | adopt a node | *O(1)* | ✔ | ✔ |
+| `adoptValue(value)` | adopt a value by creating a value node | *O(1)* | ✔ | ✔ |
 | `normalizeNode(node)` | normalize a node | *O(1)* | ✔ | ✔ |
 | `normalizeRange(range)` | normalize a range | *O(1)* | ✔ | ✔ |
 | `normalizePtrRange(range)` | normalize a pointer range | *O(1)* | | ✔ |
