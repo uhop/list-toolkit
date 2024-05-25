@@ -129,6 +129,12 @@ export class PtrBase {
   get node() {
     return this.previousNode[this.list.nextName];
   }
+  get nextNode() {
+    return this.node[this.list.nextName];
+  }
+  get isPreviousNodeValid() {
+    return this.previousNode && this.previousNode[this.list.nextName] === this.node;
+  }
   next() {
     this.previousNode = this.previousNode[this.list.nextName];
     return this;
@@ -231,14 +237,12 @@ copyDescriptors(
   [
     'isNodeLike',
     'isCompatibleNames',
-    'isRangeLike',
+    'isCompatibleRange',
     'normalizeNode',
     'normalizeRange',
     'normalizePtrRange',
     'adoptNode',
-    'adoptValue',
-    'isCompatibleNames',
-    'isNodeLike'
+    'adoptValue'
   ],
   HeadNode
 );

@@ -124,8 +124,16 @@ export class PtrBase {
     if (this.node && !isNodeLike(this.list, this.node)) throw new Error('"node" is not a compatible node');
   }
 
+  get nextNode() {
+    return this.node[this.list.nextName];
+  }
+
   get previousNode() {
     return this.node[this.list.prevName];
+  }
+
+  get isPreviousNodeValid() {
+    return true;
   }
 
   next() {
@@ -237,6 +245,6 @@ export class ExtListBase {
 
 copyDescriptors(
   ExtListBase,
-  ['isNodeLike', 'isCompatibleNames', 'isRangeLike', 'normalizeNode', 'normalizeRange', 'adoptNode', 'adoptValue', 'isCompatibleNames', 'isNodeLike'],
+  ['isNodeLike', 'isCompatibleNames', 'isCompatibleRange', 'normalizeNode', 'normalizeRange', 'adoptNode', 'adoptValue'],
   HeadNode
 );
