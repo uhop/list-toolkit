@@ -51,6 +51,7 @@ The legend:
 | `isEmpty` | check if the list is empty | *O(1)* | ✔ | ✔ |
 | `isOne` | check if the list has only one node | *O(1)* | ✔ | ✔ |
 | `isOneOrEmpty` | check if the list has only one node or it is empty | *O(1)* | ✔ | ✔ |
+| `head` | get the head node | *O(1)* | ✔ | ✔ |
 | `front` | get the first node | *O(1)* | ✔ | ✔ |
 | `back` | get the last node | *O(1)* | ✔ | ✔ |
 | `range` | get the range of the list | *O(1)* | ✔ | ✔ |
@@ -77,7 +78,8 @@ to respective node-specific methods. If you want to work with
 |--------|-------------|:----------:|:----:|:-----:|
 | `frontPtr` | get the front pointer | *O(1)* | ✔ | ✔ |
 | `backPtr` | get the back pointer | *O(1)* | ✔ | |
-| `makePtr(node)` | create a new pointer from a pointer | *O(1)* | ✔ | ✔* |
+| `makePtr(node)` | create a new pointer from a node | *O(1)* | ✔ | ✔* |
+| `makePtrFromPrev(prev)` | create a new pointer from its previous node | *O(1)* | ✔ | ✔ |
 | `pushFrontNode(node)` | add a node to the front | *O(1)* | ✔ | ✔ |
 | `pushBackNode(node)` | add a node to the back | *O(1)* | ✔ | ✔ |
 | `pushFront(value)` | add a value to the front | *O(1)* | ✔ | ✔ |

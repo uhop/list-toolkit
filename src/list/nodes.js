@@ -58,6 +58,10 @@ export class HeadNode extends Node {
     return this[this.nextName][this.nextName] === this;
   }
 
+  get head() {
+    return this;
+  }
+
   get front() {
     return this[this.nextName];
   }
@@ -122,6 +126,7 @@ export class PtrBase {
       this.node = node;
     }
     if (this.node && !isNodeLike(this.list, this.node)) throw new Error('"node" is not a compatible node');
+    if (!this.node) this.node = this.list.front;
   }
 
   get nextNode() {

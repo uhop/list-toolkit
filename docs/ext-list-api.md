@@ -51,18 +51,13 @@ This API is modelled after the corresponding [List API](./list-api.md).
 | Method | Description | Complexity | ExtList | ExtSList |
 |--------|-------------|:----------:|:-------:|:--------:|
 | `makePtr(node)` | create a new pointer | *O(1)* | ✔ | ✔ |
+| `makePtrFromPrev(prev)` | create a new pointer from its previous node | *O(1)* | ✔ | ✔ |
 | `adoptNode(node)` | adopt a node | *O(1)* | ✔ | ✔ |
 | `adoptValue(value)` | adopt a value by creating a value node | *O(1)* | ✔ | ✔ |
 | `normalizeNode(node)` | normalize a node | *O(1)* | ✔ | ✔ |
 | `normalizeRange(range)` | normalize a range | *O(1)* | ✔ | ✔ |
 | `normalizePtrRange(range)` | normalize a pointer range | *O(1)* | | ✔ |
 | `syncPrev()` | synchronize the reference of the previous node | *O(n)* | | ✔ |
-
-`ExtSList` implements some methods with a different signature (marked with an asterisk):
-
-| ExtList | ExtSList |
-|---------|----------|
-| `makePtr(node)` | `makePtr(prev)` |
 
 # Pointer-like API
 

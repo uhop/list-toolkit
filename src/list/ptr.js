@@ -6,7 +6,6 @@ import {pop, splice} from './basics.js';
 export class Ptr extends PtrBase {
   constructor(list, node) {
     super(list, node, HeadNode);
-    this.node ||= this.list.front;
   }
   get isHead() {
     return this.node === this.list;

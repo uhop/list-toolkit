@@ -52,6 +52,10 @@ export class HeadNode extends Node {
     return this[this.nextName][this.nextName] === this;
   }
 
+  get head() {
+    return this;
+  }
+
   get front() {
     return this[this.nextName];
   }
@@ -140,7 +144,7 @@ export class PtrBase {
     if (this.node) {
       if (!this.prevNode) this.prevNode = this.node;
     } else {
-      if (!this.prevNode) this.prevNode = this.list;
+      if (!this.prevNode) this.prevNode = this.list.head;
       this.node = this.prevNode[this.list.nextName];
     }
   }
@@ -153,6 +157,8 @@ export class PtrBase {
     this.prevNode = this.node;
     if (this.prevNode[this.list.nextName] === this.node) return true;
     this.prevNode = this.prevNode[this.list.nextName];
+    if (this.prevNode[this.list.nextName] === this.node) return true;
+    this.prevNode = this.list.head;
     if (this.prevNode[this.list.nextName] === this.node) return true;
     this.prevNode = this.node;
     return false;

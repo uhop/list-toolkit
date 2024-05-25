@@ -15,7 +15,13 @@ export class List extends HeadNode {
   }
 
   makePtr(node) {
+    if (node && !this.isNodeLike(node)) throw new Error('"node" is not a compatible node');
     return new Ptr(this, node || this.front);
+  }
+
+  makePtrFromPrev(prev) {
+    if (prev && !this.isNodeLike(prev)) throw new Error('"prev" is not a compatible node');
+    return new Ptr(this, prev ? prev[this.nextName] : this.front);
   }
 
   pushFront(value) {
