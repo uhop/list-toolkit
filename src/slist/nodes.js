@@ -145,7 +145,7 @@ export class PtrBase {
       if (!this.prevNode) this.prevNode = this.node;
     } else {
       if (!this.prevNode) this.prevNode = this.list.head;
-      this.node = this.prevNode[this.list.nextName];
+      if (this.prevNode) this.node = this.prevNode[this.list.nextName];
     }
   }
   get nextNode() {

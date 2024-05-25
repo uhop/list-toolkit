@@ -16,8 +16,14 @@ export class Ptr extends PtrBase {
 
 export class ExtList extends ExtListBase {
   makePtr(node) {
+    if (node && !this.isNodeLike(node)) throw new Error('"node" is not a compatible node');
     node ||= this.head;
     return node ? new Ptr(this, node) : null;
+  }
+
+  makePtrFromPrev(prev) {
+    if (prev && !this.isNodeLike(prev)) throw new Error('"prev" is not a compatible node');
+    return new Ptr(this, prev ? prev[this.nextName] : this.front);
   }
 
   // Ptr API
@@ -106,8 +112,9 @@ export class ExtList extends ExtListBase {
     return this.makePtr(head);
   }
 
-  moveBefore(node) {
-    node = this.normalizeNode(node);
+  moveBefore(nodeOrPtr) {
+    const node = this.normalizeNode(nodeOrPtr);
+    if (nodeOrPtr instanceof Ptr) nodeOrPtr.list = this;
 
     if (this.head === node) {
       this.head = this.head[this.nextName];
@@ -121,11 +128,12 @@ export class ExtList extends ExtListBase {
       this.head = node;
     }
 
-    return this;
+    return this.makePtr(node);
   }
 
-  moveAfter(node) {
-    node = this.normalizeNode(node);
+  moveAfter(nodeOrPtr) {
+    const node = this.normalizeNode(nodeOrPtr);
+    if (nodeOrPtr instanceof Ptr) nodeOrPtr.list = this;
 
     if (this.head === node) {
       this.head = this.head[this.prevName];
@@ -139,7 +147,7 @@ export class ExtList extends ExtListBase {
       this.head = node;
     }
 
-    return this;
+    return this.makePtr(node);
   }
 
   // List API

@@ -76,15 +76,21 @@ export class List extends HeadNode {
     return this.makePtr(head);
   }
 
-  moveToFront(node) {
-    node = this.normalizeNode(node);
-    if (this[this.nextName] !== node) splice(this, this, pop(this, node).extracted);
+  moveToFront(nodeOrPtr) {
+    const node = this.normalizeNode(nodeOrPtr);
+    if (nodeOrPtr instanceof Ptr) nodeOrPtr.list = this;
+    if (this[this.nextName] !== node) {
+      splice(this, this, pop(this, node).extracted);
+    }
     return this.frontPtr;
   }
 
-  moveToBack(node) {
-    node = this.normalizeNode(node);
-    if (this[this.prevName] !== node) splice(this, this[this.prevName], pop(this, node).extracted);
+  moveToBack(nodeOrPtr) {
+    const node = this.normalizeNode(nodeOrPtr);
+    if (nodeOrPtr instanceof Ptr) nodeOrPtr.list = this;
+    if (this[this.prevName] !== node) {
+      splice(this, this[this.prevName], pop(this, node).extracted);
+    }
     return this.backPtr;
   }
 
@@ -98,8 +104,7 @@ export class List extends HeadNode {
   }
 
   removeNode(node) {
-    pop(this, this.normalizeNode(node));
-    return this;
+    return pop(this, this.normalizeNode(node)).extracted;
   }
 
   removeRange(range, drop) {

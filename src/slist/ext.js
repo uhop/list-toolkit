@@ -5,9 +5,8 @@ import {pop, extract, splice} from './basics.js';
 import {addAliases} from '../meta-utils.js';
 
 export class Ptr extends PtrBase {
-  constructor(list, prev) {
-    super(list, null, prev, ExtSList);
-    this.prevNode ||= this.list.head;
+  constructor(list, node, prev) {
+    super(list, node, prev, ExtSList);
   }
   clone() {
     return new Ptr(this);
@@ -19,10 +18,14 @@ export class ExtSList extends ExtListBase {
     return this.head ? {from: this.makePtr(), to: this.head, list: this.head} : null;
   }
 
-  makePtr(prev) {
+  makePtr(node) {
+    if (node && !this.isNodeLike(node)) throw new Error('"node" is not a compatible node');
+    return new Ptr(this, node);
+  }
+
+  makePtrFromPrev(prev) {
     if (prev && !this.isNodeLike(prev)) throw new Error('"prev" is not a compatible node');
-    prev ||= this.head;
-    return prev ? new Ptr(this, prev) : null;
+    return new Ptr(this, null, prev || this.head);
   }
 
   // Ptr API
@@ -65,6 +68,7 @@ export class ExtSList extends ExtListBase {
 
   moveAfter(ptr) {
     if (!this.isCompatiblePtr(ptr)) throw new Error('Incompatible pointer');
+    ptr.list = this;
 
     if (!this.head) {
       this.head = pop(this, ptr.prevNode).extracted.to;
@@ -80,7 +84,7 @@ export class ExtSList extends ExtListBase {
 
     ptr.prevNode = splice(this, this.head, {prevFrom: pop(this, ptr.prevNode).extracted.to});
 
-    return this;
+    return ptr.clone();
   }
 
   // List API
