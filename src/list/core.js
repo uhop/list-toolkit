@@ -115,7 +115,7 @@ export class List extends HeadNode {
     if (this.isOneOrEmpty) return extracted;
 
     for (const ptr of this.getPtrIterator({from: this.front[this.nextName]})) {
-      if (condition(ptr.node)) extracted.pushBack(ptr.removeNode());
+      if (condition(ptr.node)) extracted.pushBack(ptr.removeCurrent());
     }
 
     return extracted;

@@ -288,13 +288,13 @@ test("ValueList's Ptr", t => {
   ptr.next().next();
   t.equal(ptr.node.value, 8);
 
-  t.equal(ptr.removeNode().value, 8);
+  t.equal(ptr.removeCurrent().value, 8);
   t.deepEqual(Array.from(list), [4, 6, 7, 1, 9, 5, 2, 3]);
   t.equal(ptr.node.value, 9);
 
-  t.equal(list.frontPtr.removeNode().value, 4);
+  t.equal(list.frontPtr.removeCurrent().value, 4);
   t.deepEqual(Array.from(list), [6, 7, 1, 9, 5, 2, 3]);
 
-  t.equal(list.backPtr.removeNode().value, 3);
+  t.equal(list.backPtr.removeCurrent().value, 3);
   t.deepEqual(Array.from(list), [6, 7, 1, 9, 5, 2]);
 });
