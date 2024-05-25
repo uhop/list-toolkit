@@ -6,7 +6,7 @@ import {addAliases} from '../meta-utils.js';
 
 export class Ptr extends PtrBase {
   constructor(list, prev) {
-    super(list, prev, ExtSList);
+    super(list, null, prev, ExtSList);
     this.prevNode ||= this.list.head;
   }
   clone() {

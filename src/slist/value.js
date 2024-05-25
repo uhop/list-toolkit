@@ -11,11 +11,11 @@ export class ValueSList extends List {
 
   adoptValue(value) {
     if (value instanceof Ptr) {
-      if (!this.isCompatiblePtr(value)) throw new Error('Incompatible pointer');
-      value = value.node;
+      if (value.node instanceof ValueNode) return super.adoptNode(value);
+      value.list = this;
+      return new ValueNode(value.node, this);
     }
-    if (value instanceof ValueNode) return super.adoptNode(value);
-    return new ValueNode(value, this);
+    return value instanceof ValueNode ? super.adoptNode(value) : new ValueNode(value, this);
   }
 
   // iterators

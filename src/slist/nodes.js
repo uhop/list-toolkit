@@ -70,13 +70,19 @@ export class HeadNode extends Node {
     return n;
   }
 
-  adoptNode(node) {
-    if (node instanceof PtrBase) node = node.node;
+  adoptNode(nodeOrPtr) {
+    const isPtr = nodeOrPtr instanceof PtrBase;
+    if (isPtr && !this.isCompatiblePtr(nodeOrPtr)) throw new Error('Incompatible pointer');
+    const node = isPtr ? nodeOrPtr.node : nodeOrPtr;
     if (node[this.nextName]) {
       if (node[this.nextName] === node) return node;
       throw new Error('node is already a part of a list, or there is a name clash');
     }
     node[this.nextName] = node;
+    if (isPtr) {
+      nodeOrPtr.list = this;
+      nodeOrPtr.prevNode = node;
+    }
     return node;
   }
 
@@ -109,34 +115,61 @@ export class ValueNode extends Node {
 }
 
 export class PtrBase {
-  constructor(list, prev, ListClass) {
+  constructor(list, node, prev, ListClass) {
     if (list instanceof PtrBase) {
       this.list = list.list;
+      this.node = list.node;
       this.prevNode = list.prevNode;
       return;
     }
     if (!(list instanceof ListClass)) throw new Error('"list" is not a compatible list');
-    if (prev instanceof PtrBase) {
-      if (list !== prev.list) throw new Error('Node specified by a pointer must belong to the same list');
+    if (node instanceof PtrBase) {
+      if (list !== node.list) throw new Error('Node specified by a pointer must belong to the same list');
       this.list = list;
-      this.prevNode = prev.prevNode;
+      this.node = node.node;
+      this.prevNode = node.prevNode;
     } else {
       this.list = list;
+      this.node = node;
       this.prevNode = prev;
     }
+    // check nodes
+    if (this.node && !isNodeLike(this.list, this.node)) throw new Error('"node" is not a compatible node');
     if (this.prevNode && !isNodeLike(this.list, this.prevNode)) throw new Error('"prev" is not a compatible node');
-  }
-  get node() {
-    return this.prevNode[this.list.nextName];
+    // initialize missing nodes
+    if (this.node) {
+      if (!this.prevNode) this.prevNode = this.node;
+    } else {
+      if (!this.prevNode) this.prevNode = this.list;
+      this.node = this.prevNode[this.list.nextName];
+    }
   }
   get nextNode() {
     return this.node[this.list.nextName];
   }
   get isPrevNodeValid() {
-    return this.prevNode && this.prevNode[this.list.nextName] === this.node;
+    if (!this.prevNode) this.prevNode = this.node;
+    if (this.prevNode[this.list.nextName] === this.node) return true;
+    this.prevNode = this.node;
+    if (this.prevNode[this.list.nextName] === this.node) return true;
+    this.prevNode = this.prevNode[this.list.nextName];
+    if (this.prevNode[this.list.nextName] === this.node) return true;
+    this.prevNode = this.node;
+    return false;
   }
   next() {
-    this.prevNode = this.prevNode[this.list.nextName];
+    this.prevNode = this.node;
+    this.node = this.node[this.list.nextName];
+    return this;
+  }
+  syncPrev() {
+    if (this.isPrevNodeValid) return this;
+    this.prevNode = this.node;
+    do {
+      const next = this.prevNode[this.list.nextName];
+      if (next === this.node) break;
+      this.prevNode = next;
+    } while (this.prevNode !== this.node);
     return this;
   }
 }

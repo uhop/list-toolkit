@@ -69,7 +69,7 @@ test('ValueSList.removeXXX()', t => {
   ptr.next();
   list.removeRange({from: ptr, to: ptr});
   t.deepEqual(Array.from(list), [1, 3, 4, 5]);
-  ptr.removeCurrent();
+  list.frontPtr.next().removeCurrent();
   t.deepEqual(Array.from(list), [1, 4, 5]);
 });
 
