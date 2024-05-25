@@ -15,7 +15,7 @@ export class Ptr extends PtrBase {
     return new Ptr(this);
   }
   removeCurrent() {
-    if (!this.isPrevNodeValid) throw new Error('Current node cannot be removed: "prevNode" is invalid');
+    if (!this.isPrevNodeValid()) throw new Error('Current node cannot be removed: "prevNode" is invalid');
     if (this.node === this.list || this.node === this.prevNode) return null;
     if (this.list.last === this.node) this.list.last = this.prevNode;
     const node = pop(this.list, this.prevNode).extracted.to;
@@ -23,7 +23,7 @@ export class Ptr extends PtrBase {
     return node;
   }
   addBefore(value) {
-    if (!this.isPrevNodeValid) throw new Error('Cannot be added before: "prevNode" is invalid');
+    if (!this.isPrevNodeValid()) throw new Error('Cannot be added before: "prevNode" is invalid');
     const node = this.list.adoptValue(value),
       prev = splice(this.list, this.prevNode, {prevFrom: node});
     this.prevNode = node;
@@ -31,7 +31,7 @@ export class Ptr extends PtrBase {
     return this.list.makePtr(prev);
   }
   addNodeBefore(node) {
-    if (!this.isPrevNodeValid) throw new Error('Cannot be added before: "prevNode" is invalid');
+    if (!this.isPrevNodeValid()) throw new Error('Cannot be added before: "prevNode" is invalid');
     node = this.list.adoptNode(node);
     const prev = splice(this.list, this.prevNode, {prevFrom: node});
     this.prevNode = node;
@@ -49,7 +49,7 @@ export class Ptr extends PtrBase {
     return this.list.makePtr(prev);
   }
   insertBefore(list) {
-    if (!this.isPrevNodeValid) throw new Error('Cannot be inserted before: "prevNode" is invalid');
+    if (!this.isPrevNodeValid()) throw new Error('Cannot be inserted before: "prevNode" is invalid');
     if (!this.list.isCompatible(list)) throw new Error('Incompatible lists');
     if (list.isEmpty) return this;
 

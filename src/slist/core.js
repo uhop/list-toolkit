@@ -121,7 +121,7 @@ export class SList extends HeadNode {
   }
 
   removeNode(ptr) {
-    if (!ptr.isPrevNodeValid) throw new Error('Cannot remove node: "prevNode" is invalid');
+    if (!ptr.isPrevNodeValid()) throw new Error('Cannot remove node: "prevNode" is invalid');
     if (!this.isCompatiblePtr(ptr)) throw new Error('Incompatible pointer');
     const node = ptr.prevNode[this.nextName];
     if (node === this || node === ptr.prevNode) return null;
@@ -139,7 +139,7 @@ export class SList extends HeadNode {
   extractRange(ptrRange = {}) {
     const originalTo = ptrRange.to;
     ptrRange = this.normalizePtrRange(ptrRange.from ? ptrRange : {...ptrRange, from: this.frontPtr});
-    if (!ptrRange.from.isPrevNodeValid) throw new Error('Cannot extract range: "prevNode" is invalid');
+    if (!ptrRange.from.isPrevNodeValid()) throw new Error('Cannot extract range: "prevNode" is invalid');
     ptrRange.to ||= this.last;
 
     const extracted = this.make();

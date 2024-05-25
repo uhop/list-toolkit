@@ -70,7 +70,7 @@ This API is modelled after the corresponding [Pointer API](./ptr-api.md).
 
 | Method | Description | Complexity | ExtList | ExtSList |
 |--------|-------------|:----------:|:-------:|:--------:|
-| `isPrevNodeValid` | return a boolean value indicating whether the previous node is available | *O(1)* | ✔ | ✔ |
+| `isPrevNodeValid()` | return a boolean value indicating whether the previous node is available | *O(1)* | ✔ | ✔ |
 | `next()` | move the pointer to the next node | *O(1)* | ✔ | ✔ |
 | `prev()` | move the pointer to the previous node | *O(1)* | ✔ | ✔ |
 | `removeCurrent()` | remove the node the pointer points to | *O(1)* | ✔ | ✔ |

@@ -132,7 +132,7 @@ export class PtrBase {
     return this.node[this.list.prevName];
   }
 
-  get isPrevNodeValid() {
+  isPrevNodeValid() {
     return true;
   }
 
@@ -243,8 +243,4 @@ export class ExtListBase {
   }
 }
 
-copyDescriptors(
-  ExtListBase,
-  ['isNodeLike', 'isCompatibleNames', 'isCompatibleRange', 'normalizeNode', 'normalizeRange', 'adoptNode', 'adoptValue'],
-  HeadNode
-);
+copyDescriptors(ExtListBase, ['isNodeLike', 'isCompatibleNames', 'isCompatibleRange', 'normalizeNode', 'normalizeRange', 'adoptNode', 'adoptValue'], HeadNode);

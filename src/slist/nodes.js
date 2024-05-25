@@ -147,7 +147,7 @@ export class PtrBase {
   get nextNode() {
     return this.node[this.list.nextName];
   }
-  get isPrevNodeValid() {
+  isPrevNodeValid() {
     if (!this.prevNode) this.prevNode = this.node;
     if (this.prevNode[this.list.nextName] === this.node) return true;
     this.prevNode = this.node;
@@ -162,8 +162,13 @@ export class PtrBase {
     this.node = this.node[this.list.nextName];
     return this;
   }
+  prev() {
+    if (!this.isPrevNodeValid()) throw new Error('Cannot get previous node: "prevNode" is invalid');
+    this.node = this.prevNode;
+    return this;
+  }
   syncPrev() {
-    if (this.isPrevNodeValid) return this;
+    if (this.isPrevNodeValid()) return this;
     this.prevNode = this.node;
     do {
       const next = this.prevNode[this.list.nextName];
@@ -267,15 +272,6 @@ export class ExtListBase {
 
 copyDescriptors(
   ExtListBase,
-  [
-    'isNodeLike',
-    'isCompatibleNames',
-    'isCompatibleRange',
-    'normalizeNode',
-    'normalizeRange',
-    'normalizePtrRange',
-    'adoptNode',
-    'adoptValue'
-  ],
+  ['isNodeLike', 'isCompatibleNames', 'isCompatibleRange', 'normalizeNode', 'normalizeRange', 'normalizePtrRange', 'adoptNode', 'adoptValue'],
   HeadNode
 );

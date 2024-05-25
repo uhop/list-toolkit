@@ -14,7 +14,7 @@ These pointers are essentially an API build around a node. A pointer can be cons
 | `node` | return the node it points to | *O(1)* | ✔ | ✔ |
 | `nextNode` | return the next node | *O(1)* | ✔ | ✔ |
 | `prevNode` | return the previous node | *O(1)* | ✔ | ✔ |
-| `isPrevNodeValid` | return a boolean value indicating whether the previous node is available | *O(1)* | ✔ | ✔ |
+| `isPrevNodeValid()` | return a boolean value indicating whether the previous node is available | *O(1)* | ✔ | ✔ |
 | `next()` | move the pointer to the next node | *O(1)* | ✔ | ✔ |
 | `prev()` | move the pointer to the previous node | *O(1)* | ✔ | ✔ |
 
@@ -46,7 +46,7 @@ If the previous node is invalid we cannot move backwards, insert nodes before th
 
 # Double linked list pointer nodes
 
-`isPrevNodeValid` is always `true`.
+`isPrevNodeValid()` is always `true`.
 
 # Full API
 

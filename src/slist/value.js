@@ -62,10 +62,7 @@ export class ValueSList extends List {
 ValueSList.Ptr = Ptr;
 ValueSList.ValueNode = ValueNode;
 
-addAliases(ValueSList, {
-  popFront: 'pop',
-  getValueIterator: 'getIterator'
-}, true);
+addAliases(ValueSList, {popFront: 'pop', getValueIterator: 'getIterator'}, true);
 
 export {ValueNode, Ptr};
 export default ValueSList;
