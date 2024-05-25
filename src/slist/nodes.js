@@ -112,31 +112,31 @@ export class PtrBase {
   constructor(list, prev, ListClass) {
     if (list instanceof PtrBase) {
       this.list = list.list;
-      this.previousNode = list.previousNode;
+      this.prevNode = list.prevNode;
       return;
     }
     if (!(list instanceof ListClass)) throw new Error('"list" is not a compatible list');
     if (prev instanceof PtrBase) {
       if (list !== prev.list) throw new Error('Node specified by a pointer must belong to the same list');
       this.list = list;
-      this.previousNode = prev.previousNode;
+      this.prevNode = prev.prevNode;
     } else {
       this.list = list;
-      this.previousNode = prev;
+      this.prevNode = prev;
     }
-    if (this.previousNode && !isNodeLike(this.list, this.previousNode)) throw new Error('"prev" is not a compatible node');
+    if (this.prevNode && !isNodeLike(this.list, this.prevNode)) throw new Error('"prev" is not a compatible node');
   }
   get node() {
-    return this.previousNode[this.list.nextName];
+    return this.prevNode[this.list.nextName];
   }
   get nextNode() {
     return this.node[this.list.nextName];
   }
-  get isPreviousNodeValid() {
-    return this.previousNode && this.previousNode[this.list.nextName] === this.node;
+  get isPrevNodeValid() {
+    return this.prevNode && this.prevNode[this.list.nextName] === this.node;
   }
   next() {
-    this.previousNode = this.previousNode[this.list.nextName];
+    this.prevNode = this.prevNode[this.list.nextName];
     return this;
   }
 }

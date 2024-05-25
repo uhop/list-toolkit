@@ -89,7 +89,7 @@ export class SList extends HeadNode {
     if (!this.isCompatiblePtr(ptr)) throw new Error('Incompatible pointer');
     if (ptr.isHead) return this;
     const node = ptr.removeCurrent();
-    ptr.previousNode = this;
+    ptr.prevNode = this;
     return this.pushFrontNode(node);
   }
 
@@ -97,7 +97,7 @@ export class SList extends HeadNode {
     if (!this.isCompatiblePtr(ptr)) throw new Error('Incompatible pointer');
     if (ptr.isHead) return this;
     const node = ptr.removeCurrent();
-    ptr.previousNode = this.last;
+    ptr.prevNode = this.last;
     return this.pushBackNode(node);
   }
 
@@ -117,10 +117,10 @@ export class SList extends HeadNode {
 
   removeNode(ptr) {
     if (!this.isCompatiblePtr(ptr)) throw new Error('Incompatible pointer');
-    const node = ptr.previousNode[this.nextName];
-    if (node === this || node === ptr.previousNode) return null;
-    if (this.last === node) this.last = ptr.previousNode;
-    ptr.previousNode[this.nextName] = node[this.nextName];
+    const node = ptr.prevNode[this.nextName];
+    if (node === this || node === ptr.prevNode) return null;
+    if (this.last === node) this.last = ptr.prevNode;
+    ptr.prevNode[this.nextName] = node[this.nextName];
     node[this.nextName] = node;
     return node;
   }
@@ -134,7 +134,7 @@ export class SList extends HeadNode {
     ptrRange.to ||= this.last;
 
     const extracted = this.make();
-    append(this, extracted, {prevFrom: ptrRange.from.previousNode, to: ptrRange.to});
+    append(this, extracted, {prevFrom: ptrRange.from.prevNode, to: ptrRange.to});
     extracted.last = ptrRange.to;
 
     return extracted;
@@ -198,7 +198,7 @@ export class SList extends HeadNode {
   releaseAsPtrRange() {
     const range = this.ptrRange;
     if (!range) return null;
-    const rawRange = extract(this, {prevFrom: range.from.previousNode, to: range.to}).extracted;
+    const rawRange = extract(this, {prevFrom: range.from.prevNode, to: range.to}).extracted;
     return {from: new Ptr(this, rawRange.prevFrom), to: rawRange.to};
   }
 

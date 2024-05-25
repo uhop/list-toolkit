@@ -128,11 +128,11 @@ export class PtrBase {
     return this.node[this.list.nextName];
   }
 
-  get previousNode() {
+  get prevNode() {
     return this.node[this.list.prevName];
   }
 
-  get isPreviousNodeValid() {
+  get isPrevNodeValid() {
     return true;
   }
 
