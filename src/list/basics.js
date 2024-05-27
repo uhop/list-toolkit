@@ -50,17 +50,15 @@ export const splice = ({nextName, prevName}, target, circularList) => {
 // append(options, target, range) === splice(options, target, extract(options, range))
 
 export const append = ({nextName, prevName}, target, {from, to = from}) => {
-  const next = target[nextName];
-
   // extract
   from[prevName][nextName] = to[nextName];
   to[nextName][prevName] = from[prevName];
 
   // splice
+  to[nextName] = target[nextName];
+  to[nextName][prevName] = to;
   target[nextName] = from;
   from[prevName] = target;
-  to[nextName] = next;
-  next[prevName] = to;
 
   return target;
 };
