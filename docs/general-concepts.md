@@ -355,6 +355,7 @@ The same properties are exposed as properties of list objects:
 const list = new List({nextName: 'next', prevName: 'prev'});
 const compatibleList = new List(list);
 const compatibleSList = new SList(list);
+const compatibleExternalList = new ExtList(null, list);
 
 const uniqueList = new List({nextName: Symbol(), prevName: Symbol()});
 const compatibleUniqueList = new List(uniqueList);
@@ -395,7 +396,10 @@ Singly linked lists have a special last node. It is used to support important op
 the back of the list. It can be calculated in *O(n)* time. Given that the last node should be
 tracked by the list itself so it is available in *O(1)* time.
 
-## Headless lists vs. lists with explicit head nodes
+## Hosted lists vs. headless lists
+
+Hosted lists are lists that serve as a head node for the list. This design simplifies
+iterations and provides a persistent place to keep some lists state.
 
 Headless lists are similar to pointers. They are used to manipulate external lists.
 A headless list object has the `head` property that points to the first node in the list.
@@ -420,14 +424,89 @@ Headless doubly linked lists have no problems with previous nodes.
 Circular doubly linked lists have no problems with last nodes, which supports our decision
 to use circular lists instead of `null`-terminated lists.
 
-### Singly linked lists with a head node
+### Hosted singly linked lists
 
 Singly linked lists can be efficiently implemented as a circular list where
 the list object serves as a head node.
 This way it solves a problem of a previous node for the front node in *O(1)* time. Additionally,
 it can keep a track of the last node as the `last` property.
 
-### Doubly linked lists with a head node
+### Hosted doubly linked lists with
 
 Doubly linked lists are efficient with and without a head node, but having a list object
 as a head node simplifies traversing the list for users. A trivial `for` loop suffices.
+
+# Implementation details
+
+The `list-toolkit` provides the following lists:
+
+* Doubly linked lists:
+  * `List` - a hosted list.
+  * `ValueList` - a hosted list with support for values.
+  * `ExtList` - a headless list.
+  * `ExtValueList` - a headless list with support for values.
+* Singly linked lists:
+  * `SList` - a hosted list.
+  * `ValueSList` - a hosted list with support for values.
+  * `ExtSList` - a headless list.
+  * `ExtValueSList` - a headless list with support for values.
+
+We can classify them along the "node vs. value" lists:
+
+* Node-based lists: `List`, `SList`, `ExtList`, `ExtSList`.
+* Value-based (container) lists: `ValueList`, `ValueSList`, `ExtValueList`, `ExtValueSList`.
+
+We can classify them as hosted vs. headless lists:
+
+* Hosted lists: `List`, `SList`, `ValueList`, `ValueSList`.
+* Headless lists: `ExtList`, `ExtSList`, `ExtValueList`, `ExtValueSList`.
+
+## Pointers
+
+All lists support pointers.
+
+Hosted lists have rich pointers that support various operations in *O(1)* time.
+
+Headless lists are pointers themselves. So their pointers are used mostly for iterating
+and for keeping track of nodes. All operations should be done through their lists.
+
+## Ranges
+
+All lists support ranges. Ranges are naked objects with the following properties:
+
+* `from` - the first node in the range
+* `to` - the last node in the range
+* `list` - the list that contains the range (optional)
+
+All ranges are iterable and should be traversed in *O(k)* time, where *k* is the number
+of nodes in the range.
+
+## Algorithms
+
+All lists support a rich set of efficient algorithms.
+
+On top of already mentioned manipulations hosted lists provide the following algorithms:
+
+* Frequently used operations:
+  * Moving a node to the front of the list in *O(1)* time. Effectively it is removing a node
+  from the list and pushing it to the front.
+  * Moving a node to the back of the list in *O(1)* time.
+* Removals:
+  * Extracting a range of nodes in *O(1)* time.
+  * Removing a range of nodes in *O(1)* time. Effectively it is the same as extracting and
+  dropping the result.
+    * Optionally making them disconnected in *O(k)* time.
+  * Clearing the list in *O(1)* time.
+    * Optionally making all nodes disconnected in *O(n)* time.
+* Complex algorithms:
+  * Reversing in *O(n)* time.
+  * Sorting in *O(n log n)* time.
+
+# Auxiliary classes
+
+The `list-toolkit` provides the following auxiliary classes:
+
+* `Cache` - a class that stores a value in a cache based on the [LRU](https://en.wikipedia.org/wiki/Cache_replacement_policies#LRU) policy.
+  * Implemented using `List`.
+* `MinHeap` - a class that stores a value in a [heap](https://en.wikipedia.org/wiki/Heap_(data_structure)).
+It implements a min-heap variant of a binary heap.
