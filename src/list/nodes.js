@@ -81,8 +81,8 @@ export class HeadNode extends Node {
     return n;
   }
 
-  adoptNode(node) {
-    if (node instanceof PtrBase) node = node.node;
+  adoptNode(nodeOrPtr) {
+    const node = nodeOrPtr instanceof PtrBase ? nodeOrPtr.node : nodeOrPtr;
     if (node[this.nextName] || node[this.prevName]) {
       if (node[this.nextName] === node && node[this.prevName] === node) return node;
       throw new Error('node is already a part of a list, or there is a name clash');
@@ -91,8 +91,8 @@ export class HeadNode extends Node {
     return node;
   }
 
-  normalizeNode(node) {
-    return normalizeNode(this, node, PtrBase);
+  normalizeNode(nodeOrPtr) {
+    return normalizeNode(this, nodeOrPtr, PtrBase);
   }
 
   normalizeRange(range) {
