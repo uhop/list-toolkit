@@ -2,9 +2,7 @@ This document describes the foundational classes and methods of the implementati
 Make sure to familiarize yourself with the [Backgrounder](./Backgrounder) and
 [Concepts: list API](./Concepts:-list-API) first.
 
-# [list/nodes.js](https://github.com/uhop/list-toolkit/blob/master/src/list/nodes.js)
-
-Legend:
+Legend for tables:
 
 * `options` - options object, which contains `nextName` and `prevName` link names with default values `"next"` and `"prev"`.
 * `node` - a node object in the list
@@ -14,6 +12,14 @@ Legend:
 * `range` - a range of nodes in the list
 * `nodeOrPtr` - a node or a pointer to a node
 * `value` - a value
+
+# [list/nodes.js](https://github.com/uhop/list-toolkit/blob/master/src/list/nodes.js)
+
+Include:
+
+```js
+import {HeadNode} from 'list-toolkit/list/nodes.js';
+```
 
 ## Stand-alone functions
 
