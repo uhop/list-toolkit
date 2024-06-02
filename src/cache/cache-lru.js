@@ -1,7 +1,7 @@
 'use strict';
 
 import ValueList from '../value-list.js';
-import {addAlias} from '../meta-utils.js';
+import {addAliases} from '../meta-utils.js';
 
 // The base cache class. Evicts the least recently used items.
 // Based on doubly linked value lists.
@@ -17,6 +17,9 @@ export class CacheLRU {
   }
   get size() {
     return this.dict.size;
+  }
+  has(key) {
+    return this.dict.has(key);
   }
   find(key) {
     const node = this.use(key);
@@ -79,6 +82,6 @@ export class CacheLRU {
   }
 }
 
-addAlias(CacheLRU, 'add', 'register');
+addAliases(CacheLRU, {register: 'add, set', remove: 'delete', find: 'get'});
 
 export default CacheLRU;

@@ -1,5 +1,6 @@
 'use strict';
 
+import {addAlias} from '../meta-utils.js';
 import MinHeap from '../min-heap.js';
 import CacheLRU from './cache-lru.js';
 
@@ -55,5 +56,7 @@ export class CacheLFU extends CacheLRU {
     return this;
   }
 }
+
+addAlias(CacheLFU, 'delete', 'remove');
 
 export default CacheLFU;
