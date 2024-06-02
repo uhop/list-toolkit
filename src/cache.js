@@ -1,53 +1,54 @@
 'use strict';
 
 import ValueList from './value-list.js';
+import {addAlias} from './meta-utils.js';
 
 export class Cache {
   constructor(capacity = 10) {
     this.capacity = capacity;
-    this.size = 0;
     this.list = new ValueList();
-    this.dict = {};
+    this.dict = new Map();
+  }
+  get isEmpty() {
+    return this.list.isEmpty;
+  }
+  get size() {
+    return this.dict.size;
   }
   find(key) {
-    const node = this.dict[key];
-    if (typeof node == 'object') {
-      return node.value.value;
-    }
+    const node = this.dict.get(key);
+    return typeof node == 'object' ? node.value.value : undefined;
   }
   remove(key) {
-    const node = this.dict[key];
+    const node = this.dict.get(key);
     if (typeof node == 'object') {
-      delete this.dict[key];
+      this.dict.delete(key);
       this.list.removeNode(node);
-      --this.size;
     }
     return this;
   }
   register(key, value) {
-    const node = this.dict[key];
+    const node = this.dict.get(key);
     if (typeof node == 'object') {
       this.list.moveToFront(node);
       node.value.value = value;
       return this;
     }
-    if (this.size >= this.capacity) {
+    if (this.dict.size >= this.capacity) {
       const node = this.list.back;
       this.list.moveToFront(node);
-      delete this.dict[node.value.key];
-      this.dict[key] = node;
+      this.dict.delete(node.value.key);
+      this.dict.set(key, node);
       node.value = {key, value};
       return this;
     }
     this.list.pushFront({key, value});
-    ++this.size;
-    this.dict[key] = this.list.front;
+    this.dict.set(key, this.list.front);
     return this;
   }
   clear() {
-    this.dict = {};
+    this.dict.clear();
     this.list.clear();
-    this.size = 0;
     return this;
   }
   [Symbol.iterator]() {
@@ -57,5 +58,7 @@ export class Cache {
     return this.list.getReverseIterator();
   }
 }
+
+addAlias(Cache, 'add', 'register');
 
 export default Cache;
