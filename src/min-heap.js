@@ -64,9 +64,8 @@ export class MinHeap {
     return this.array[0];
   }
 
-  clear() {
-    this.array = [];
-    return this;
+  peek() {
+    return this.array[0];
   }
 
   pop() {
@@ -186,6 +185,11 @@ export class MinHeap {
 
   replace(value, newValue) {
     return MinHeap.replace(this.array, value, newValue, this.less, this.equal);
+  }
+
+  clear() {
+    this.array = [];
+    return this;
   }
 
   releaseSorted() {
