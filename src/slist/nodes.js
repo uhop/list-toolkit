@@ -109,7 +109,7 @@ export class HeadNode extends Node {
   }
 }
 
-addAlias(HeadNode, 'adoptValue', 'adoptNode');
+addAlias(HeadNode, 'adoptNode', 'adoptValue');
 
 export class ValueNode extends Node {
   constructor(value, options) {

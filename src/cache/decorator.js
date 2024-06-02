@@ -13,12 +13,14 @@ export const decorateFn = (fn, Cache, ...args) => {
   wrapped.fn = fn;
   wrapped.cache = new Cache(...args);
   return wrapped;
-}
+};
 
 export const decorator = (object, key, Cache, ...args) => {
-  const descriptor = Object.getOwnPropertyDescriptor(object, key),
-    wrapped = decorateFn(descriptor.get ||descriptor.value, Cache, ...args),
-    newDescriptor = {...descriptor};
+  const descriptor = Object.getOwnPropertyDescriptor(object, key);
+  if (!descriptor) throw new Error('Missing property: ' + key);
+
+  const newDescriptor = {...descriptor},
+    wrapped = decorateFn(descriptor.get || descriptor.value, Cache, ...args);
 
   if (descriptor.get) newDescriptor.get = wrapped;
   else newDescriptor.value = wrapped;

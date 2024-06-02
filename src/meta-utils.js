@@ -40,14 +40,14 @@ export const addGetters = (Class, getters, force) => {
   }
 };
 
-export const addAlias = (Class, newNames, oldName, force) => {
+export const addAlias = (Class, name, aliases, force) => {
   const target = Class.prototype || Class;
-  return addDescriptor(Class, newNames, Object.getOwnPropertyDescriptor(target, oldName), force);
+  return addDescriptor(Class, aliases, Object.getOwnPropertyDescriptor(target, name), force);
 };
 
 export const addAliases = (Class, aliases, force) => {
-  for (const [oldName, newNames] of Object.entries(aliases)) {
-    addAlias(Class, newNames, oldName, force);
+  for (const [name, value] of Object.entries(aliases)) {
+    addAlias(Class, name, value, force);
   }
 };
 
