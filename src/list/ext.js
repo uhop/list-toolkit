@@ -68,8 +68,8 @@ export class ExtList extends ExtListBase {
     return this.makePtr(node);
   }
 
-  addNodeBefore(node) {
-    node = this.adoptNode(node);
+  addNodeBefore(nodeOrPtr) {
+    const node = this.adoptNode(nodeOrPtr);
     if (this.head) {
       splice(this, this.head[this.prevName], node);
     } else {
@@ -78,8 +78,8 @@ export class ExtList extends ExtListBase {
     return this.makePtr(node);
   }
 
-  addNodeAfter(node) {
-    node = this.adoptNode(node);
+  addNodeAfter(nodeOrPtr) {
+    const node = this.adoptNode(nodeOrPtr);
     if (this.head) {
       splice(this, this.head, node);
     } else {
@@ -114,7 +114,6 @@ export class ExtList extends ExtListBase {
 
   moveBefore(nodeOrPtr) {
     const node = this.normalizeNode(nodeOrPtr);
-    if (nodeOrPtr instanceof Ptr) nodeOrPtr.list = this;
 
     if (this.head === node) {
       this.head = this.head[this.nextName];
@@ -133,7 +132,6 @@ export class ExtList extends ExtListBase {
 
   moveAfter(nodeOrPtr) {
     const node = this.normalizeNode(nodeOrPtr);
-    if (nodeOrPtr instanceof Ptr) nodeOrPtr.list = this;
 
     if (this.head === node) {
       this.head = this.head[this.prevName];
@@ -162,10 +160,10 @@ export class ExtList extends ExtListBase {
     return this;
   }
 
-  removeNode(node) {
+  removeNode(nodeOrPtr) {
     if (!this.head) return null;
 
-    node = this.normalizeNode(node);
+    const node = this.normalizeNode(nodeOrPtr);
 
     if (this.head === node) {
       // remove head

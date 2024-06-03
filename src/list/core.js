@@ -46,14 +46,12 @@ export class List extends HeadNode {
 
   pushFrontNode(nodeOrPtr) {
     const node = this.adoptNode(nodeOrPtr);
-    if (nodeOrPtr instanceof Ptr) nodeOrPtr.list = this;
     splice(this, this, node);
     return this.makePtr(node);
   }
 
   pushBackNode(nodeOrPtr) {
     const node = this.adoptNode(nodeOrPtr);
-    if (nodeOrPtr instanceof Ptr) nodeOrPtr.list = this;
     splice(this, this[this.prevName], node);
     return this.makePtr(node);
   }
@@ -80,7 +78,6 @@ export class List extends HeadNode {
 
   moveToFront(nodeOrPtr) {
     const node = this.normalizeNode(nodeOrPtr);
-    if (nodeOrPtr instanceof Ptr) nodeOrPtr.list = this;
     if (this[this.nextName] !== node) {
       splice(this, this, pop(this, node).extracted);
     }
@@ -89,7 +86,6 @@ export class List extends HeadNode {
 
   moveToBack(nodeOrPtr) {
     const node = this.normalizeNode(nodeOrPtr);
-    if (nodeOrPtr instanceof Ptr) nodeOrPtr.list = this;
     if (this[this.prevName] !== node) {
       splice(this, this[this.prevName], pop(this, node).extracted);
     }
