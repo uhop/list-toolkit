@@ -1,6 +1,6 @@
 'use strict';
 
-import {addAliases} from '../meta-utils.js';
+import {addAliases, normalizeIterator} from '../meta-utils.js';
 import {ExtListBase, HeadNode} from './nodes.js';
 import {extract, append} from './basics.js';
 import Ptr from './ptr.js';
@@ -224,7 +224,7 @@ export class SList extends HeadNode {
   [Symbol.iterator]() {
     let current = this[this.nextName],
       readyToStop = this.isEmpty;
-    return {
+    return normalizeIterator({
       next: () => {
         if (readyToStop && current === this) return {done: true};
         readyToStop = true;
@@ -232,7 +232,7 @@ export class SList extends HeadNode {
         current = current[this.nextName];
         return {value};
       }
-    };
+    });
   }
 
   getNodeIterator(range = {}) {
@@ -243,7 +243,7 @@ export class SList extends HeadNode {
         let current = from || this[this.nextName],
           readyToStop = this.isEmpty;
         const stop = to ? to[this.nextName] : this;
-        return {
+        return normalizeIterator({
           next: () => {
             if (readyToStop && current === stop) return {done: true};
             readyToStop = true;
@@ -251,7 +251,7 @@ export class SList extends HeadNode {
             current = current[this.nextName];
             return {value};
           }
-        };
+        });
       }
     };
   }
@@ -265,7 +265,7 @@ export class SList extends HeadNode {
         let current = fromPtr.clone(),
           readyToStop = this.isEmpty;
         const stop = to ? to[this.nextName] : this;
-        return {
+        return normalizeIterator({
           next: () => {
             if (readyToStop && current.node === stop) return {done: true};
             readyToStop = true;
@@ -273,7 +273,7 @@ export class SList extends HeadNode {
             current = current.next();
             return {value};
           }
-        };
+        });
       }
     };
   }

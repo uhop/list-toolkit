@@ -2,7 +2,7 @@
 
 import {ExtListBase, PtrBase} from './nodes.js';
 import {pop, extract, splice} from './basics.js';
-import {addAliases} from '../meta-utils.js';
+import {addAliases, normalizeIterator} from '../meta-utils.js';
 
 export class Ptr extends PtrBase {
   constructor(list, node, prev) {
@@ -242,7 +242,7 @@ export class ExtSList extends ExtListBase {
   [Symbol.iterator]() {
     let current = this.head,
       readyToStop = this.isEmpty;
-    return {
+    return normalizeIterator({
       next: () => {
         if (readyToStop && current === this.head) return {done: true};
         readyToStop = true;
@@ -250,7 +250,7 @@ export class ExtSList extends ExtListBase {
         current = current[this.nextName];
         return {value};
       }
-    };
+    });
   }
 
   getNodeIterator(range = {}) {
@@ -261,7 +261,7 @@ export class ExtSList extends ExtListBase {
         let readyToStop = this.isEmpty,
           current = readyToStop ? null : from || this.head;
         const stop = readyToStop ? null : to ? to[this.nextName] : this.head;
-        return {
+        return normalizeIterator({
           next: () => {
             if (readyToStop && current === stop) return {done: true};
             readyToStop = true;
@@ -269,7 +269,7 @@ export class ExtSList extends ExtListBase {
             current = current[this.nextName];
             return {value};
           }
-        };
+        });
       }
     };
   }
@@ -283,7 +283,7 @@ export class ExtSList extends ExtListBase {
         let current = fromPtr.clone(),
           readyToStop = this.isEmpty;
         const stop = to ? to[this.nextName] : this;
-        return {
+        return normalizeIterator({
           next: () => {
             if (readyToStop && current.node === stop) return {done: true};
             readyToStop = true;
@@ -291,7 +291,7 @@ export class ExtSList extends ExtListBase {
             current = current.next();
             return {value};
           }
-        };
+        });
       }
     };
   }

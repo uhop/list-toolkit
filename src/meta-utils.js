@@ -64,19 +64,34 @@ export const copyDescriptors = (Class, names, SourceClass, force) => {
   return target;
 };
 
+export const augmentIterator = iterator => {
+  if (!Object.hasOwnProperty(Symbol.iterator)) {
+    iterator[Symbol.iterator] = function () {
+      return this;
+    };
+  }
+  return iterator;
+};
+
+let normalizeIterator = augmentIterator;
+if (typeof globalThis.Iterator?.from == 'function') {
+  normalizeIterator = iterator => Iterator.from(iterator);
+}
+export {normalizeIterator};
+
 export const mapIterator = (iterator, callbackFn) => {
   if (typeof iterator?.map == 'function') return iterator.map(callbackFn);
   return {
     [Symbol.iterator]: () => {
       const iterable = iterator[Symbol.iterator]();
       let index = 0;
-      return {
+      return normalizeIterator({
         next: () => {
           const result = iterable.next();
           if (result.done) return result;
           return {value: callbackFn(result.value, index++)};
         }
-      };
+      });
     }
   };
 };

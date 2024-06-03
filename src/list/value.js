@@ -3,7 +3,7 @@
 import List, {Ptr} from './core.js';
 import {ValueNode} from './nodes.js';
 import {pop} from './basics.js';
-import {addAliases, mapIterator} from '../meta-utils.js';
+import {addAliases, mapIterator, normalizeIterator} from '../meta-utils.js';
 
 export class ValueList extends List {
   popFront() {
@@ -28,7 +28,7 @@ export class ValueList extends List {
   [Symbol.iterator]() {
     let current = this[this.nextName],
       readyToStop = this.isEmpty;
-    return {
+    return normalizeIterator({
       next: () => {
         if (readyToStop && current === this) return {done: true};
         readyToStop = true;
@@ -36,7 +36,7 @@ export class ValueList extends List {
         current = current[this.nextName];
         return {value};
       }
-    };
+    });
   }
 
   getValueIterator(range) {

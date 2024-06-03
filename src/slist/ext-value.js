@@ -2,7 +2,7 @@
 
 import ExtSList, {Ptr} from './ext.js';
 import {ValueNode} from './nodes.js';
-import {addAlias, mapIterator} from '../meta-utils.js';
+import {addAlias, mapIterator, normalizeIterator} from '../meta-utils.js';
 
 export class ExtValueSList extends ExtSList {
   adoptValue(value) {
@@ -19,7 +19,7 @@ export class ExtValueSList extends ExtSList {
   [Symbol.iterator]() {
     let current = this.head,
       readyToStop = this.isEmpty;
-    return {
+    return normalizeIterator({
       next: () => {
         if (readyToStop && current === this.head) return {done: true};
         readyToStop = true;
@@ -27,7 +27,7 @@ export class ExtValueSList extends ExtSList {
         current = current[this.nextName];
         return {value};
       }
-    };
+    });
   }
 
   getValueIterator(range) {

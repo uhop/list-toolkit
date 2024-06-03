@@ -3,7 +3,7 @@
 import {ExtListBase, HeadNode} from './nodes.js';
 import {pop, splice, append} from './basics.js';
 import Ptr from './ptr.js';
-import {addAliases, mapIterator} from '../meta-utils.js';
+import {addAliases, mapIterator, normalizeIterator} from '../meta-utils.js';
 
 export class List extends HeadNode {
   get frontPtr() {
@@ -180,7 +180,7 @@ export class List extends HeadNode {
   [Symbol.iterator]() {
     let current = this[this.nextName],
       readyToStop = this.isEmpty;
-    return {
+    return normalizeIterator({
       next: () => {
         if (readyToStop && current === this) return {done: true};
         readyToStop = true;
@@ -188,7 +188,7 @@ export class List extends HeadNode {
         current = current[this.nextName];
         return {value};
       }
-    };
+    });
   }
 
   getNodeIterator(range = {}) {
@@ -199,7 +199,7 @@ export class List extends HeadNode {
         let current = from || this[this.nextName],
           readyToStop = this.isEmpty;
         const stop = to ? to[this.nextName] : this;
-        return {
+        return normalizeIterator({
           next: () => {
             if (readyToStop && current === stop) return {done: true};
             readyToStop = true;
@@ -207,7 +207,7 @@ export class List extends HeadNode {
             current = current[this.nextName];
             return {value};
           }
-        };
+        });
       }
     };
   }
@@ -224,7 +224,7 @@ export class List extends HeadNode {
         let current = to || this[this.prevName],
           readyToStop = this.isEmpty;
         const stop = from ? from[this.prevName] : this;
-        return {
+        return normalizeIterator({
           next: () => {
             if (readyToStop && current === stop) return {done: true};
             readyToStop = true;
@@ -232,7 +232,7 @@ export class List extends HeadNode {
             current = current[this.prevName];
             return {value};
           }
-        };
+        });
       }
     };
   }
