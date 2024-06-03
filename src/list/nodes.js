@@ -88,11 +88,14 @@ export class HeadNode extends Node {
       throw new Error('node is already a part of a list, or there is a name clash');
     }
     node[this.nextName] = node[this.prevName] = node;
+    if (nodeOrPtr instanceof PtrBase) nodeOrPtr.list = this;
     return node;
   }
 
   normalizeNode(nodeOrPtr) {
-    return normalizeNode(this, nodeOrPtr, PtrBase);
+    const node = normalizeNode(this, nodeOrPtr, PtrBase);
+    if (nodeOrPtr instanceof PtrBase) nodeOrPtr.list = this;
+    return node;
   }
 
   normalizeRange(range) {
