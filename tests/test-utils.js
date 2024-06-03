@@ -1,7 +1,7 @@
 'use strict';
 
 import test from 'tape-six';
-import {compareFromLess, lessFromCompare, equalFromLess, greaterFromLess, binarySearch} from 'list-toolkit/utils.js';
+import {compareFromLess, lessFromCompare, equalFromLess, reverseLess, reverseCompare, binarySearch} from 'list-toolkit/utils.js';
 
 test('utils: compareFromLess()', t => {
   t.equal(typeof compareFromLess, 'function');
@@ -45,18 +45,32 @@ test('utils: equalFromLess()', t => {
   t.ok(fromGt(4, 4));
 });
 
-test('utils: greaterFromLess()', t => {
-  t.equal(typeof greaterFromLess, 'function');
+test('utils: reverseLess()', t => {
+  t.equal(typeof reverseLess, 'function');
 
-  const fromLt = greaterFromLess((a, b) => a < b);
+  const fromLt = reverseLess((a, b) => a < b);
   t.notOk(fromLt(1, 2));
   t.ok(fromLt(3, 2));
   t.notOk(fromLt(4, 4));
 
-  const fromGt = greaterFromLess((a, b) => a > b);
+  const fromGt = reverseLess((a, b) => a > b);
   t.ok(fromGt(1, 2));
   t.notOk(fromGt(3, 2));
   t.notOk(fromGt(4, 4));
+});
+
+test('utils: reverseCompare()', t => {
+  t.equal(typeof reverseCompare, 'function');
+
+  const reverseNormal = reverseCompare((a, b) => a - b);
+  t.notOk(reverseNormal(1, 2) < 0);
+  t.notOk(reverseNormal(3, 2) > 0);
+  t.ok(reverseNormal(4, 4) == 0);
+
+  const reverseReverse = reverseCompare((a, b) => b - a);
+  t.notOk(reverseReverse(1, 2) > 0);
+  t.notOk(reverseReverse(3, 2) < 0);
+  t.ok(reverseReverse(4, 4) == 0);
 });
 
 const isSorted = (array, less = (a, b) => a < b) => {
