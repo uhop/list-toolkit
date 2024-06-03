@@ -32,7 +32,8 @@ export class CacheLFU extends CacheLRU {
     const node = this.heap.top;
     this.dict.delete(node.value.key);
     node.value = {key, value, counter: 1};
-    this.heap.replaceTop(node);
+    this.dict.set(key, node);
+    this.heap.updateTop();
     return node;
   }
   remove(key) {
