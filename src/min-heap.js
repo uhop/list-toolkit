@@ -184,23 +184,33 @@ export class MinHeap {
   }
 
   remove(value) {
-    return MinHeap.remove(this.array, value, this.less, this.equal);
+    MinHeap.remove(this.array, value, this.less, this.equal);
+    return this;
   }
 
   removeByIndex(index) {
-    return MinHeap.removeByIndex(this.array, index, this.less);
+    MinHeap.removeByIndex(this.array, index, this.less);
+    return this;
   }
 
   replace(value, newValue) {
-    return MinHeap.replace(this.array, value, newValue, this.less, this.equal);
+    MinHeap.replace(this.array, value, newValue, this.less, this.equal);
+    return this;
   }
 
   replaceByIndex(index, newValue) {
-    return MinHeap.replaceByIndex(this.array, index, newValue, this.less);
+    MinHeap.replaceByIndex(this.array, index, newValue, this.less);
+    return this;
+  }
+
+  updateTop() {
+    down(this.array, 0, this.less);
+    return this;
   }
 
   updateByIndex(index, isDecreased) {
-    return MinHeap.updateByIndex(this.array, index, isDecreased, this.less);
+    MinHeap.updateByIndex(this.array, index, isDecreased, this.less);
+    return this;
   }
 
   clear() {
@@ -315,7 +325,7 @@ export class MinHeap {
       return MinHeap.updateByIndex(heapArray, index, less(newItem, item), less);
     }
     heapArray.pop();
-    return this;
+    return heapArray;
   }
 
   static remove(heapArray, item, less = MinHeap.defaults.less, equal = MinHeap.defaults.equal) {
@@ -337,8 +347,7 @@ export class MinHeap {
 
   static updateByIndex(heapArray, index, isDecreased, less = MinHeap.defaults.less) {
     if (index < 0 || index >= heapArray.length) return this;
-    (isDecreased ? up : down)(heapArray, index, less);
-    return this;
+    return (isDecreased ? up : down)(heapArray, index, less);
   }
 
   static sort(heapArray, less = MinHeap.defaults.less) {
