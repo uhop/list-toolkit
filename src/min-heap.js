@@ -179,12 +179,28 @@ export class MinHeap {
     return this.array.findIndex(element => this.equal(element, value)) >= 0;
   }
 
+  findIndex(value) {
+    return this.array.findIndex(element => this.equal(element, value));
+  }
+
   remove(value) {
     return MinHeap.remove(this.array, value, this.less, this.equal);
   }
 
+  removeByIndex(index) {
+    return MinHeap.removeByIndex(this.array, index, this.less);
+  }
+
   replace(value, newValue) {
     return MinHeap.replace(this.array, value, newValue, this.less, this.equal);
+  }
+
+  replaceByIndex(index, newValue) {
+    return MinHeap.replaceByIndex(this.array, index, newValue, this.less);
+  }
+
+  updateByIndex(index, isDecreased) {
+    return MinHeap.updateByIndex(this.array, index, isDecreased, this.less);
   }
 
   clear() {
@@ -272,10 +288,7 @@ export class MinHeap {
 
   static pushPop(heapArray, item, less = MinHeap.defaults.less) {
     if (!heapArray.length || less(item, heapArray[0])) return item;
-    const top = heapArray[0];
-    heapArray[0] = item;
-    down(heapArray, 0, less);
-    return top;
+    return MinHeap.replaceTop(heapArray, item, less);
   }
 
   static replaceTop(heapArray, item, less = MinHeap.defaults.less) {
@@ -293,45 +306,38 @@ export class MinHeap {
     return heapArray.findIndex(element => equal(element, item));
   }
 
-  static removeByIndex(heapArray, index, less = MinHeap.defaults.less, equal = MinHeap.defaults.equal) {
+  static removeByIndex(heapArray, index, less = MinHeap.defaults.less) {
     if (index < 0 || index >= heapArray.length) return this;
     const last = heapArray.length - 1;
     if (index !== last) {
-      const item = heapArray[index];
-      heapArray[index] = heapArray.pop();
-      if (less(heapArray[index], item)) up(heapArray, index, less);
-      else down(heapArray, index, less);
-    } else heapArray.pop();
+      const item = heapArray[index],
+        newItem = heapArray[index] = heapArray.pop();
+      return MinHeap.updateByIndex(heapArray, index, less(newItem, item), less);
+    }
+    heapArray.pop();
     return this;
   }
 
   static remove(heapArray, item, less = MinHeap.defaults.less, equal = MinHeap.defaults.equal) {
     const index = heapArray.findIndex(element => equal(element, item));
-    if (index < 0) return this;
-    const last = heapArray.length - 1;
-    if (index !== last) {
-      heapArray[index] = heapArray.pop();
-      if (less(heapArray[index], item)) up(heapArray, index, less);
-      else down(heapArray, index, less);
-    } else heapArray.pop();
-    return this;
+    return MinHeap.removeByIndex(heapArray, index, less);
   }
 
-  static replaceByIndex(heapArray, index, newItem, less = MinHeap.defaults.less, equal = MinHeap.defaults.equal) {
+  static replaceByIndex(heapArray, index, newItem, less = MinHeap.defaults.less) {
     if (index < 0 || index >= heapArray.length) return this;
     const item = heapArray[index];
     heapArray[index] = newItem;
-    if (less(newItem, item)) up(heapArray, index, less);
-    else down(heapArray, index, less);
-    return this;
+    return MinHeap.updateByIndex(heapArray, index, less(newItem, item), less);
   }
 
   static replace(heapArray, item, newItem, less = MinHeap.defaults.less, equal = MinHeap.defaults.equal) {
     const index = heapArray.findIndex(element => equal(element, item));
-    if (index < 0) return this;
-    heapArray[index] = newItem;
-    if (less(newItem, item)) up(heapArray, index, less);
-    else down(heapArray, index, less);
+    return MinHeap.replaceByIndex(heapArray, index, newItem, less);
+  }
+
+  static updateByIndex(heapArray, index, isDecreased, less = MinHeap.defaults.less) {
+    if (index < 0 || index >= heapArray.length) return this;
+    (isDecreased ? up : down)(heapArray, index, less);
     return this;
   }
 
