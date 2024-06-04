@@ -90,8 +90,10 @@ export class HeadNode extends Node {
     return node;
   }
 
-  normalizeNode(node) {
-    return normalizeNode(this, node, PtrBase);
+  normalizeNode(nodeOrPtr) {
+    const node = normalizeNode(this, nodeOrPtr, PtrBase);
+    if (nodeOrPtr instanceof PtrBase) nodeOrPtr.list = this;
+    return node;
   }
 
   normalizeRange(range) {

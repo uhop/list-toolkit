@@ -16,12 +16,20 @@ export class ValueList extends List {
 
   adoptValue(value) {
     if (value instanceof Ptr) {
-      if (value.node instanceof ValueNode) return super.adoptNode(value);
-      value.list = this;
+      if (!this.isCompatiblePtr(value)) throw new Error('Incompatible pointer');
+      if (value.node instanceof ValueNode) {
+        value.list = this;
+        return super.adoptNode(value);
+      }
       return new ValueNode(value.node, this);
     }
-    return value instanceof ValueNode ? super.adoptNode(value) : new ValueNode(value, this);
+    if (value instanceof ValueNode) {
+      if (!this.isNodeLike(value)) throw new Error('Incompatible node');
+      return super.adoptNode(value);
+    }
+    return new ValueNode(value, this);
   }
+
 
   // iterators
 

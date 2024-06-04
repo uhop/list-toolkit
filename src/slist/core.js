@@ -48,16 +48,16 @@ export class SList extends HeadNode {
     return this.makePtrFromPrev(last);
   }
 
-  pushFrontNode(node) {
-    node = this.adoptNode(node);
+  pushFrontNode(nodeOrPtr) {
+    const node = this.adoptNode(nodeOrPtr);
     node[this.nextName] = this[this.nextName];
     this[this.nextName] = node;
     if (node[this.nextName] === this) this.last = node;
     return this.makePtr();
   }
 
-  pushBackNode(node) {
-    node = this.adoptNode(node);
+  pushBackNode(nodeOrPtr) {
+    const node = this.adoptNode(nodeOrPtr);
     node[this.nextName] = this;
     const last = this.last;
     this.last = this.last[this.nextName] = node;
@@ -280,10 +280,6 @@ export class SList extends HeadNode {
 
   // meta helpers
 
-  clone() {
-    return SList.from(this, this);
-  }
-
   make() {
     return new SList(this);
   }
@@ -302,10 +298,10 @@ export class SList extends HeadNode {
     return list;
   }
 
-  static fromRange(range, options) {
+  static fromPtrRange(ptrRange, options) {
     const list = new SList(options);
-    if (!list.isCompatibleRange(list)) throw new Error('"range" is not a compatible range');
-    if (range) append(list, list, range);
+    if (!list.isCompatiblePtrRange(ptrRange)) throw new Error('"range" is not a compatible range');
+    if (ptrRange) append(list, list, ptrRange);
     return list;
   }
 
@@ -331,6 +327,7 @@ addAliases(SList, {
   popFrontNode: 'popFront, pop',
   popBackNode: 'popBack',
   pushFront: 'push',
+  appendBack: 'append',
   getNodeIterator: 'getIterator'
 });
 

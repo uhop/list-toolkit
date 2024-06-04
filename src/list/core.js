@@ -239,10 +239,6 @@ export class List extends HeadNode {
 
   // meta helpers
 
-  clone() {
-    return List.from(this, this);
-  }
-
   make() {
     return new List(this);
   }

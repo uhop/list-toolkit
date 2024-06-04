@@ -8,9 +8,16 @@ export class ExtValueSList extends ExtSList {
   adoptValue(value) {
     if (value instanceof Ptr) {
       if (!this.isCompatiblePtr(value)) throw new Error('Incompatible pointer');
-      value = value.node;
+      if (value.node instanceof ValueNode) {
+        value.list = this;
+        return super.adoptNode(value);
+      }
+      return new ValueNode(value.node, this);
     }
-    if (value instanceof ValueNode) return super.adoptNode(value);
+    if (value instanceof ValueNode) {
+      if (!this.isNodeLike(value)) throw new Error('Incompatible node');
+      return super.adoptNode(value);
+    }
     return new ValueNode(value, this);
   }
 
@@ -32,10 +39,6 @@ export class ExtValueSList extends ExtSList {
 
   getValueIterator(range) {
     return mapIterator(this.getNodeIterator(range), node => node.value);
-  }
-
-  getReverseValueIterator(range) {
-    return mapIterator(this.getReverseNodeIterator(range), node => node.value);
   }
 
   // meta helpers
@@ -67,4 +70,5 @@ ExtValueSList.ValueNode = ValueNode;
 
 addAlias(ExtValueSList, 'getIterator', 'getValueIterator');
 
+export {ValueNode};
 export default ExtValueSList;
