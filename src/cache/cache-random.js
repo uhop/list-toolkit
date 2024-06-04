@@ -54,6 +54,7 @@ export class CacheRandom extends CacheLRU {
   clear() {
     super.clear();
     this.heap.clear();
+    this.nextId = 0;
     return this;
   }
   resetIndices() {
