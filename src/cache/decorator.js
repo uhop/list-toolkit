@@ -30,4 +30,17 @@ export const decorator = (object, key, Cache, ...args) => {
   return wrapped;
 };
 
+export const decorateMethod = (object, key, Cache, ...args) => {
+  const fn = object[key],
+    wrapped = decorateFn(fn, Cache, ...args);
+  object[key] = wrapped;
+  return wrapped;
+};
+
+export const getCache = (object, key) => {
+  const descriptor = Object.getOwnPropertyDescriptor(object, key);
+  if (!descriptor) throw new Error('Missing property: ' + key);
+  return (descriptor.get || descriptor.value).cache;
+};
+
 export default decorator;
