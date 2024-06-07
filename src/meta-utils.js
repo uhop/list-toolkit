@@ -13,12 +13,10 @@ export const fromSnakeCase = name => name.split('_');
 export const toKebabCase = names => names.map(name => name.toLowerCase()).join('-');
 export const fromKebabCase = name => name.split('-');
 
-export const directlyToObject = Class => ({prototype: Class});
-
-export const addDescriptor = (Class, names, descriptor, force) => {
-  const target = Class.prototype || Class;
+export const addDescriptor = (target, names, descriptor, force) => {
   if (!descriptor) return target;
   if (typeof names == 'string') names = names.trim().split(/\s*,\s*/);
+  if (!Array.isArray(names)) names = [names];
   for (const name of names) {
     if (!force && target.hasOwnProperty(name)) continue;
     Object.defineProperty(target, name, descriptor);
@@ -26,43 +24,54 @@ export const addDescriptor = (Class, names, descriptor, force) => {
   return target;
 };
 
-export const addDescriptors = (Class, descriptors, force) => {
-  for (const [names, descriptor] of Object.entries(descriptors)) {
-    addDescriptor(Class, names, descriptor, force);
+export const addDescriptors = (target, dict, force) => {
+  for (const [names, descriptor] of Object.entries(dict)) {
+    addDescriptor(target, names, descriptor, force);
   }
 };
 
-export const addGetter = (Class, names, getter, force) => addDescriptor(Class, names, {configurable: true, enumerable: true, get: getter}, force);
+export const addGetter = (target, names, getter, force) =>
+  addDescriptor(
+    target,
+    names,
+    {
+      configurable: true,
+      enumerable: true,
+      get: getter
+    },
+    force
+  );
 
-export const addGetters = (Class, getters, force) => {
-  for (const [names, value] of Object.entries(getters)) {
-    addGetter(Class, names, value, force);
+export const addGetters = (target, dict, force) => {
+  for (const [names, getter] of Object.entries(dict)) {
+    addGetter(target, names, getter, force);
   }
 };
 
-export const addAlias = (Class, name, aliases, force) => {
-  const target = Class.prototype || Class;
-  return addDescriptor(Class, aliases, Object.getOwnPropertyDescriptor(target, name), force);
-};
-
-export const addAliases = (Class, aliases, force) => {
-  for (const [name, value] of Object.entries(aliases)) {
-    addAlias(Class, name, value, force);
+export const copyDescriptors = (target, source, names, force) => {
+  switch (typeof names) {
+    case 'string':
+      names = names.trim().split(/\s*,\s*/);
+      break;
+    case 'symbol':
+      names = [names];
+      break;
   }
-};
-
-export const copyDescriptors = (Class, names, SourceClass, force) => {
-  const target = Class.prototype || Class,
-    source = SourceClass.prototype || SourceClass;
-  if (typeof names == 'string') names = names.trim().split(/\s*,\s*/);
-  for (const name of names) {
-    if (!force && target.hasOwnProperty(name)) continue;
-    const descriptor = Object.getOwnPropertyDescriptor(source, name);
-    if (!descriptor) continue;
-    Object.defineProperty(target, name, descriptor);
+  if (Array.isArray(names)) {
+    for (const name of names) {
+      addDescriptor(target, [name], Object.getOwnPropertyDescriptor(source, name), force);
+    }
+  } else {
+    for (const [name, aliases] of Object.entries(names)) {
+      addDescriptor(target, aliases, Object.getOwnPropertyDescriptor(source, name), force);
+    }
   }
   return target;
 };
+
+export const addAlias = (object, name, aliases, force) => addDescriptor(object, aliases, Object.getOwnPropertyDescriptor(object, name), force);
+
+export const addAliases = (object, dict, force) => copyDescriptors(object, object, dict, force);
 
 export const augmentIterator = iterator => {
   if (!Object.hasOwnProperty(Symbol.iterator)) {

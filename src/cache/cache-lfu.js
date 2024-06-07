@@ -58,6 +58,6 @@ export class CacheLFU extends CacheLRU {
   }
 }
 
-addAlias(CacheLFU, 'remove', 'delete');
+addAlias(CacheLFU.prototype, 'remove', 'delete');
 
 export default CacheLFU;

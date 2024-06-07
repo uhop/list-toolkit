@@ -103,7 +103,7 @@ export class HeadNode extends Node {
   }
 }
 
-addAlias(HeadNode, 'adoptNode', 'adoptValue');
+addAlias(HeadNode.prototype, 'adoptNode', 'adoptValue');
 
 export class ValueNode extends Node {
   constructor(value, options) {
@@ -251,4 +251,12 @@ export class ExtListBase {
   }
 }
 
-copyDescriptors(ExtListBase, ['isNodeLike', 'isCompatibleNames', 'isCompatibleRange', 'normalizeNode', 'normalizeRange', 'adoptNode', 'adoptValue'], HeadNode);
+copyDescriptors(ExtListBase.prototype, HeadNode.prototype, [
+  'isNodeLike',
+  'isCompatibleNames',
+  'isCompatibleRange',
+  'normalizeNode',
+  'normalizeRange',
+  'adoptNode',
+  'adoptValue'
+]);

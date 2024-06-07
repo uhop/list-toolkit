@@ -72,7 +72,7 @@ export class ExtValueList extends ExtList {
 ExtValueList.Ptr = Ptr;
 ExtValueList.ValueNode = ValueNode;
 
-addAliases(ExtValueList, {
+addAliases(ExtValueList.prototype, {
   getValueIterator: 'getIterator',
   getReverseValueIterator: 'getReverseIterator'
 });

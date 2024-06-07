@@ -46,6 +46,6 @@ export class Queue {
   }
 }
 
-addAliases(Queue, {add: 'push, pushBack', remove: 'pop, popFront'});
+addAliases(Queue.prototype, {add: 'push, pushBack', remove: 'pop, popFront'});
 
 export default Queue;

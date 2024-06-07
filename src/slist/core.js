@@ -323,7 +323,7 @@ export class SList extends HeadNode {
 
 SList.Ptr = Ptr;
 
-addAliases(SList, {
+addAliases(SList.prototype, {
   popFrontNode: 'popFront, pop',
   popBackNode: 'popBack',
   pushFront: 'push',

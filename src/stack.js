@@ -47,6 +47,6 @@ export class Stack {
   }
 }
 
-addAlias(Stack, 'push', 'pushFront');
+addAlias(Stack.prototype, 'push', 'pushFront');
 
 export default Stack;

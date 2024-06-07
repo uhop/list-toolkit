@@ -282,7 +282,7 @@ export class List extends HeadNode {
 
 List.Ptr = Ptr;
 
-addAliases(List, {
+addAliases(List.prototype, {
   popFrontNode: 'popFront, pop',
   popBackNode: 'popBack',
   pushFront: 'push',

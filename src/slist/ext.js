@@ -322,7 +322,7 @@ export class ExtSList extends ExtListBase {
 
 ExtSList.Ptr = Ptr;
 
-addAliases(ExtSList, {
+addAliases(ExtSList.prototype, {
   addAfter: 'add',
   removeNodeAfter: 'removeAfter',
   getNodeIterator: 'getIterator'

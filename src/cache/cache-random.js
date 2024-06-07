@@ -68,6 +68,6 @@ export class CacheRandom extends CacheLRU {
   }
 }
 
-addAlias(CacheRandom, 'remove', 'delete');
+addAlias(CacheRandom.prototype, 'remove', 'delete');
 
 export default CacheRandom;

@@ -30,7 +30,6 @@ export class ValueList extends List {
     return new ValueNode(value, this);
   }
 
-
   // iterators
 
   [Symbol.iterator]() {
@@ -79,15 +78,11 @@ export class ValueList extends List {
 ValueList.Ptr = Ptr;
 ValueList.ValueNode = ValueNode;
 
-addAliases(
-  ValueList,
-  {
-    popFront: 'pop',
-    getValueIterator: 'getIterator',
-    getReverseValueIterator: 'getReverseIterator'
-  },
-  true
-);
+addAliases(ValueList.prototype, {
+  popFront: 'pop',
+  getValueIterator: 'getIterator',
+  getReverseValueIterator: 'getReverseIterator'
+});
 
 export {ValueNode, Ptr};
 export default ValueList;

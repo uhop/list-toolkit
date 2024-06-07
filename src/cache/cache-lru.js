@@ -82,6 +82,6 @@ export class CacheLRU {
   }
 }
 
-addAliases(CacheLRU, {register: 'add, set', remove: 'delete', find: 'get'});
+addAliases(CacheLRU.prototype, {register: 'add, set', remove: 'delete', find: 'get'});
 
 export default CacheLRU;

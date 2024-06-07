@@ -68,7 +68,7 @@ export class ExtValueSList extends ExtSList {
 ExtValueSList.Ptr = Ptr;
 ExtValueSList.ValueNode = ValueNode;
 
-addAlias(ExtValueSList, 'getIterator', 'getValueIterator');
+addAlias(ExtValueSList.prototype, 'getIterator', 'getValueIterator');
 
 export {ValueNode};
 export default ExtValueSList;
