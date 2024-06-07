@@ -28,6 +28,9 @@ export const addDescriptors = (target, dict, force) => {
   for (const [names, descriptor] of Object.entries(dict)) {
     addDescriptor(target, names, descriptor, force);
   }
+  for (const symbol of Object.getOwnPropertySymbols(dict)) {
+    addDescriptor(target, [symbol], dict[symbol], force);
+  }
 };
 
 export const addGetter = (target, names, getter, force) =>
@@ -45,6 +48,9 @@ export const addGetter = (target, names, getter, force) =>
 export const addGetters = (target, dict, force) => {
   for (const [names, getter] of Object.entries(dict)) {
     addGetter(target, names, getter, force);
+  }
+  for (const symbol of Object.getOwnPropertySymbols(dict)) {
+    addGetter(target, [symbol], dict[symbol], force);
   }
 };
 
@@ -64,6 +70,11 @@ export const copyDescriptors = (target, source, names, force) => {
   } else {
     for (const [name, aliases] of Object.entries(names)) {
       addDescriptor(target, aliases, Object.getOwnPropertyDescriptor(source, name), force);
+    }
+    for (const symbol of Object.getOwnPropertySymbols(names)) {
+      const descriptor = Object.getOwnPropertyDescriptor(source, symbol);
+      if (!descriptor || !descriptor.enumerable) continue;
+      addDescriptor(target, names[symbol], descriptor, force);
     }
   }
   return target;
