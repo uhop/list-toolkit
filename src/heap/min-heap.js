@@ -1,6 +1,6 @@
 'use strict';
 
-import {copyOptions} from './meta-utils.js';
+import {copyOptions} from '../meta-utils.js';
 
 // the following functions are inlined:
 
