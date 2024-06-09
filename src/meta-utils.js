@@ -13,6 +13,27 @@ export const fromSnakeCase = name => name.split('_');
 export const toKebabCase = names => names.map(name => name.toLowerCase()).join('-');
 export const fromKebabCase = name => name.split('-');
 
+export const defaultDescriptor = {configurable: true, enumerable: true};
+
+export const fromGetter = (getter, defaultDescriptor = defaultDescriptor) => {
+  const descriptor = {...defaultDescriptor};
+  if (typeof getter == 'function') descriptor.get = getter;
+  return descriptor;
+};
+
+export const fromSetter = (setter, defaultDescriptor = defaultDescriptor) => {
+  const descriptor = {...defaultDescriptor};
+  if (typeof setter == 'function') descriptor.set = setter;
+  return descriptor;
+};
+
+export const fromAccessors = (getter, setter, defaultDescriptor = defaultDescriptor) => {
+  const descriptor = {...defaultDescriptor};
+  if (typeof getter == 'function') descriptor.get = getter;
+  if (typeof setter == 'function') descriptor.set = setter;
+  return descriptor;
+};
+
 export const addDescriptor = (target, names, descriptor, force) => {
   if (!descriptor) return target;
   if (typeof names == 'string') names = names.trim().split(/\s*,\s*/);
@@ -35,26 +56,16 @@ export const addDescriptors = (target, dict, force) => {
   }
 };
 
-export const addGetter = (target, names, getter, force) =>
-  addDescriptor(
-    target,
-    names,
-    {
-      configurable: true,
-      enumerable: true,
-      get: getter
-    },
-    force
-  );
+export const addAccessor = (target, names, getter, setter, force) => addDescriptor(target, names, fromAccessors(getter, setter), force);
 
 export const addGetters = (target, dict, force) => {
   for (const [names, getter] of Object.entries(dict)) {
-    addGetter(target, names, getter, force);
+    addDescriptor(target, names, fromGetter(getter), force);
   }
   for (const symbol of Object.getOwnPropertySymbols(dict)) {
     const descriptor = Object.getOwnPropertyDescriptor(source, symbol);
     if (!descriptor || !descriptor.enumerable) continue;
-    addGetter(target, [symbol], dict[symbol], force);
+    addDescriptor(target, [symbol], fromGetter(dict[symbol]), force);
   }
 };
 
