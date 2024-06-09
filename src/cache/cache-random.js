@@ -4,7 +4,7 @@ import {addAlias} from '../meta-utils.js';
 import MinHeap from '../min-heap.js';
 import CacheLRU from './cache-lru.js';
 
-// Evicts on the first-in-first-out basis.
+// Evicts items randomly.
 
 export class CacheRandom extends CacheLRU {
   constructor(capacity = 10) {
@@ -57,7 +57,7 @@ export class CacheRandom extends CacheLRU {
     this.nextId = 0;
     return this;
   }
-  resetIndices() {
+  resetIds() {
     this.nextId = 0;
     for (const item of this.heap) {
       item.id = this.nextId++;

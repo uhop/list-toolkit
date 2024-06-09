@@ -4,7 +4,7 @@ import {addAlias} from '../meta-utils.js';
 import MinHeap from '../min-heap.js';
 import CacheLRU from './cache-lru.js';
 
-// Evicts on the first-in-first-out basis.
+// Evicts the least frequently used items.
 
 export class CacheLFU extends CacheLRU {
   constructor(capacity = 10) {
