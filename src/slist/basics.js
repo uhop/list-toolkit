@@ -22,7 +22,7 @@ export const pop = ({nextName}, prev) => {
     next = node[nextName];
 
   // exclude the node
-  prev[nextName] = node[nextName];
+  prev[nextName] = next;
 
   // circle the node
   node[nextName] = node;
