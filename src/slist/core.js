@@ -2,7 +2,7 @@
 
 import {addAliases, normalizeIterator} from '../meta-utils.js';
 import {ExtListBase, HeadNode} from './nodes.js';
-import {extract, append} from './basics.js';
+import {append} from './basics.js';
 import Ptr from './ptr.js';
 
 export class SList extends HeadNode {
@@ -44,7 +44,7 @@ export class SList extends HeadNode {
     const node = this.adoptValue(value);
     node[this.nextName] = this;
     const last = this.last;
-    this.last = this.last[this.nextName] = node;
+    this.last = last[this.nextName] = node;
     return this.makePtrFromPrev(last);
   }
 
@@ -60,7 +60,7 @@ export class SList extends HeadNode {
     const node = this.adoptNode(nodeOrPtr);
     node[this.nextName] = this;
     const last = this.last;
-    this.last = this.last[this.nextName] = node;
+    this.last = last[this.nextName] = node;
     return this.makePtrFromPrev(last);
   }
 
@@ -72,7 +72,7 @@ export class SList extends HeadNode {
     this[this.nextName] = list[this.nextName];
     if (list.last[this.nextName] === this) this.last = list.last;
 
-    list[this.nextName] = list.last = list;
+    list[this.nextName] = list.last = list; // clear the list
     return this.makePtr();
   }
 
@@ -86,7 +86,7 @@ export class SList extends HeadNode {
     const last = this.last;
     this.last = list.last;
 
-    list[this.nextName] = list.last = list;
+    list[this.nextName] = list.last = list; // clear the list
     return this.makePtrFromPrev(last);
   }
 
@@ -151,7 +151,7 @@ export class SList extends HeadNode {
     ptrRange.from.list = extracted;
     if (originalTo instanceof Ptr) originalTo.list = extracted;
 
-    // TODO: calculate new last node
+    if (ptrRange.to === this.last) this.last = ptrRange.from.prevNode;
 
     return extracted;
   }
@@ -212,10 +212,12 @@ export class SList extends HeadNode {
   }
 
   releaseAsPtrRange() {
-    const range = this.ptrRange;
-    if (!range) return null;
-    const rawRange = extract(this, {prevFrom: range.from.prevNode, to: range.to}).extracted;
-    return {from: new Ptr(this, null, rawRange.prevFrom), to: rawRange.to};
+    if (this.isEmpty) return null;
+    const head = this[this.nextName],
+      tail = this.last;
+    this.clear();
+    tail[this.nextName] = head;
+    return {from: new Ptr(this, null, tail), to: tail};
   }
 
   releaseRawList() {
