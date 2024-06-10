@@ -171,6 +171,15 @@ export class List extends HeadNode {
     return this.isEmpty ? null : pop(this, this).rest;
   }
 
+  releaseNTList() {
+    if (this.isEmpty) return null;
+    const head = this[this.nextName],
+      tail = this[this.prevName];
+    this.clear();
+    head[this.prevName] = tail[this.nextName] = null;
+    return {head, tail};
+  }
+
   // iterators
 
   [Symbol.iterator]() {

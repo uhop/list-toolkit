@@ -119,6 +119,7 @@ export class SList extends HeadNode {
     } else {
       this[this.nextName] = this;
     }
+    this.last = this;
     return this;
   }
 
@@ -149,6 +150,8 @@ export class SList extends HeadNode {
     extracted.last = ptrRange.to;
     ptrRange.from.list = extracted;
     if (originalTo instanceof Ptr) originalTo.list = extracted;
+
+    // TODO: calculate new last node
 
     return extracted;
   }
@@ -216,7 +219,21 @@ export class SList extends HeadNode {
   }
 
   releaseRawList() {
-    return this.releaseAsPtrRange()?.from.node;
+    if (this.isEmpty) return null;
+    const head = this[this.nextName],
+      tail = this.last;
+    this.clear();
+    tail[this.nextName] = head;
+    return head;
+  }
+
+  releaseNTList() {
+    if (this.isEmpty) return null;
+    const head = this[this.nextName],
+      tail = this.last;
+    this.clear();
+    tail[this.nextName] = null;
+    return {head, tail};
   }
 
   // iterators
