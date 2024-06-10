@@ -5,9 +5,9 @@ import {addAliases} from './meta-utils.js';
 import {pushValuesBack} from './list-utils.js';
 
 export class Queue {
-  constructor(UnderlyingList = ValueList) {
-    this.size = 0;
-    this.list = new UnderlyingList();
+  constructor(underlyingList = new ValueList()) {
+    this.list = underlyingList;
+    this.size = this.list.getLength();
   }
   get isEmpty() {
     return this.list.isEmpty;
@@ -46,6 +46,6 @@ export class Queue {
   }
 }
 
-addAliases(Queue.prototype, {add: 'push, pushBack', remove: 'pop, popFront'});
+addAliases(Queue.prototype, {add: 'push, pushBack, enqueue', remove: 'pop, popFront, dequeue'});
 
 export default Queue;
