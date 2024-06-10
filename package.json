@@ -33,9 +33,9 @@
   },
   "homepage": "https://github.com/uhop/list-toolkit#readme",
   "devDependencies": {
-    "@babel/cli": "^7.24.5",
-    "@babel/core": "^7.24.5",
-    "@babel/preset-env": "^7.24.5",
+    "@babel/cli": "^7.24.7",
+    "@babel/core": "^7.24.7",
+    "@babel/preset-env": "^7.24.7",
     "tape-six": "^0.9.5"
   },
   "files": [
