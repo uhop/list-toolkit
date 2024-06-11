@@ -21,11 +21,12 @@ export class Queue {
   add(value) {
     this.list.pushBack(value);
     ++this.size;
+    return this;
   }
   remove() {
     if (!this.list.isEmpty) {
       --this.size;
-      return this.list.popFront().value;
+      return this.list.popFront();
     }
     // return undefined;
   }
