@@ -279,6 +279,28 @@ test('List.releaseRawList()', t => {
   t.deepEqual(array, [1, 2, 3]);
 });
 
+test('List.releaseNTList()', t => {
+  const list = List.from([{x: 1}, {x: 2}, {x: 3}]);
+
+  t.equal(list.getLength(), 3);
+
+  const ntList = list.releaseNTList();
+
+  t.ok(list.isEmpty);
+  t.ok(!!ntList);
+  t.ok(!!ntList.head);
+  t.ok(!!ntList.tail);
+  t.ok(ntList.head[list.prevName] === null);
+  t.ok(ntList.tail[list.nextName] === null);
+
+  const array = [];
+  for (let node = ntList.head; node; node = node[list.nextName]) {
+    array.push(node.x);
+  }
+
+  t.deepEqual(array, [1, 2, 3]);
+});
+
 test('List.sort()', t => {
   const N = 100;
 
@@ -292,4 +314,14 @@ test('List.sort()', t => {
     Array.from(list).map(value => value.x),
     array.sort((a, b) => a - b)
   );
+});
+
+test('List.validateRange()', t => {
+  const a = {x: 1},
+    b = {x: 2},
+    c = {x: 3};
+  const list = List.from([a, b, c]);
+
+  t.ok(list.validateRange({from: a, to: c}));
+  t.notOk(list.validateRange({from: c, to: a}));
 });
