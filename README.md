@@ -118,7 +118,6 @@ for (let node = ladies.front; node !== ladies; node = node.n) {
 people.moveToFront(jim);
 people.moveToBack(john);
 
-
 // sort the list
 people.sort((a, b) => a.name.localeCompare(b.name) < 0);
 
