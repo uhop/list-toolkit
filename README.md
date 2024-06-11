@@ -140,13 +140,12 @@ ji.isEmpty === true;
 // BTW, the list `ladies` is unchanged
 ```
 
-
-
 ## License
 
 BSD 3-Clause "New" or "Revised" License. See the LICENSE file for details.
 
 ## Release History
 
+* 2.0.0 *New major release.*
 * 1.0.1 *Fixed exports. Added more methods to `MinHeap`.*
 * 1.0.1 *Initial release.*
