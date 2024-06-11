@@ -3,10 +3,12 @@
 // utilities for working with null-terminated lists
 
 export const isNTList = (head, {nextName = 'next'} = {}) => {
+  if (head === null) return true;
   let current = head;
   do {
     const next = current[nextName];
-    if (!next) return true;
+    if (next === null) return true;
+    if (!next) break;
     current = next;
   } while (current !== head);
   return false;
