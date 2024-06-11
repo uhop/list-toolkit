@@ -238,6 +238,16 @@ export class SList extends HeadNode {
     return {head, tail};
   }
 
+  validateRange(range = {}) {
+    range = this.normalizeRange(range);
+    let current = range.from;
+    do {
+      if (current === this) return false;
+      current = current[this.nextName];
+    } while (current !== range.to);
+    return true;
+  }
+
   // iterators
 
   [Symbol.iterator]() {
