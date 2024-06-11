@@ -1,7 +1,7 @@
 'use strict';
 
 import {addAlias} from '../meta-utils.js';
-import MinHeap from '../min-heap.js';
+import MinHeap from '../heap/min-heap.js';
 import CacheLRU from './cache-lru.js';
 
 // Evicts items randomly.
