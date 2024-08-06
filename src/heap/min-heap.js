@@ -26,17 +26,10 @@ const down = (array, i, less = defaultLess, n = array.length) => {
   for (;;) {
     const l = (i << 1) + 1;
     if (l >= n) break;
-    let c = l,
+    const r = l + 1,
+      c = r < n && less(array[r], array[l]) ? r : l,
+      iValue = array[i],
       cValue = array[c];
-    const r = c + 1;
-    if (r < n) {
-      const rValue = array[r];
-      if (less(rValue, cValue)) {
-        c = r;
-        cValue = rValue;
-      }
-    }
-    const iValue = array[i];
     if (!less(cValue, iValue)) break;
     array[i] = cValue;
     array[c] = iValue;
@@ -83,17 +76,10 @@ export class MinHeap {
     for (let i = 0; ; ) {
       const l = (i << 1) + 1;
       if (l >= n) break;
-      let c = l,
+      const r = l + 1,
+        c = r < n && this.less(this.array[r], this.array[l]) ? r : l,
+        iValue = this.array[i],
         cValue = this.array[c];
-      const r = c + 1;
-      if (r < n) {
-        const rValue = this.array[r];
-        if (this.less(rValue, cValue)) {
-          c = r;
-          cValue = rValue;
-        }
-      }
-      const iValue = this.array[i];
       if (!this.less(cValue, iValue)) break;
       this.array[i] = cValue;
       this.array[c] = iValue;
@@ -127,17 +113,10 @@ export class MinHeap {
     for (let i = 0; ; ) {
       const l = (i << 1) + 1;
       if (l >= n) break;
-      let c = l,
+      const r = l + 1,
+        c = r < n && this.less(this.array[r], this.array[l]) ? r : l,
+        iValue = this.array[i],
         cValue = this.array[c];
-      const r = c + 1;
-      if (r < n) {
-        const rValue = this.array[r];
-        if (this.less(rValue, cValue)) {
-          c = r;
-          cValue = rValue;
-        }
-      }
-      const iValue = this.array[i];
       if (!this.less(cValue, iValue)) break;
       this.array[i] = cValue;
       this.array[c] = iValue;
@@ -155,17 +134,10 @@ export class MinHeap {
     for (let i = 0; ; ) {
       const l = (i << 1) + 1;
       if (l >= n) break;
-      let c = l,
+      const r = l + 1,
+        c = r < n && this.less(this.array[r], this.array[l]) ? r : l,
+        iValue = this.array[i],
         cValue = this.array[c];
-      const r = c + 1;
-      if (r < n) {
-        const rValue = this.array[r];
-        if (this.less(rValue, cValue)) {
-          c = r;
-          cValue = rValue;
-        }
-      }
-      const iValue = this.array[i];
       if (!this.less(cValue, iValue)) break;
       this.array[i] = cValue;
       this.array[c] = iValue;
@@ -257,17 +229,10 @@ export class MinHeap {
       for (let i = j; ; ) {
         const l = (i << 1) + 1;
         if (l >= n) break;
-        let c = l,
+        const r = l + 1,
+          c = r < n && less(array[r], array[l]) ? r : l,
+          iValue = array[i],
           cValue = array[c];
-        const r = c + 1;
-        if (r < n) {
-          const rValue = array[r];
-          if (less(rValue, cValue)) {
-            c = r;
-            cValue = rValue;
-          }
-        }
-        const iValue = array[i];
         if (!less(cValue, iValue)) break;
         array[i] = cValue;
         array[c] = iValue;
@@ -321,7 +286,7 @@ export class MinHeap {
     const last = heapArray.length - 1;
     if (index !== last) {
       const item = heapArray[index],
-        newItem = heapArray[index] = heapArray.pop();
+        newItem = (heapArray[index] = heapArray.pop());
       return MinHeap.updateByIndex(heapArray, index, less(newItem, item), less);
     }
     heapArray.pop();
