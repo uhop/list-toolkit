@@ -50,6 +50,12 @@ test('MinHeap', t => {
     t.deepEqual(array, [5, 4, 3, 2, 1]);
   }
 
+  {
+    const heap = new MinHeap({compare: (a, b) => a.localeCompare(b)}, ['b', 'c', 'a', 'b']);
+    const array = heap.releaseSorted();
+    t.deepEqual(array, ['c', 'b', 'b', 'a']);
+  }
+
   heap.clear();
   t.ok(heap.isEmpty);
 

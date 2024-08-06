@@ -41,6 +41,10 @@ const down = (array, i, less = defaultLess, n = array.length) => {
 export class MinHeap {
   constructor(options, ...args) {
     copyOptions(this, MinHeap.defaults, options);
+    if (typeof this.compare == 'function') {
+      this.less = (a, b) => this.compare(a, b) < 0;
+      this.equal = (a, b) => !this.compare(a, b);
+    }
     this.array = [];
     this.merge(...args);
   }
@@ -325,6 +329,6 @@ export class MinHeap {
   }
 }
 
-MinHeap.defaults = {less: defaultLess, equal: defaultEqual};
+MinHeap.defaults = {less: defaultLess, equal: defaultEqual, compare: null};
 
 export default MinHeap;
