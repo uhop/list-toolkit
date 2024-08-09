@@ -190,6 +190,11 @@ class SplayTree {
 
     return this;
   }
+  clear() {
+    this.root = null;
+    this.size = 0;
+    return this;
+  }
   splitMaxTree(value) {
     if (!this.root) return new SplayTree(this);
     let z = this.root,
@@ -268,6 +273,40 @@ class SplayTree {
       }
     }
     return newTree;
+  }
+  joinMaxTreeUnsafe(tree) {
+    if (this.root.right) {
+      this.splay(this.getMax());
+    }
+
+    this.root.right = tree.root;
+    tree.root.parent = this.root;
+    this.size += tree.size;
+
+    tree.clear();
+
+    return this;
+  }
+  join(tree) {
+    if (!tree.root) return this;
+    if (!this.root) {
+      this.root = tree.root;
+      this.size = tree.size;
+      tree.clear();
+      return this;
+    }
+
+    const leftMax = this.getMax(), rightMin = tree.getMin();
+    if (this.less(leftMax.value, rightMin.value)) {
+      return this.splay(leftMax).joinMaxTreeUnsafe(tree);
+    }
+
+    for (const value of tree) {
+      this.insert(value);
+    }
+
+    tree.clear();
+    return this;
   }
   [Symbol.iterator]() {
     let current = this.root ? this.root.getMin() : null;

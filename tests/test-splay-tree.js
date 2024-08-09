@@ -87,12 +87,41 @@ test('SplayTree: compare()', t => {
 
 test('SplayTree: splitMaxTree()', t => {
   const tree = SplayTree.from([3, 2, 5, 1, 4], {compare: (a, b) => b - a});
+  t.equal(tree.length, 5);
   t.deepEqual([...tree], [5, 4, 3, 2, 1]);
   t.deepEqual([...tree.getReverseIterator()], [1, 2, 3, 4, 5]);
 
   t.equal(tree.root.value, 4);
 
   const newTree = tree.splitMaxTree(3);
+  t.equal(newTree.length, 2);
+  t.equal(tree.length, 3);
   t.deepEqual([...newTree], [2, 1]);
   t.deepEqual([...tree], [5, 4, 3]);
+});
+
+test('SplayTree: join()', t => {
+  const tree = SplayTree.from([3, 2, 5, 1, 4]);
+  t.equal(tree.length, 5);
+  t.deepEqual([...tree], [1, 2, 3, 4, 5]);
+  t.deepEqual([...tree.getReverseIterator()], [5, 4, 3, 2, 1]);
+
+  let newTree = tree.splitMaxTree(3);
+  t.equal(newTree.length, 2);
+  t.equal(tree.length, 3);
+  t.deepEqual([...newTree], [4, 5]);
+  t.deepEqual([...tree], [1, 2, 3]);
+
+  tree.joinMaxTreeUnsafe(newTree);
+  t.equal(tree.length, 5);
+  t.deepEqual([...tree], [1, 2, 3, 4, 5]);
+  t.ok(newTree.isEmpty);
+  t.equal(newTree.root, null);
+
+  newTree = tree.splitMaxTree(3);
+  tree.join(newTree);
+  t.equal(tree.length, 5);
+  t.deepEqual([...tree], [1, 2, 3, 4, 5]);
+  t.ok(newTree.isEmpty);
+  t.equal(newTree.root, null);
 });
