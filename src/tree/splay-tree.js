@@ -55,7 +55,7 @@ const splay = node => {
 
 const count = tree => (tree ? count(tree.left) + count(tree.right) + 1 : 0);
 
-class SplayTreeNode {
+export class SplayTreeNode {
   constructor(value) {
     this.left = this.right = this.parent = null;
     this.value = value;
@@ -72,7 +72,7 @@ class SplayTreeNode {
   }
 }
 
-class SplayTree {
+export class SplayTree {
   constructor(options) {
     copyOptions(this, SplayTree.defaults, options);
     if (typeof this.compare == 'function') {
