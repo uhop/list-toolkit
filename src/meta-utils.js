@@ -100,7 +100,7 @@ export const addAlias = (object, name, aliases, force) => addDescriptor(object, 
 export const addAliases = (object, dict, force) => copyDescriptors(object, object, dict, force);
 
 export const augmentIterator = iterator => {
-  if (!Object.hasOwnProperty(Symbol.iterator)) {
+  if (!iterator.hasOwnProperty(Symbol.iterator)) {
     iterator[Symbol.iterator] = function () {
       return this;
     };
