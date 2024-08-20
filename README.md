@@ -102,7 +102,7 @@ const john = new Person('John'),
 const people = List.from([john, jane, jim, jill]);
 
 // iterator over the list manually:
-for (let node = people.front; node !== people; node = node[list.nextName]) {
+for (let node = people.front; node !== people; node = node[people.nextName]) {
   console.log(node.name); // John, Jane, Jim, Jill
 }
 // yes, the link names are customizable, can be strings or symbols, for example:
