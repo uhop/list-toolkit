@@ -101,7 +101,7 @@ const john = new Person('John'),
 
 const people = List.from([john, jane, jim, jill]);
 
-// iterator over the list manually:
+// iterate over the list manually:
 for (let node = people.front; node !== people; node = node[people.nextName]) {
   console.log(node.name); // John, Jane, Jim, Jill
 }
@@ -146,6 +146,7 @@ BSD 3-Clause "New" or "Revised" License. See the LICENSE file for details.
 
 ## Release History
 
+* 2.1.1 *Allowed functions to be used as nodes. Updated deps.*
 * 2.1.0 *Added splay tree. Updated deps.*
 * 2.0.0 *New major release.*
 * 1.0.1 *Fixed exports. Added more methods to `MinHeap`.*
