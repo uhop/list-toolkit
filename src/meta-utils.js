@@ -131,6 +131,8 @@ export const mapIterator = (iterator, callbackFn) => {
   };
 };
 
+export const canHaveProps = {object: 1, function: 1};
+
 export const copyOptions = (target, pattern, ...sources) => {
   target = target || {};
   const keys = Object.keys(pattern);
@@ -138,7 +140,7 @@ export const copyOptions = (target, pattern, ...sources) => {
     target[key] = pattern[key];
   }
   for (const source of sources) {
-    if (!source || typeof source !== 'object') continue;
+    if (!source || canHaveProps[typeof source] !== 1) continue;
     for (const key of keys) {
       if (key in source) target[key] = source[key];
     }

@@ -1,7 +1,7 @@
 'use strict';
 
 import {isRangeLike, normalizeNode, normalizeRange} from '../list-helpers.js';
-import {addAlias, copyDescriptors} from '../meta-utils.js';
+import {addAlias, copyDescriptors, canHaveProps} from '../meta-utils.js';
 
 export const isNodeLike = ({nextName, prevName}, node) => node && node[prevName] && node[nextName];
 export const isStandAlone = ({nextName, prevName}, node) => node && node[prevName] === node && node[nextName] === node;
@@ -22,9 +22,9 @@ export class HeadNode extends Node {
   isNodeLike(node) {
     if (!node) return false;
     const next = node[this.nextName];
-    if (!next || typeof next != 'object') return false;
+    if (!next || canHaveProps[typeof next] !== 1) return false;
     const prev = node[this.prevName];
-    return prev && typeof prev == 'object';
+    return prev && canHaveProps[typeof prev] === 1;
   }
 
   isCompatibleNames({nextName, prevName}) {
