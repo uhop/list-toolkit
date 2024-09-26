@@ -10,10 +10,14 @@
     }
   },
   "scripts": {
-    "test": "tape6 --flags FO",
     "prepare-dist": "node scripts/prepare-dist.js",
     "build": "babel src --out-dir cjs",
-    "prepublishOnly": "npm run prepare-dist && npm run build"
+    "prepublishOnly": "npm run prepare-dist && npm run build",
+    "test": "tape6 --flags FO",
+    "test:bun": "tape6-bun --flags FO",
+    "test:deno-original": "tape6-deno --flags FO",
+    "test:deno": "deno run -A `tape6-runner main` --flags FO",
+    "start": "tape6-server --trace"
   },
   "repository": {
     "type": "git",
@@ -33,10 +37,10 @@
   },
   "homepage": "https://github.com/uhop/list-toolkit#readme",
   "devDependencies": {
-    "@babel/cli": "^7.24.8",
+    "@babel/cli": "^7.25.6",
     "@babel/core": "^7.25.2",
     "@babel/preset-env": "^7.25.4",
-    "tape-six": "^0.9.6"
+    "tape-six": "^0.12.2"
   },
   "files": [
     "/src",
@@ -57,6 +61,12 @@
   "tape6": {
     "tests": [
       "/tests/test-*.*js"
-    ]
+    ],
+    "importmap": {
+      "imports": {
+        "tape-six": "/node_modules/tape-six/index.js",
+        "list-toolkit/": "/src/"
+      }
+    }
   }
 }
