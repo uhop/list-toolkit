@@ -1,6 +1,6 @@
 'use strict';
 
-import {copyOptions} from '../meta-utils.js';
+import HeapBase from './basics.js';
 
 const defaultLess = (a, b) => a < b;
 
@@ -42,15 +42,15 @@ export class LeftistHeapNode {
   }
 }
 
-export class LeftistHeap {
-  constructor(options) {
-    copyOptions(this, LeftistHeap.defaults, options);
+export class LeftistHeap extends HeapBase {
+  constructor(options, ...args) {
+    super(options);
     if (typeof this.compare == 'function') {
       this.less = (a, b) => this.compare(a, b) < 0;
-      // this.find = this.findWithCompare;
     }
     this.root = null;
     this.size = 0;
+    if (args.length) this.merge(...args);
   }
   get isEmpty() {
     return !this.root;
@@ -77,8 +77,6 @@ export class LeftistHeap {
     return z.value;
   }
   pushPop(value) {
-    // this.push(value);
-    // return this.pop();
     if (!this.root || this.less(value, this.root.value)) return value;
     const z = this.root;
     this.root = merge(z.left, new LeftistHeapNode(value), this.less);
@@ -86,9 +84,6 @@ export class LeftistHeap {
     return z.value;
   }
   replaceTop(value) {
-    // const z = this.pop();
-    // this.push(value);
-    // return z;
     if (!this.root) {
       this.root = new LeftistHeapNode(value);
       this.size = 1;
@@ -99,6 +94,11 @@ export class LeftistHeap {
     this.root = merge(this.root, z.right, this.less);
     return z.value;
   }
+  clear() {
+    this.root = null;
+    this.size = 0;
+    return this;
+  }
   merge(...args) {
     for (const other of args) {
       this.root = merge(this.root, other.root, this.less);
@@ -108,17 +108,18 @@ export class LeftistHeap {
     }
     return this;
   }
-  make(...args) {
-    return new LeftistHeap(this, ...args);
-  }
   clone() {
     const heap = new LeftistHeap(this);
     heap.root = this.root && this.root.clone();
     heap.size = this.size;
     return heap;
   }
-}
 
-LeftistHeap.defaults = {less: defaultLess, compare: null};
+  static from(array, options = HeapBase.defaults) {
+    const heap = new LeftistHeap(options);
+    for (const value of array) heap.push(value);
+    return heap;
+  }
+}
 
 export default LeftistHeap;

@@ -1,15 +1,12 @@
 'use strict';
 
-import {copyOptions} from '../meta-utils.js';
+import HeapBase from './basics.js';
 
 // the following functions are inlined:
 
 // const left = i => (i << 1) + 1;
 // const right = i => (i + 1) << 1;
 // const parent = i => (i - 1) >> 1;
-
-const defaultLess = (a, b) => a < b;
-const defaultEqual = (a, b) => a === b;
 
 const up = (array, i, less = defaultLess) => {
   for (let p = (i - 1) >> 1; i > 0; i = p, p = (i - 1) >> 1) {
@@ -38,15 +35,15 @@ const down = (array, i, less = defaultLess, n = array.length) => {
   return array;
 };
 
-export class MinHeap {
+export class MinHeap extends HeapBase {
   constructor(options, ...args) {
-    copyOptions(this, MinHeap.defaults, options);
+    super(options);
     if (typeof this.compare == 'function') {
       this.less = (a, b) => this.compare(a, b) < 0;
       this.equal = (a, b) => !this.compare(a, b);
     }
     this.array = [];
-    this.merge(...args);
+    if (args.length) this.merge(...args);
   }
 
   get length() {
@@ -216,10 +213,6 @@ export class MinHeap {
     return this;
   }
 
-  make(...args) {
-    return new MinHeap(this, ...args);
-  }
-
   clone() {
     const heap = new MinHeap(this);
     heap.array = this.array.slice(0);
@@ -327,8 +320,12 @@ export class MinHeap {
     }
     return heapArray;
   }
-}
 
-MinHeap.defaults = {less: defaultLess, equal: defaultEqual, compare: null};
+  static from(array, options = MinHeap.defaults) {
+    const heap = new MinHeap(options);
+    heap.array = MinHeap.build(array, heap.less);
+    return heap;
+  }
+}
 
 export default MinHeap;

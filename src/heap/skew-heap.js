@@ -1,8 +1,6 @@
 'use strict';
 
-import {copyOptions} from '../meta-utils.js';
-
-const defaultLess = (a, b) => a < b;
+import HeapBase from './basics.js';
 
 const merge = (a, b, less) => {
   if (!a) return b;
@@ -32,15 +30,15 @@ export class SkewHeapNode {
   }
 }
 
-export class SkewHeap {
+export class SkewHeap extends HeapBase {
   constructor(options, ...args) {
-    copyOptions(this, SkewHeap.defaults, options);
+    super(options);
     if (typeof this.compare == 'function') {
       this.less = (a, b) => this.compare(a, b) < 0;
     }
     this.root = null;
     this.size = 0;
-    this.merge(...args);
+    if (args.length) this.merge(...args);
   }
   get isEmpty() {
     return !this.root;
@@ -67,8 +65,6 @@ export class SkewHeap {
     return z.value;
   }
   pushPop(value) {
-    // this.push(value);
-    // return this.pop();
     if (!this.root || this.less(value, this.root.value)) return value;
     const z = this.root;
     this.root = merge(z.left, new SkewHeapNode(value), this.less);
@@ -76,9 +72,6 @@ export class SkewHeap {
     return z.value;
   }
   replaceTop(value) {
-    // const z = this.pop();
-    // this.push(value);
-    // return z;
     if (!this.root) {
       this.root = new SkewHeapNode(value);
       this.size = 1;
@@ -89,6 +82,11 @@ export class SkewHeap {
     this.root = merge(this.root, z.right, this.less);
     return z.value;
   }
+  clear() {
+    this.root = null;
+    this.size = 0;
+    return this;
+  }
   merge(...args) {
     for (const other of args) {
       this.root = merge(this.root, other.root, this.less);
@@ -98,17 +96,18 @@ export class SkewHeap {
     }
     return this;
   }
-  make(...args) {
-    return new SkewHeap(this, ...args);
-  }
   clone() {
     const heap = new SkewHeap(this);
     heap.root = this.root && this.root.clone();
     heap.size = this.size;
     return heap;
   }
-}
 
-SkewHeap.defaults = {less: defaultLess, compare: null};
+  static from(array, options = HeapBase.defaults) {
+    const heap = new SkewHeap(options);
+    for (const value of array) heap.push(value);
+    return heap;
+  }
+}
 
 export default SkewHeap;
