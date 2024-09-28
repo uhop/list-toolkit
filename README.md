@@ -15,7 +15,7 @@ The toolkit provides the following data structures with a full set of efficientl
   * Value-based lists, where a list serves as a container for external objects, and node-based lists, where a list uses custom properties on external objects to link them around.
   * Hosted lists, which use a special head node to manage nodes, and headless lists, which point to an external list without including any headers.
 * Heaps:
-  * Min-heap to support priority queues.
+  * Priority queues: min heap, leftist heap, skew heap.
 * Various list-based data structures:
   * Caches with various eviction algorithms: least recently used (LRU), least frequently used (LFU), first in first out (FIFO), and random.
     * A decorator is provided to decorate functions, methods, and getters with a cache of your choice.
@@ -146,6 +146,7 @@ BSD 3-Clause "New" or "Revised" License. See the LICENSE file for details.
 
 ## Release History
 
+* 2.2.0 *Added leftist and skew heaps.*
 * 2.1.1 *Allowed functions to be used as nodes. Updated deps.*
 * 2.1.0 *Added splay tree. Updated deps.*
 * 2.0.0 *New major release.*
