@@ -146,6 +146,7 @@ BSD 3-Clause "New" or "Revised" License. See the LICENSE file for details.
 
 ## Release History
 
+* 2.2.1 *Technical release: updated deps, added more tests.*
 * 2.2.0 *Added leftist and skew heaps.*
 * 2.1.1 *Allowed functions to be used as nodes. Updated deps.*
 * 2.1.0 *Added splay tree. Updated deps.*
