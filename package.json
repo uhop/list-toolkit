@@ -1,6 +1,6 @@
 {
   "name": "list-toolkit",
-  "version": "2.2.1",
+  "version": "2.2.2",
   "description": "List-based data structures to organize your objects.",
   "type": "module",
   "exports": {
@@ -45,7 +45,7 @@
     "@babel/preset-env": "^7.28.6",
     "nano-benchmark": "^1.0.4",
     "tape-six": "^1.4.1",
-    "tape-six-proc": "^1.1.1"
+    "tape-six-proc": "^1.1.2"
   },
   "files": [
     "/src",

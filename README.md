@@ -146,10 +146,11 @@ BSD 3-Clause "New" or "Revised" License. See the LICENSE file for details.
 
 ## Release History
 
+* 2.2.2 *Updated dev dependencies.*
 * 2.2.1 *Technical release: updated deps, added more tests.*
 * 2.2.0 *Added leftist and skew heaps.*
 * 2.1.1 *Allowed functions to be used as nodes. Updated deps.*
 * 2.1.0 *Added splay tree. Updated deps.*
 * 2.0.0 *New major release.*
-* 1.0.1 *Fixed exports. Added more methods to `MinHeap`.*
-* 1.0.1 *Initial release.*
+
+For more info consult full [release notes](https://github.com/uhop/list-toolkit/wiki/Release-notes).
