@@ -146,6 +146,7 @@ BSD 3-Clause "New" or "Revised" License. See the LICENSE file for details.
 
 ## Release History
 
+* 2.2.4 *Updated dev dependencies.*
 * 2.2.3 *Updated dev dependencies.*
 * 2.2.2 *Updated dev dependencies.*
 * 2.2.1 *Technical release: updated deps, added more tests.*
