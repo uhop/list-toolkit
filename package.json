@@ -1,6 +1,6 @@
 {
   "name": "list-toolkit",
-  "version": "2.2.5",
+  "version": "2.2.6",
   "description": "List-based data structures to organize your objects.",
   "type": "module",
   "exports": {
@@ -13,13 +13,16 @@
     "prepare-dist": "node scripts/prepare-dist.js",
     "build": "babel src --out-dir cjs",
     "prepublishOnly": "npm run prepare-dist && npm run build",
+    "start": "tape6-server --trace",
     "test": "tape6 --flags FO",
     "test:bun": "tape6-bun --flags FO",
     "test:deno": "tape6-deno --flags FO",
     "test:proc": "tape6-proc --flags FO",
-    "test:proc:bun": "bun run `npx tape6-proc --self` --flags FO",
-    "test:proc:deno": "deno run -A `npx tape6-proc --self` --flags FO -r -A",
-    "start": "tape6-server --trace"
+    "test:proc:bun": "bun run `tape6-proc --self` --flags FO",
+    "test:proc:deno": "deno run -A `tape6-proc --self` --flags FO -r -A",
+    "test:seq": "tape6-seq --flags FO",
+    "test:seq:bun": "bun run `tape6-seq --self` --flags FO",
+    "test:seq:deno": "deno run -A `tape6-seq --self` --flags FO"
   },
   "repository": {
     "type": "git",
@@ -41,11 +44,11 @@
   "homepage": "https://github.com/uhop/list-toolkit#readme",
   "devDependencies": {
     "@babel/cli": "^7.28.6",
-    "@babel/core": "^7.28.6",
-    "@babel/preset-env": "^7.28.6",
-    "nano-benchmark": "^1.0.7",
-    "tape-six": "^1.4.5",
-    "tape-six-proc": "^1.1.6"
+    "@babel/core": "^7.29.0",
+    "@babel/preset-env": "^7.29.0",
+    "nano-benchmark": "^1.0.9",
+    "tape-six": "^1.7.0",
+    "tape-six-proc": "^1.2.2"
   },
   "files": [
     "/src",
