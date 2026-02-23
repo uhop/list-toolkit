@@ -3,6 +3,15 @@ import {Ptr} from './ptr.js';
 
 /** Hosted node-based singly linked list. */
 export class SList<T extends object = object> extends HeadNode {
+  /** The first node after the head. */
+  get front(): T;
+
+  /** The last node in the list. */
+  get back(): T;
+
+  /** A range spanning all nodes, or `null` if empty. */
+  get range(): SllRange<T> | null;
+
   /** Pointer to the first node. */
   get frontPtr(): Ptr<T>;
 
