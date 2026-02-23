@@ -240,6 +240,11 @@ export const augmentIterator = iterator => {
   return iterator;
 };
 
+/**
+ * Normalize an iterator, using `Iterator.from` when available.
+ * @param {Iterator} iterator - Iterator to normalize.
+ * @returns {IterableIterator} An iterable iterator.
+ */
 let normalizeIterator = augmentIterator;
 if (typeof globalThis.Iterator?.from == 'function') {
   normalizeIterator = iterator => Iterator.from(iterator);
