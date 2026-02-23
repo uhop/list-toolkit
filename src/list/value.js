@@ -1,5 +1,3 @@
-'use strict';
-
 import List, {Ptr} from './core.js';
 import {ValueNode} from './nodes.js';
 import {pop} from './basics.js';

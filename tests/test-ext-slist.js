@@ -1,5 +1,3 @@
-'use strict';
-
 import test from 'tape-six';
 import ExtSList from 'list-toolkit/ext-slist.js';
 import SList from 'list-toolkit/slist.js';

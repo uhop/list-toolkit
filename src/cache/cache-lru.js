@@ -1,5 +1,3 @@
-'use strict';
-
 import ValueList from '../value-list.js';
 import {addAliases} from '../meta-utils.js';
 

@@ -1,5 +1,3 @@
-'use strict';
-
 import test from 'tape-six';
 import {copyOptions} from 'list-toolkit/meta-utils.js';
 

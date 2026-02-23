@@ -1,5 +1,3 @@
-'use strict';
-
 import test from 'tape-six';
 import ExtValueSList from 'list-toolkit/ext-value-slist.js';
 

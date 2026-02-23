@@ -1,5 +1,3 @@
-'use strict';
-
 import {ExtListBase, PtrBase} from './nodes.js';
 import {pop, extract, splice, append} from './basics.js';
 import {addAliases, normalizeIterator} from '../meta-utils.js';

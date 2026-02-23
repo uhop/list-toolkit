@@ -1,5 +1,3 @@
-'use strict';
-
 // useful low-level operations on singly linked lists
 
 export const extract = ({nextName}, {prevFrom, to = prevFrom[nextName]}) => {

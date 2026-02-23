@@ -1,5 +1,3 @@
-'use strict';
-
 import {copyOptions} from '../meta-utils.js';
 
 const defaultLess = (a, b) => a < b;

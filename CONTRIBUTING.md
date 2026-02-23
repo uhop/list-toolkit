@@ -48,7 +48,7 @@ npm run build                     # Babel transpile src/ → cjs/
 
 ### General
 
-- **ESM-only**: use `import`/`export` syntax. `'use strict'` at the top of every source file.
+- **ESM-only**: use `import`/`export` syntax.
 - **No runtime dependencies**: do not add any packages to `dependencies`.
 - **Formatting**: Prettier — 160 char width, single quotes, no bracket spacing, no trailing commas, arrow parens "avoid".
 - **Indentation**: 2 spaces.

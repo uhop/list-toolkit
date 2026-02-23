@@ -1,5 +1,3 @@
-'use strict';
-
 import {HeadNode, PtrBase} from './nodes.js';
 import {pop, splice} from './basics.js';
 

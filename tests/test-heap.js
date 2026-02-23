@@ -1,5 +1,3 @@
-'use strict';
-
 import test from 'tape-six';
 import MinHeap from 'list-toolkit/heap.js';
 

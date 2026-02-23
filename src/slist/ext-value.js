@@ -1,5 +1,3 @@
-'use strict';
-
 import ExtSList, {Ptr} from './ext.js';
 import {ValueNode} from './nodes.js';
 import {addAlias, mapIterator, normalizeIterator} from '../meta-utils.js';

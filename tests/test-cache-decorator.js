@@ -1,5 +1,3 @@
-'use strict';
-
 import test from 'tape-six';
 import {decorate, decorateMethod, getCache} from 'list-toolkit/cache/decorator.js';
 import Cache from 'list-toolkit/cache/cache-lru.js';

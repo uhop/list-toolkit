@@ -1,5 +1,3 @@
-'use strict';
-
 import test from 'tape-six';
 import ExtValueList from 'list-toolkit/ext-value-list.js';
 import {isStandAlone} from 'list-toolkit/list/nodes.js';

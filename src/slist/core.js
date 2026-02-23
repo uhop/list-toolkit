@@ -1,5 +1,3 @@
-'use strict';
-
 import {addAliases, normalizeIterator} from '../meta-utils.js';
 import {ExtListBase, HeadNode} from './nodes.js';
 import {append} from './basics.js';

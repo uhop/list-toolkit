@@ -1,5 +1,3 @@
-'use strict';
-
 import test from 'tape-six';
 import CacheRandom from 'list-toolkit/cache/cache-random.js';
 

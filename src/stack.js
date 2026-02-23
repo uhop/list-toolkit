@@ -1,5 +1,3 @@
-'use strict';
-
 import ValueList from './value-list.js';
 import {addAlias} from './meta-utils.js';
 import {pushValuesFront} from './list-utils.js';

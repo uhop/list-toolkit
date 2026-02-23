@@ -1,5 +1,3 @@
-'use strict';
-
 import test from 'tape-six';
 
 import Queue from 'list-toolkit/queue.js';

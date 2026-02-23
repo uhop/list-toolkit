@@ -1,5 +1,3 @@
-'use strict';
-
 import test from 'tape-six';
 import LeftistHeap from 'list-toolkit/heap/leftist-heap.js';
 

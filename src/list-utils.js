@@ -1,5 +1,3 @@
-'use strict';
-
 export const isValidList = list => {
   let current = list;
   do {

@@ -1,5 +1,3 @@
-'use strict';
-
 import CacheLRU from './cache-lru.js';
 
 // Evicts on the first-in-first-out basis.

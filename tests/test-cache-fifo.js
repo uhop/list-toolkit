@@ -1,5 +1,3 @@
-'use strict';
-
 import test from 'tape-six';
 import CacheFIFO from 'list-toolkit/cache/cache-fifo.js';
 

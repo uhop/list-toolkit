@@ -1,5 +1,3 @@
-'use strict';
-
 import HeapBase from './basics.js';
 
 const merge = (a, b, less) => {

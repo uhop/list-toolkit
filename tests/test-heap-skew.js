@@ -1,5 +1,3 @@
-'use strict';
-
 import test from 'tape-six';
 import SkewHeap from 'list-toolkit/heap/skew-heap.js';
 

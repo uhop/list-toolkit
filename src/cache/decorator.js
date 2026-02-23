@@ -1,5 +1,3 @@
-'use strict';
-
 export const decorateFn = (fn, cache) => {
   if (typeof fn !== 'function') throw new TypeError('Not a function');
   const wrapped = function (...args) {

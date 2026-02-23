@@ -1,5 +1,3 @@
-'use strict';
-
 import test from 'tape-six';
 import ValueSList from 'list-toolkit/value-slist.js';
 import {pushValuesFront, findPtrBy, removeNodeBy} from 'list-toolkit/list-utils.js';

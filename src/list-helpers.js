@@ -1,5 +1,3 @@
-'use strict';
-
 export const normalizeNode = (list, node, PtrBase) => {
   if (!node) return null;
   if (node instanceof PtrBase) {

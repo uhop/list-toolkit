@@ -1,5 +1,3 @@
-'use strict';
-
 import test from 'tape-six';
 
 import ValueList from 'list-toolkit/value-list.js';

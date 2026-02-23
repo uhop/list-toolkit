@@ -1,5 +1,3 @@
-'use strict';
-
 import test from 'tape-six';
 import CacheLFU from 'list-toolkit/cache/cache-lfu.js';
 

@@ -79,7 +79,6 @@ list-toolkit/
 ## Code style
 
 - **ES modules** throughout (`"type": "module"` in package.json).
-- **`'use strict'`** at the top of every source file.
 - **Prettier** for formatting (see `.prettierrc`): 160 char width, single quotes, no bracket spacing, no trailing commas, arrow parens "avoid".
 - 2-space indentation (`.editorconfig`).
 - Imports at top of file, using `import` syntax.

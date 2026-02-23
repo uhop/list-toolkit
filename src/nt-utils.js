@@ -1,5 +1,3 @@
-'use strict';
-
 // utilities for working with null-terminated lists
 
 export const isNTList = (head, {nextName = 'next'} = {}) => {

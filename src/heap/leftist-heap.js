@@ -1,5 +1,3 @@
-'use strict';
-
 import HeapBase from './basics.js';
 
 const defaultLess = (a, b) => a < b;

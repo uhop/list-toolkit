@@ -9,7 +9,7 @@ Follow these steps when adding a new public module.
 ## Implementation
 
 1. Create `src/<name>.js` (or `src/<category>/<name>.js` for categorized modules) with the implementation.
-   - ESM only. `'use strict'` at the top. Use `.js` extensions in all imports.
+   - ESM only. Use `.js` extensions in all imports.
    - No runtime dependencies.
 2. Create `tests/test-<name>.js` with automated tests (tape-six).
    // turbo
