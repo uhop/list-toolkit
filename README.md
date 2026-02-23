@@ -9,42 +9,42 @@ suitable to use in all environments including browsers.
 
 The toolkit provides the following data structures with a full set of efficiently implemented operations:
 
-* Converters for `null`-terminated (NT) lists, both singly and doubly linked. They convert in place from NT lists to circular lists and back.
-* Various lists:
-  * Doubly linked circular lists (DLL) and singly linked circular lists (SLL).
-  * Value-based lists, where a list serves as a container for external objects, and node-based lists, where a list uses custom properties on external objects to link them around.
-  * Hosted lists, which use a special head node to manage nodes, and headless lists, which point to an external list without including any headers.
-* Heaps:
-  * Priority queues: min heap, leftist heap, skew heap.
-* Various list-based data structures:
-  * Caches with various eviction algorithms: least recently used (LRU), least frequently used (LFU), first in first out (FIFO), and random.
-    * A decorator is provided to decorate functions, methods, and getters with a cache of your choice.
-  * Queue and Stack: adapters for lists.
-* Trees:
-  * Splay tree: a self-adjusting binary search tree.
-* Numerous list utilities.
+- Converters for `null`-terminated (NT) lists, both singly and doubly linked. They convert in place from NT lists to circular lists and back.
+- Various lists:
+  - Doubly linked circular lists (DLL) and singly linked circular lists (SLL).
+  - Value-based lists, where a list serves as a container for external objects, and node-based lists, where a list uses custom properties on external objects to link them around.
+  - Hosted lists, which use a special head node to manage nodes, and headless lists, which point to an external list without including any headers.
+- Heaps:
+  - Priority queues: min heap, leftist heap, skew heap.
+- Various list-based data structures:
+  - Caches with various eviction algorithms: least recently used (LRU), least frequently used (LFU), first in first out (FIFO), and random.
+    - A decorator is provided to decorate functions, methods, and getters with a cache of your choice.
+  - Queue and Stack: adapters for lists.
+- Trees:
+  - Splay tree: a self-adjusting binary search tree.
+- Numerous list utilities.
 
 All lists can be used without the toolkit. Your existing lists, either doubly or singly linked,
 can be used. The toolkit provides a few utilities that you would write yourself if you wanted to use them.
 
 The implementation philosophy was very simple:
 
-* Flexibility, efficiency, and simplicity.
-* No dependencies. No unexpected surprises.
-* You never pay for what you don't use.
-* Suitable for all environments.
-* Should be usable with already existing lists.
-* Could be used as a foundation for other list-based data structures.
+- Flexibility, efficiency, and simplicity.
+- No dependencies. No unexpected surprises.
+- You never pay for what you don't use.
+- Suitable for all environments.
+- Should be usable with already existing lists.
+- Could be used as a foundation for other list-based data structures.
 
 **Read all about the implemented ideas in the [Backgrounder](https://github.com/uhop/list-toolkit/wiki/Backgrounder).**
 
 All lists support similar intuitive interfaces:
 
-* Creating from existing objects.
-* Adding, inserting, extracting and removing nodes.
-* Forward and reverse iterators.
-* General manipulations like reversing and sorting.
-* Link names for the next and previous links (for doubly linked lists) are customizable.
+- Creating from existing objects.
+- Adding, inserting, extracting and removing nodes.
+- Forward and reverse iterators.
+- General manipulations like reversing and sorting.
+- Link names for the next and previous links (for doubly linked lists) are customizable.
 
 All facilities are efficient, well-debugged, and battle-tested.
 
@@ -94,7 +94,7 @@ class Person {
   constructor(name) {
     this.name = name;
   }
-};
+}
 
 const john = new Person('John'),
   jane = new Person('Jane'),
@@ -148,15 +148,15 @@ BSD 3-Clause "New" or "Revised" License. See the LICENSE file for details.
 
 ## Release History
 
-* 2.2.6 *Updated dev dependencies.*
-* 2.2.5 *Updated dev dependencies.*
-* 2.2.4 *Updated dev dependencies.*
-* 2.2.3 *Updated dev dependencies.*
-* 2.2.2 *Updated dev dependencies.*
-* 2.2.1 *Technical release: updated deps, added more tests.*
-* 2.2.0 *Added leftist and skew heaps.*
-* 2.1.1 *Allowed functions to be used as nodes. Updated deps.*
-* 2.1.0 *Added splay tree. Updated deps.*
-* 2.0.0 *New major release.*
+- 2.2.6 _Updated dev dependencies._
+- 2.2.5 _Updated dev dependencies._
+- 2.2.4 _Updated dev dependencies._
+- 2.2.3 _Updated dev dependencies._
+- 2.2.2 _Updated dev dependencies._
+- 2.2.1 _Technical release: updated deps, added more tests._
+- 2.2.0 _Added leftist and skew heaps._
+- 2.1.1 _Allowed functions to be used as nodes. Updated deps._
+- 2.1.0 _Added splay tree. Updated deps._
+- 2.0.0 _New major release._
 
 For more info consult full [release notes](https://github.com/uhop/list-toolkit/wiki/Release-notes).

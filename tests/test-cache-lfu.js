@@ -31,12 +31,22 @@ test('CacheLFU', t => {
   t.equal(cache.find(2), 42);
   t.equal(cache.find(1), 41);
 
-  t.deepEqual(Array.from(cache).map(value => value.key).sort((a, b) => a - b), [1, 2, 4]);
+  t.deepEqual(
+    Array.from(cache)
+      .map(value => value.key)
+      .sort((a, b) => a - b),
+    [1, 2, 4]
+  );
 
   cache.remove(2);
   cache.remove(3);
 
-  t.deepEqual(Array.from(cache).map(value => value.key).sort((a, b) => a - b), [1, 4]);
+  t.deepEqual(
+    Array.from(cache)
+      .map(value => value.key)
+      .sort((a, b) => a - b),
+    [1, 4]
+  );
 
   cache.clear();
   t.equal(cache.size, 0);

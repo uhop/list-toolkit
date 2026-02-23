@@ -296,7 +296,8 @@ export class SplayTree {
       return this;
     }
 
-    const leftMax = this.getMax(), rightMin = tree.getMin();
+    const leftMax = this.getMax(),
+      rightMin = tree.getMin();
     if (this.less(leftMax.value, rightMin.value)) {
       return this.splay(leftMax).joinMaxTreeUnsafe(tree);
     }

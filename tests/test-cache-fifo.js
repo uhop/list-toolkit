@@ -31,11 +31,17 @@ test('CacheFIFO', t => {
   t.equal(cache.find(2), 42);
   t.equal(cache.find(1), undefined);
 
-  t.deepEqual(Array.from(cache).map(value => value.key), [2, 3, 4]);
+  t.deepEqual(
+    Array.from(cache).map(value => value.key),
+    [2, 3, 4]
+  );
 
   cache.remove(3);
 
-  t.deepEqual(Array.from(cache).map(value => value.key), [2, 4]);
+  t.deepEqual(
+    Array.from(cache).map(value => value.key),
+    [2, 4]
+  );
 
   cache.clear();
   t.equal(cache.size, 0);

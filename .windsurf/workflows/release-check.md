@@ -21,7 +21,7 @@ Run through this checklist before publishing a new version.
 9. Run `npm install` to regenerate `package-lock.json`.
    // turbo
 10. Build CJS output: `npm run build`
-   // turbo
+    // turbo
 11. Run the full test suite: `npm test`
-   // turbo
+    // turbo
 12. Dry-run publish to verify package contents: `npm pack --dry-run`

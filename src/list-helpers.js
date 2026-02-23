@@ -30,7 +30,7 @@ export const isRangeLike = (listHost, range, PtrBase) => {
   }
 
   if (range.to instanceof PtrBase) {
-    if (list){
+    if (list) {
       if (range.to.list !== list) return false;
     } else {
       if (!listHost.isCompatible(range.to.list)) return false;

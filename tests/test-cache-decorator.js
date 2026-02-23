@@ -5,7 +5,6 @@ import {decorate, decorateMethod, getCache} from 'list-toolkit/cache/decorator.j
 import Cache from 'list-toolkit/cache/cache-lru.js';
 
 test('Cache decorateMethod()', t => {
-
   class Sample {
     static counter = 0;
 
@@ -40,7 +39,6 @@ test('Cache decorateMethod()', t => {
 });
 
 test('Cache decorate()', t => {
-
   class Sample {
     static counter = 0;
 

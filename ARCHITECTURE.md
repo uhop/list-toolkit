@@ -66,20 +66,20 @@ All lists in the toolkit are **circular** — the last node's `next` pointer lin
 
 ### Node types
 
-| Class | Description | Module |
-|-------|-------------|--------|
-| `Node` | Base node with configurable link properties | `list/nodes.js`, `slist/nodes.js` |
-| `HeadNode` | Sentinel node for hosted lists (extends `Node`) | `list/nodes.js`, `slist/nodes.js` |
+| Class       | Description                                       | Module                            |
+| ----------- | ------------------------------------------------- | --------------------------------- |
+| `Node`      | Base node with configurable link properties       | `list/nodes.js`, `slist/nodes.js` |
+| `HeadNode`  | Sentinel node for hosted lists (extends `Node`)   | `list/nodes.js`, `slist/nodes.js` |
 | `ValueNode` | Node wrapping an arbitrary value (extends `Node`) | `list/nodes.js`, `slist/nodes.js` |
 
 ### List variants
 
-| Variant | DLL | SLL | Description |
-|---------|-----|-----|-------------|
-| Hosted node-based | `List` | `SList` | Uses `HeadNode` sentinel; link properties on user objects |
-| Hosted value-based | `ValueList` | `ValueSList` | Uses `HeadNode` sentinel; wraps values in `ValueNode` |
-| External node-based | `ExtList` | `ExtSList` | Headless; points into existing circular list |
-| External value-based | `ExtValueList` | `ExtValueSList` | Headless; points into existing value circular list |
+| Variant              | DLL            | SLL             | Description                                               |
+| -------------------- | -------------- | --------------- | --------------------------------------------------------- |
+| Hosted node-based    | `List`         | `SList`         | Uses `HeadNode` sentinel; link properties on user objects |
+| Hosted value-based   | `ValueList`    | `ValueSList`    | Uses `HeadNode` sentinel; wraps values in `ValueNode`     |
+| External node-based  | `ExtList`      | `ExtSList`      | Headless; points into existing circular list              |
+| External value-based | `ExtValueList` | `ExtValueSList` | Headless; points into existing value circular list        |
 
 ### Customizable link names
 
