@@ -134,7 +134,7 @@ export const frontPusher = (ExtListClass, options) => {
 
       pushFrontNode: node => list.addNodeAfter(node).node,
 
-      releaseList: () => this.make(list.detach())
+      releaseList: () => list.make(list.detach())
     };
   return adapter;
 };

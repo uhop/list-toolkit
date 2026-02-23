@@ -26,7 +26,7 @@ export class Stack {
   pop() {
     if (!this.list.isEmpty) {
       --this.size;
-      return this.list.popFront().value;
+      return this.list.popFront();
     }
     // return undefined;
   }
