@@ -13,6 +13,9 @@
     "prepare-dist": "node scripts/prepare-dist.js",
     "build": "babel src --out-dir cjs",
     "prepublishOnly": "npm run prepare-dist && npm run build",
+    "lint": "prettier --check .",
+    "lint:fix": "prettier --write .",
+    "ts-check": "tsc --noEmit",
     "start": "tape6-server --trace",
     "test": "tape6 --flags FO",
     "test:bun": "tape6-bun --flags FO",
@@ -63,9 +66,11 @@
     "@babel/cli": "^7.28.6",
     "@babel/core": "^7.29.0",
     "@babel/preset-env": "^7.29.0",
-    "nano-benchmark": "^1.0.9",
-    "tape-six": "^1.7.0",
-    "tape-six-proc": "^1.2.2"
+    "nano-benchmark": "^1.0.10",
+    "prettier": "^3.8.1",
+    "tape-six": "^1.7.2",
+    "tape-six-proc": "^1.2.3",
+    "typescript": "^5.9.3"
   },
   "files": [
     "/src",
