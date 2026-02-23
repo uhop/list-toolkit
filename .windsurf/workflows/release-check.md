@@ -19,7 +19,7 @@ Run through this checklist before publishing a new version.
 7. Bump `version` in `package.json`.
 8. Update release history in `README.md`.
 9. Run `npm install` to regenerate `package-lock.json`.
-    // turbo
+   // turbo
 10. Run the full test suite: `npm test`
     // turbo
 11. Dry-run publish to verify package contents: `npm pack --dry-run`
