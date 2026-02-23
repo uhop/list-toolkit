@@ -4,15 +4,9 @@
   "description": "Zero-dependency list-based data structures: linked lists (doubly/singly linked, circular), caches (LRU, LFU, FIFO), heaps, queues, stacks, splay trees.",
   "type": "module",
   "exports": {
-    "./*": {
-      "require": "./cjs/*",
-      "default": "./src/*"
-    }
+    "./*": "./src/*"
   },
   "scripts": {
-    "prepare-dist": "node scripts/prepare-dist.js",
-    "build": "babel src --out-dir cjs",
-    "prepublishOnly": "npm run prepare-dist && npm run build",
     "lint": "prettier --check .",
     "lint:fix": "prettier --write .",
     "ts-check": "tsc --noEmit",
@@ -63,9 +57,6 @@
   "llms": "https://raw.githubusercontent.com/uhop/list-toolkit/master/llms.txt",
   "llmsFull": "https://raw.githubusercontent.com/uhop/list-toolkit/master/llms-full.txt",
   "devDependencies": {
-    "@babel/cli": "^7.28.6",
-    "@babel/core": "^7.29.0",
-    "@babel/preset-env": "^7.29.0",
     "nano-benchmark": "^1.0.10",
     "prettier": "^3.8.1",
     "tape-six": "^1.7.2",
@@ -74,25 +65,13 @@
   },
   "files": [
     "/src",
-    "/cjs",
     "llms.txt",
     "llms-full.txt"
   ],
-  "babel": {
-    "presets": [
-      [
-        "@babel/preset-env",
-        {
-          "targets": {
-            "node": "current"
-          }
-        }
-      ]
-    ]
-  },
   "tape6": {
     "tests": [
-      "/tests/test-*.*js"
+      "/tests/test-*.js",
+      "/tests/test-*.cjs"
     ],
     "importmap": {
       "imports": {

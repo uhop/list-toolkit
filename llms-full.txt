@@ -7,7 +7,7 @@
 - Wiki: https://github.com/uhop/list-toolkit/wiki
 - License: BSD-3-Clause
 - Runtime: Node.js, Bun, Deno, browsers
-- Module system: ESM + CJS (Babel-generated)
+- Module system: ESM (CJS supported via Node.js 22+ native ESM loader)
 
 ## Installation
 

@@ -1,6 +1,6 @@
 # Architecture
 
-`list-toolkit` is a pure JavaScript (ESM) library providing efficient list-based data structures. It has **zero runtime dependencies** — only dev dependencies for testing, benchmarking, and CJS transpilation.
+`list-toolkit` is a pure JavaScript (ESM) library providing efficient list-based data structures. It has **zero runtime dependencies** — only dev dependencies for testing and benchmarking.
 
 ## Project layout
 
@@ -51,11 +51,9 @@ src/                      # All source code (ESM)
 ├── list-helpers.js       # Node/range normalization helpers
 ├── nt-utils.js           # Null-terminated list utilities (convert NT ↔ circular)
 └── meta-utils.js         # addAlias, addAliases, iterators, copyOptions
-cjs/                      # CommonJS build output (Babel, gitignored)
 tests/                    # Automated tests (tape-six framework)
 bench/                    # Benchmarks (nano-benchmark)
 wiki/                     # GitHub wiki documentation (git submodule)
-scripts/                  # Build helper scripts
 ```
 
 ## Core concepts
@@ -167,4 +165,4 @@ import Queue from 'list-toolkit/queue.js';
 import SplayTree from 'list-toolkit/tree/splay-tree.js';
 ```
 
-The wildcard export `./*` maps to `./src/*` (ESM) or `./cjs/*` (CJS).
+The wildcard export `./*` maps to `./src/*`. CJS consumers can use `require()` with Node.js 22+ which natively loads ESM modules.
