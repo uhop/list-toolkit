@@ -1,5 +1,3 @@
-'use strict';
-
 import {addAlias} from '../meta-utils.js';
 import MinHeap from '../heap/min-heap.js';
 import CacheLRU from './cache-lru.js';
@@ -59,8 +57,8 @@ export class CacheRandom extends CacheLRU {
   }
   resetIds() {
     this.nextId = 0;
-    for (const item of this.heap) {
-      item.id = this.nextId++;
+    for (const item of this.heap.array) {
+      item.value.id = this.nextId++;
     }
     const array = this.heap.array;
     this.heap.clear().merge(array);

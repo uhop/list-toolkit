@@ -1,5 +1,3 @@
-'use strict';
-
 import {ExtListBase, HeadNode} from './nodes.js';
 import {pop, splice, append} from './basics.js';
 import Ptr from './ptr.js';
@@ -120,7 +118,7 @@ export class List extends HeadNode {
     const extracted = this.make();
     if (this.isEmpty) return extracted;
 
-    while (this.isEmpty && condition(this.front)) extracted.pushBack(this.popFront());
+    while (!this.isEmpty && condition(this.front)) extracted.pushBack(this.popFrontNode());
     if (this.isOneOrEmpty) return extracted;
 
     for (const ptr of this.getPtrIterator({from: this.front[this.nextName]})) {

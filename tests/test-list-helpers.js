@@ -1,5 +1,3 @@
-'use strict';
-
 import test from 'tape-six';
 
 import List from 'list-toolkit/list.js';
@@ -114,6 +112,18 @@ test('normalizePtrRange: incompatible range throws', t => {
   const list2 = List.from([{x: 1}]);
   const ptr = list2.frontPtr;
   t.throws(() => normalizePtrRange(list1, {from: ptr}, PtrBase));
+});
+
+test('list.isCompatibleRange: via public API', t => {
+  const list = List.from([{x: 1}, {x: 2}, {x: 3}]);
+  t.ok(list.isCompatibleRange(null));
+  t.ok(list.isCompatibleRange({}));
+  t.ok(list.isCompatibleRange({from: list.front, to: list.back}));
+
+  const ptr = list.frontPtr;
+  t.ok(list.isCompatibleRange({from: ptr, to: list.back}));
+
+  t.notOk(list.isCompatibleRange({from: {bad: true}}));
 });
 
 test('list.normalizeNode: via public API', t => {

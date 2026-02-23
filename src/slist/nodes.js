@@ -1,5 +1,3 @@
-'use strict';
-
 import {isRangeLike, normalizeNode, normalizeRange, normalizePtrRange} from '../list-helpers.js';
 import {addAlias, copyDescriptors, canHaveProps} from '../meta-utils.js';
 
@@ -37,7 +35,7 @@ export class HeadNode extends Node {
     return ptr instanceof PtrBase && (ptr.list === this || (ptr.list instanceof HeadNode && this.nextName === ptr.list.nextName));
   }
   isCompatibleRange(range) {
-    return isRangeLike(this, range);
+    return isRangeLike(this, range, PtrBase);
   }
 
   get isEmpty() {

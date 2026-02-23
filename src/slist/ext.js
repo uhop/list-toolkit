@@ -1,5 +1,3 @@
-'use strict';
-
 import {ExtListBase, PtrBase} from './nodes.js';
 import {pop, extract, splice} from './basics.js';
 import {addAliases, normalizeIterator} from '../meta-utils.js';
@@ -274,8 +272,8 @@ export class ExtSList extends ExtListBase {
     };
   }
 
-  getPtrIterator(range) {
-    if (!ptrRange.from) ptrRange = Object.assign({from: this.frontPtr}, ptrRange);
+  getPtrIterator(ptrRange = {}) {
+    if (!ptrRange.from) ptrRange = Object.assign({from: this.makePtr()}, ptrRange);
     ptrRange = this.normalizePtrRange(ptrRange);
     const {from: fromPtr, to} = ptrRange;
     return {

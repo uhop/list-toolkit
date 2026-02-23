@@ -63,7 +63,7 @@ export const addGetters = (target, dict, force) => {
     addDescriptor(target, names, fromGetter(getter), force);
   }
   for (const symbol of Object.getOwnPropertySymbols(dict)) {
-    const descriptor = Object.getOwnPropertyDescriptor(source, symbol);
+    const descriptor = Object.getOwnPropertyDescriptor(dict, symbol);
     if (!descriptor || !descriptor.enumerable) continue;
     addDescriptor(target, [symbol], fromGetter(dict[symbol]), force);
   }

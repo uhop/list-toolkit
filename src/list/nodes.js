@@ -1,5 +1,3 @@
-'use strict';
-
 import {isRangeLike, normalizeNode, normalizeRange} from '../list-helpers.js';
 import {addAlias, copyDescriptors, canHaveProps} from '../meta-utils.js';
 
@@ -43,7 +41,7 @@ export class HeadNode extends Node {
   }
 
   isCompatibleRange(range) {
-    return isRangeLike(this, range);
+    return isRangeLike(this, range, PtrBase);
   }
 
   get isEmpty() {

@@ -1,5 +1,3 @@
-'use strict';
-
 import {addAlias} from '../meta-utils.js';
 import MinHeap from '../heap/min-heap.js';
 import CacheLRU from './cache-lru.js';
@@ -51,8 +49,8 @@ export class CacheLFU extends CacheLRU {
     return this;
   }
   resetCounters(initialValue = 1) {
-    for (const item of this.heap) {
-      item.counter = initialValue;
+    for (const item of this.heap.array) {
+      item.value.counter = initialValue;
     }
     return this;
   }

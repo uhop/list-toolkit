@@ -1,5 +1,3 @@
-'use strict';
-
 import test from 'tape-six';
 import List from 'list-toolkit/list.js';
 import {pushValuesFront, pushValuesBack, appendValuesFront} from 'list-toolkit/list-utils.js';
@@ -313,6 +311,61 @@ test('List.sort()', t => {
   t.deepEqual(
     Array.from(list).map(value => value.x),
     array.sort((a, b) => a - b)
+  );
+});
+
+test('List.extractBy()', t => {
+  const a = {x: 1},
+    b = {x: 2},
+    c = {x: 3},
+    d = {x: 4},
+    e = {x: 5};
+  const list = List.from([a, b, c, d, e]);
+
+  const extracted = list.extractBy(node => node.x % 2 === 0);
+  t.deepEqual(
+    Array.from(list).map(n => n.x),
+    [1, 3, 5]
+  );
+  t.deepEqual(
+    Array.from(extracted).map(n => n.x),
+    [2, 4]
+  );
+});
+
+test('List.extractBy(): all match', t => {
+  const list = List.from([{x: 1}, {x: 2}, {x: 3}]);
+
+  const extracted = list.extractBy(node => node.x > 0);
+  t.ok(list.isEmpty);
+  t.deepEqual(
+    Array.from(extracted).map(n => n.x),
+    [1, 2, 3]
+  );
+});
+
+test('List.extractBy(): none match', t => {
+  const list = List.from([{x: 1}, {x: 2}, {x: 3}]);
+
+  const extracted = list.extractBy(node => node.x > 10);
+  t.ok(extracted.isEmpty);
+  t.deepEqual(
+    Array.from(list).map(n => n.x),
+    [1, 2, 3]
+  );
+});
+
+test('List.extractBy(): front match', t => {
+  const list = List.from([{x: 1}, {x: 2}, {x: 3}]);
+
+  const extracted = list.extractBy(node => node.x < 2);
+  t.deepEqual(
+    Array.from(list).map(n => n.x),
+    [2, 3]
+  );
+  t.deepEqual(
+    Array.from(extracted).map(n => n.x),
+    [1]
   );
 });
 
