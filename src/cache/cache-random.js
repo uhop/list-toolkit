@@ -2,21 +2,27 @@ import {addAlias} from '../meta-utils.js';
 import MinHeap from '../heap/min-heap.js';
 import CacheLRU from './cache-lru.js';
 
-// Evicts items randomly.
-
+/**
+ * Random eviction cache. Evicts a randomly chosen entry.
+ * Extends {@link CacheLRU} with random eviction via a min-heap.
+ */
 export class CacheRandom extends CacheLRU {
+  /** @param {number} [capacity=10] - Maximum number of entries. */
   constructor(capacity = 10) {
     super(capacity);
     this.heap = new MinHeap({less: (a, b) => a.value.id > b.value.id});
     this.nextId = 0;
   }
+  /** @override */
   use(key) {
     return this.dict.get(key);
   }
+  /** @override */
   update(node, value) {
     node.value.value = value;
     return this;
   }
+  /** @override */
   addNew(key, value) {
     this.list.pushFront({key, value, id: this.nextId++});
     const node = this.list.front;
@@ -24,6 +30,7 @@ export class CacheRandom extends CacheLRU {
     this.heap.push(node);
     return node;
   }
+  /** @override */
   evictAndReplace(key, value) {
     const index = Math.floor(this.heap.length * Math.random());
 
@@ -40,6 +47,7 @@ export class CacheRandom extends CacheLRU {
 
     return node;
   }
+  /** @override */
   remove(key) {
     const node = this.dict.get(key);
     if (node) {
@@ -49,12 +57,17 @@ export class CacheRandom extends CacheLRU {
     }
     return this;
   }
+  /** @override */
   clear() {
     super.clear();
     this.heap.clear();
     this.nextId = 0;
     return this;
   }
+  /**
+   * Reset all internal IDs and rebuild the heap.
+   * @returns {CacheRandom} `this` for chaining.
+   */
   resetIds() {
     this.nextId = 0;
     for (const item of this.heap.array) {

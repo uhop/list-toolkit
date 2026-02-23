@@ -2,36 +2,65 @@ import {ExtListBase, PtrBase} from './nodes.js';
 import {pop, extract, splice} from './basics.js';
 import {addAliases, normalizeIterator} from '../meta-utils.js';
 
+/** Pointer for navigating and mutating an external singly linked list. */
 export class Ptr extends PtrBase {
+  /**
+   * @param {ExtSList|Ptr} list - Owning list or another Ptr to copy.
+   * @param {object} [node] - Target node.
+   * @param {object} [prev] - Node preceding the target.
+   */
   constructor(list, node, prev) {
     super(list, node, prev, ExtSList);
   }
+  /**
+   * Create a copy of this pointer.
+   * @returns {Ptr} A new Ptr referencing the same list and node.
+   */
   clone() {
     return new Ptr(this);
   }
 }
 
+/** External (headless) node-based singly linked list. */
 export class ExtSList extends ExtListBase {
+  /** A pointer-based range spanning all nodes, or `null` if empty. */
   get ptrRange() {
     return this.head ? {from: this.makePtr(), to: this.head, list: this.head} : null;
   }
 
+  /**
+   * Create a pointer to a node in this list.
+   * @param {object} [node] - Target node, or `undefined` for the head.
+   * @returns {Ptr} A new Ptr.
+   */
   makePtr(node) {
     if (node && !this.isNodeLike(node)) throw new Error('"node" is not a compatible node');
     return new Ptr(this, node);
   }
 
+  /**
+   * Create a pointer to the node after `prev`.
+   * @param {object} [prev] - Preceding node, or `undefined` for the head.
+   * @returns {Ptr} A new Ptr.
+   */
   makePtrFromPrev(prev) {
     if (prev && !this.isNodeLike(prev)) throw new Error('"prev" is not a compatible node');
     return new Ptr(this, null, prev || this.head);
   }
 
-  // Ptr API
-
+  /**
+   * Remove the node after the head.
+   * @returns {object|null} The removed node, or `null` if empty.
+   */
   removeNodeAfter() {
     return this.head ? this.removeNode(this.makePtr()) : null;
   }
 
+  /**
+   * Insert a value after the head.
+   * @param {*} value - Value or node to insert.
+   * @returns {Ptr} A Ptr to the inserted node.
+   */
   addAfter(value) {
     const node = this.adoptValue(value);
     if (this.head) {
@@ -42,6 +71,11 @@ export class ExtSList extends ExtListBase {
     return this.makePtr();
   }
 
+  /**
+   * Insert an existing node after the head.
+   * @param {object} node - Node to insert.
+   * @returns {Ptr} A Ptr to the inserted node.
+   */
   addNodeAfter(node) {
     node = this.adoptNode(node);
     if (this.head) {
@@ -52,6 +86,11 @@ export class ExtSList extends ExtListBase {
     return this.makePtr();
   }
 
+  /**
+   * Splice another external list's nodes after the head.
+   * @param {ExtListBase} extList - Compatible external list to consume.
+   * @returns {Ptr} A Ptr to the first inserted node.
+   */
   insertAfter(extList) {
     if (!this.isCompatible(extList)) throw new Error('Incompatible lists');
 
@@ -64,6 +103,11 @@ export class ExtSList extends ExtListBase {
     return this.makePtr();
   }
 
+  /**
+   * Move a node to just after the head.
+   * @param {Ptr} ptr - Pointer to the node to move.
+   * @returns {Ptr|ExtSList} A Ptr to the moved node, or `this`.
+   */
   moveAfter(ptr) {
     if (!this.isCompatiblePtr(ptr)) throw new Error('Incompatible pointer');
     ptr.list = this;
@@ -85,8 +129,11 @@ export class ExtSList extends ExtListBase {
     return ptr.clone();
   }
 
-  // List API
-
+  /**
+   * Remove all nodes.
+   * @param {boolean} [drop] - If `true`, make each removed node stand-alone.
+   * @returns {ExtSList} `this` for chaining.
+   */
   clear(drop) {
     if (drop) {
       for (const current of this.getNodeIterator()) {
@@ -97,6 +144,11 @@ export class ExtSList extends ExtListBase {
     return this;
   }
 
+  /**
+   * Remove the node at a pointer position.
+   * @param {Ptr} ptr - Pointer whose current node to remove.
+   * @returns {object|null} The removed node, or `null` if empty.
+   */
   removeNode(ptr) {
     if (!this.head) return null;
     if (!this.isCompatiblePtr(ptr)) throw new Error('Incompatible pointer');
@@ -110,10 +162,21 @@ export class ExtSList extends ExtListBase {
     return pop(this, ptr.prevNode).extracted.to;
   }
 
+  /**
+   * Remove a pointer-based range and optionally drop nodes.
+   * @param {object} [ptrRange] - Range to remove.
+   * @param {boolean} [drop] - If `true`, make each removed node stand-alone.
+   * @returns {ExtSList} A new ExtSList containing the removed nodes.
+   */
   removeRange(ptrRange, drop) {
     return this.extractRange(ptrRange).clear(drop);
   }
 
+  /**
+   * Extract a pointer-based range into a new list.
+   * @param {object} [ptrRange={}] - Range to extract (defaults to the whole list).
+   * @returns {ExtSList} A new ExtSList containing the extracted nodes.
+   */
   extractRange(ptrRange = {}) {
     ptrRange = this.normalizePtrRange(ptrRange.from ? ptrRange : {...ptrRange, from: this.makePtr()});
     ptrRange.to ||= this.head;
@@ -129,6 +192,11 @@ export class ExtSList extends ExtListBase {
     return extracted;
   }
 
+  /**
+   * Extract nodes that satisfy a condition into a new list.
+   * @param {Function} condition - Predicate receiving each node.
+   * @returns {ExtSList} A new ExtSList containing the extracted nodes.
+   */
   extractBy(condition) {
     const extracted = this.make();
     if (this.isEmpty) return extracted;
@@ -152,6 +220,10 @@ export class ExtSList extends ExtListBase {
     return extracted;
   }
 
+  /**
+   * Reverse the order of all nodes in place.
+   * @returns {ExtSList} `this` for chaining.
+   */
   reverse() {
     if (this.isOneOrEmpty) return this;
 
@@ -170,6 +242,11 @@ export class ExtSList extends ExtListBase {
     return this;
   }
 
+  /**
+   * Sort nodes in place using merge sort.
+   * @param {Function} lessFn - Returns `true` if `a` should precede `b`.
+   * @returns {ExtSList} `this` for chaining.
+   */
   sort(lessFn) {
     if (this.isOneOrEmpty) return this;
 
@@ -235,8 +312,7 @@ export class ExtSList extends ExtListBase {
     return this.next();
   }
 
-  // iterators
-
+  /** Iterate over nodes starting from the head. */
   [Symbol.iterator]() {
     let current = this.head,
       readyToStop = this.isEmpty;
@@ -251,6 +327,11 @@ export class ExtSList extends ExtListBase {
     });
   }
 
+  /**
+   * Get an iterable over nodes in a range.
+   * @param {object} [range={}] - Sub-range to iterate.
+   * @returns {Iterable} An iterable iterator of nodes.
+   */
   getNodeIterator(range = {}) {
     range = this.normalizeRange(range);
     const {from, to} = range;
@@ -272,6 +353,11 @@ export class ExtSList extends ExtListBase {
     };
   }
 
+  /**
+   * Get an iterable of Ptr objects over a pointer range.
+   * @param {object} [ptrRange={}] - Sub-range to iterate.
+   * @returns {Iterable} An iterable iterator of Ptrs.
+   */
   getPtrIterator(ptrRange = {}) {
     if (!ptrRange.from) ptrRange = Object.assign({from: this.makePtr()}, ptrRange);
     ptrRange = this.normalizePtrRange(ptrRange);
@@ -294,20 +380,38 @@ export class ExtSList extends ExtListBase {
     };
   }
 
-  // meta helpers
-
+  /**
+   * Create a shallow clone of this list.
+   * @returns {ExtSList} A new ExtSList pointing to the same head.
+   */
   clone() {
     return new ExtSList(this);
   }
 
+  /**
+   * Create an empty list with the same options.
+   * @param {object|null} [head=null] - Optional initial head node.
+   * @returns {ExtSList} A new ExtSList.
+   */
   make(head = null) {
     return new ExtSList(head, this);
   }
 
+  /**
+   * Create a list from values with the same options.
+   * @param {Iterable} values - Iterable of node objects.
+   * @returns {ExtSList} A new ExtSList.
+   */
   makeFrom(values) {
     return ExtSList.from(values, this);
   }
 
+  /**
+   * Build an ExtSList from an iterable of node objects.
+   * @param {Iterable} values - Iterable of nodes.
+   * @param {object} [options] - Link property names.
+   * @returns {ExtSList} A new ExtSList.
+   */
   static from(values, options) {
     const list = new ExtSList(null, options);
     for (const value of values) {

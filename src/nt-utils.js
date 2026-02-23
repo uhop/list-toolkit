@@ -1,5 +1,10 @@
-// utilities for working with null-terminated lists
-
+/**
+ * Check whether a linked structure is a valid null-terminated list.
+ * @param {object|null} head - First node, or `null` for an empty list.
+ * @param {object} [options] - Link property names.
+ * @param {string} [options.nextName='next'] - Property name for the next link.
+ * @returns {boolean} `true` if the list is null-terminated (not circular).
+ */
 export const isNTList = (head, {nextName = 'next'} = {}) => {
   if (head === null) return true;
   let current = head;
@@ -12,6 +17,13 @@ export const isNTList = (head, {nextName = 'next'} = {}) => {
   return false;
 };
 
+/**
+ * Find the tail of a null-terminated list by following next links.
+ * @param {object|null} head - First node, or `null`.
+ * @param {object} [options] - Link property names.
+ * @param {string} [options.nextName='next'] - Property name for the next link.
+ * @returns {object|null} The tail node, or `null` if empty or circular.
+ */
 export const getNTListTail = (head, {nextName = 'next'} = {}) => {
   if (head === null) return null;
   let current = head;
@@ -23,8 +35,22 @@ export const getNTListTail = (head, {nextName = 'next'} = {}) => {
   return null;
 };
 
+/**
+ * Find the head of a null-terminated list by following prev links.
+ * @param {object|null} node - Any node in the list, or `null`.
+ * @param {object} [options] - Link property names.
+ * @param {string} [options.prevName='prev'] - Property name for the previous link.
+ * @returns {object|null} The head node, or `null` if empty or circular.
+ */
 export const getNTListHead = (node, {prevName = 'prev'} = {}) => getNTListTail(node, {nextName: prevName});
 
+/**
+ * Count the number of nodes in a null-terminated list.
+ * @param {object|null} head - First node, or `null`.
+ * @param {object} [options] - Link property names.
+ * @param {string} [options.nextName='next'] - Property name for the next link.
+ * @returns {number} The node count.
+ */
 export const getNTListLength = (head, {nextName = 'next'} = {}) => {
   if (head === null) return 0;
   let current = head;
@@ -38,6 +64,14 @@ export const getNTListLength = (head, {nextName = 'next'} = {}) => {
   return length;
 };
 
+/**
+ * Convert a null-terminated DLL into a circular DLL.
+ * @param {object|null} node - Any node in the null-terminated list, or `null`.
+ * @param {object} [options] - Link property names.
+ * @param {string} [options.nextName='next'] - Property name for the next link.
+ * @param {string} [options.prevName='prev'] - Property name for the previous link.
+ * @returns {{head: object, tail: object}|null} Head/tail pair, or `null` if empty.
+ */
 export const makeListFromNTList = (node, {nextName = 'next', prevName = 'prev'} = {}) => {
   if (node === null) return null;
   const head = getNTListHead(node, {prevName}),
@@ -47,6 +81,13 @@ export const makeListFromNTList = (node, {nextName = 'next', prevName = 'prev'} 
   return {head, tail};
 };
 
+/**
+ * Convert a null-terminated SLL into a circular SLL.
+ * @param {object|null} head - First node, or `null`.
+ * @param {object} [options] - Link property names.
+ * @param {string} [options.nextName='next'] - Property name for the next link.
+ * @returns {{head: object, tail: object}|null} Head/tail pair, or `null` if empty.
+ */
 export const makeSListFromNTList = (head, {nextName = 'next'} = {}) => {
   if (head === null) return null;
   const tail = getNTListTail(head, {nextName});
@@ -54,6 +95,14 @@ export const makeSListFromNTList = (head, {nextName = 'next'} = {}) => {
   return {head, tail};
 };
 
+/**
+ * Convert a circular DLL into a null-terminated DLL.
+ * @param {object|null} head - Head of the circular list, or `null`.
+ * @param {object} [options] - Link property names.
+ * @param {string} [options.nextName='next'] - Property name for the next link.
+ * @param {string} [options.prevName='prev'] - Property name for the previous link.
+ * @returns {{head: object, tail: object}|null} Head/tail pair, or `null` if empty.
+ */
 export const makeNTListFromList = (head, {nextName = 'next', prevName = 'prev'} = {}) => {
   if (head === null) return null;
   const tail = head[prevName];
@@ -62,6 +111,13 @@ export const makeNTListFromList = (head, {nextName = 'next', prevName = 'prev'} 
   return {head, tail};
 };
 
+/**
+ * Convert a circular SLL into a null-terminated SLL (fast: head becomes second node).
+ * @param {object|null} head - Head of the circular list, or `null`.
+ * @param {object} [options] - Link property names.
+ * @param {string} [options.nextName='next'] - Property name for the next link.
+ * @returns {{head: object, tail: object}|null} Head/tail pair, or `null` if empty.
+ */
 export const makeNTListFromSListFast = (head, {nextName = 'next'} = {}) => {
   if (head === null) return null;
   const tail = head;
@@ -70,6 +126,13 @@ export const makeNTListFromSListFast = (head, {nextName = 'next'} = {}) => {
   return {head, tail};
 };
 
+/**
+ * Convert a circular SLL into a null-terminated SLL (traverses to find the tail).
+ * @param {object|null} head - Head of the circular list, or `null`.
+ * @param {object} [options] - Link property names.
+ * @param {string} [options.nextName='next'] - Property name for the next link.
+ * @returns {{head: object, tail: object}|null} Head/tail pair, or `null` if empty.
+ */
 export const makeNTListFromSList = (head, {nextName = 'next'} = {}) => {
   if (head === null) return null;
   let tail = head;

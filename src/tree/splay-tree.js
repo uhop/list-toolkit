@@ -53,16 +53,26 @@ const splay = node => {
 
 const count = tree => (tree ? count(tree.left) + count(tree.right) + 1 : 0);
 
+/** Node for a splay tree. */
 export class SplayTreeNode {
+  /** @param {*} value - Value to store. */
   constructor(value) {
     this.left = this.right = this.parent = null;
     this.value = value;
   }
+  /**
+   * Find the minimum node in this subtree.
+   * @returns {SplayTreeNode} The leftmost node.
+   */
   getMin() {
     let z = this;
     while (z.left) z = z.left;
     return z;
   }
+  /**
+   * Find the maximum node in this subtree.
+   * @returns {SplayTreeNode} The rightmost node.
+   */
   getMax() {
     let z = this;
     while (z.right) z = z.right;
@@ -70,7 +80,9 @@ export class SplayTreeNode {
   }
 }
 
+/** Self-adjusting binary search tree. */
 export class SplayTree {
+  /** @param {object} [options] - Ordering options (`less`, `compare`). */
   constructor(options) {
     copyOptions(this, SplayTree.defaults, options);
     if (typeof this.compare == 'function') {
@@ -82,18 +94,33 @@ export class SplayTree {
     this.root = null;
     this.size = 0;
   }
+  /** Whether the tree has no nodes. */
   get isEmpty() {
     return !this.root;
   }
+  /** The number of nodes. */
   get length() {
     return this.size;
   }
+  /**
+   * Get the node with the minimum value.
+   * @returns {SplayTreeNode} The minimum node.
+   */
   getMin() {
     return this.root.getMin();
   }
+  /**
+   * Get the node with the maximum value.
+   * @returns {SplayTreeNode} The maximum node.
+   */
   getMax() {
     return this.root.getMax();
   }
+  /**
+   * Find a node by value.
+   * @param {*} value - Value to search for.
+   * @returns {SplayTreeNode|null} The found node, or `null`.
+   */
   find(value) {
     for (let z = this.root; z; ) {
       if (this.less(z.value, value)) z = z.right;
@@ -102,6 +129,11 @@ export class SplayTree {
     }
     return null;
   }
+  /**
+   * Find a node by value using `compare`.
+   * @param {*} value - Value to search for.
+   * @returns {SplayTreeNode|null} The found node, or `null`.
+   */
   findWithCompare(value) {
     for (let z = this.root; z; ) {
       const cmp = this.compare(value, z.value);
@@ -111,6 +143,11 @@ export class SplayTree {
     }
     return null;
   }
+  /**
+   * Find a value and splay it to the root.
+   * @param {*} value - Value to promote.
+   * @returns {SplayTreeNode|null} The found node, or `null`.
+   */
   promote(value) {
     const z = this.find(value);
     if (z) {
@@ -118,10 +155,20 @@ export class SplayTree {
     }
     return z;
   }
+  /**
+   * Splay a node to the root.
+   * @param {SplayTreeNode} node - Node to splay.
+   * @returns {SplayTree} `this` for chaining.
+   */
   splay(node) {
     this.root = splay(node);
     return this;
   }
+  /**
+   * Insert a value. If it already exists, splay the existing node.
+   * @param {*} value - Value to insert.
+   * @returns {SplayTree} `this` for chaining.
+   */
   insert(value) {
     let z = this.root,
       parent = null;
@@ -143,6 +190,11 @@ export class SplayTree {
     this.root = splay(z);
     return this;
   }
+  /**
+   * Insert a value using `compare`. If it already exists, splay the existing node.
+   * @param {*} value - Value to insert.
+   * @returns {SplayTree} `this` for chaining.
+   */
   insertWithCompare(value) {
     let z = this.root,
       parent = null;
@@ -165,6 +217,11 @@ export class SplayTree {
     this.root = splay(z);
     return this;
   }
+  /**
+   * Remove a value from the tree.
+   * @param {*} value - Value to remove.
+   * @returns {SplayTree} `this` for chaining.
+   */
   remove(value) {
     const z = this.find(value);
     if (!z) return this;
@@ -188,11 +245,20 @@ export class SplayTree {
 
     return this;
   }
+  /**
+   * Remove all nodes.
+   * @returns {SplayTree} `this` for chaining.
+   */
   clear() {
     this.root = null;
     this.size = 0;
     return this;
   }
+  /**
+   * Split the tree: keep nodes ≤ value, return a new tree with nodes > value.
+   * @param {*} value - Split point.
+   * @returns {SplayTree} A new SplayTree with the greater nodes.
+   */
   splitMaxTree(value) {
     if (!this.root) return new SplayTree(this);
     let z = this.root,
@@ -232,6 +298,11 @@ export class SplayTree {
     }
     return newTree;
   }
+  /**
+   * Split the tree using `compare`: keep nodes ≤ value, return a new tree with nodes > value.
+   * @param {*} value - Split point.
+   * @returns {SplayTree} A new SplayTree with the greater nodes.
+   */
   splitMaxTreeWithCompare(value) {
     if (!this.root) return new SplayTree(this);
     let z = this.root,
@@ -272,6 +343,11 @@ export class SplayTree {
     }
     return newTree;
   }
+  /**
+   * Join a tree whose values are all greater than this tree's maximum (unsafe: no validation).
+   * @param {SplayTree} tree - Tree to join (consumed).
+   * @returns {SplayTree} `this` for chaining.
+   */
   joinMaxTreeUnsafe(tree) {
     if (this.root.right) {
       this.splay(this.getMax());
@@ -285,6 +361,11 @@ export class SplayTree {
 
     return this;
   }
+  /**
+   * Join another tree into this one. Uses fast path if ranges don't overlap.
+   * @param {SplayTree} tree - Tree to join (consumed).
+   * @returns {SplayTree} `this` for chaining.
+   */
   join(tree) {
     if (!tree.root) return this;
     if (!this.root) {
@@ -307,6 +388,7 @@ export class SplayTree {
     tree.clear();
     return this;
   }
+  /** Iterate over values in ascending order. */
   [Symbol.iterator]() {
     let current = this.root ? this.root.getMin() : null;
     return {
@@ -333,6 +415,10 @@ export class SplayTree {
       }
     };
   }
+  /**
+   * Get an iterable over values in descending order.
+   * @returns {Iterable} An iterable iterator of values.
+   */
   getReverseIterator() {
     return {
       [Symbol.iterator]: () => {
@@ -363,6 +449,12 @@ export class SplayTree {
       }
     };
   }
+  /**
+   * Build a SplayTree from an iterable.
+   * @param {Iterable} values - Values to insert.
+   * @param {object} [options] - Ordering options.
+   * @returns {SplayTree} A new SplayTree.
+   */
   static from(values, options) {
     const tree = new SplayTree(options);
     for (const value of values) {
