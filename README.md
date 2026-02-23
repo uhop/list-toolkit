@@ -19,7 +19,9 @@ The toolkit provides the following data structures with a full set of efficientl
 * Various list-based data structures:
   * Caches with various eviction algorithms: least recently used (LRU), least frequently used (LFU), first in first out (FIFO), and random.
     * A decorator is provided to decorate functions, methods, and getters with a cache of your choice.
-  * Queue: an adapter for lists.
+  * Queue and Stack: adapters for lists.
+* Trees:
+  * Splay tree: a self-adjusting binary search tree.
 * Numerous list utilities.
 
 All lists can be used without the toolkit. Your existing lists, either doubly or singly linked,
@@ -34,7 +36,7 @@ The implementation philosophy was very simple:
 * Should be usable with already existing lists.
 * Could be used as a foundation for other list-based data structures.
 
-**Read all about the implemented ideas in the [Backgrounders](./Backgrounder).**
+**Read all about the implemented ideas in the [Backgrounder](https://github.com/uhop/list-toolkit/wiki/Backgrounder).**
 
 All lists support similar intuitive interfaces:
 
@@ -79,7 +81,7 @@ for (const value of list) {
 list.pushBack(4);
 list.pushFront(0);
 
-console.log(list.popFront().value); // 0
+console.log(list.popFront()); // 0
 console.log(list.front.value); // 1
 ```
 
