@@ -35,10 +35,7 @@ export class ValueSList<V = unknown> extends HeadNode {
    */
   popFront(): V | undefined;
 
-  /**
-   * Alias for {@link popFront}.
-   * @returns The unwrapped value, or `undefined` if empty.
-   */
+  /** Alias for {@link popFront}. */
   pop(): V | undefined;
 
   /**
@@ -54,11 +51,7 @@ export class ValueSList<V = unknown> extends HeadNode {
    */
   pushFront(value: V | ValueNode<V> | PtrBase<ValueNode<V>>): Ptr<ValueNode<V>>;
 
-  /**
-   * Alias for {@link pushFront}.
-   * @param value - Raw value, ValueNode, or Ptr.
-   * @returns A Ptr to the front.
-   */
+  /** Alias for {@link pushFront}. */
   push(value: V | ValueNode<V> | PtrBase<ValueNode<V>>): Ptr<ValueNode<V>>;
 
   /**
@@ -96,11 +89,7 @@ export class ValueSList<V = unknown> extends HeadNode {
    */
   appendBack(list: HeadNode): Ptr<ValueNode<V>>;
 
-  /**
-   * Alias for {@link appendBack}.
-   * @param list - Compatible list to consume.
-   * @returns A Ptr to the first appended node.
-   */
+  /** Alias for {@link appendBack}. */
   append(list: HeadNode): Ptr<ValueNode<V>>;
 
   /**
@@ -209,11 +198,7 @@ export class ValueSList<V = unknown> extends HeadNode {
    */
   getValueIterator(range?: SllRange<ValueNode<V>>): IterableIterator<V>;
 
-  /**
-   * Alias for {@link getValueIterator}. Yields unwrapped values.
-   * @param range - Sub-range to iterate.
-   * @returns An iterable iterator of values.
-   */
+  /** Alias for {@link getValueIterator}. */
   getIterator(range?: SllRange<ValueNode<V>>): IterableIterator<V>;
 
   /**

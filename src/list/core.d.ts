@@ -58,22 +58,13 @@ export class List<T extends object = object> extends HeadNode {
    */
   popBackNode(): T | undefined;
 
-  /**
-   * Alias for {@link popFrontNode}.
-   * @returns The removed node, or `undefined` if empty.
-   */
+  /** Alias for {@link popFrontNode}. */
   popFront(): T | undefined;
 
-  /**
-   * Alias for {@link popFrontNode}.
-   * @returns The removed node, or `undefined` if empty.
-   */
+  /** Alias for {@link popFrontNode}. */
   pop(): T | undefined;
 
-  /**
-   * Alias for {@link popBackNode}.
-   * @returns The removed node, or `undefined` if empty.
-   */
+  /** Alias for {@link popBackNode}. */
   popBack(): T | undefined;
 
   /**
@@ -83,11 +74,7 @@ export class List<T extends object = object> extends HeadNode {
    */
   pushFrontNode(nodeOrPtr: T | PtrBase<T>): Ptr<T>;
 
-  /**
-   * Alias for {@link pushFront}.
-   * @param value - Value or node to insert.
-   * @returns A Ptr to the inserted node.
-   */
+  /** Alias for {@link pushFront}. */
   push(value: T | PtrBase<T>): Ptr<T>;
 
   /**
@@ -111,11 +98,7 @@ export class List<T extends object = object> extends HeadNode {
    */
   appendBack(list: HeadNode): Ptr<T>;
 
-  /**
-   * Alias for {@link appendBack}.
-   * @param list - Compatible list to consume.
-   * @returns A Ptr to the first appended node.
-   */
+  /** Alias for {@link appendBack}. */
   append(list: HeadNode): Ptr<T>;
 
   /**
@@ -210,11 +193,7 @@ export class List<T extends object = object> extends HeadNode {
    */
   getNodeIterator(range?: DllRange<T>): IterableIterator<T>;
 
-  /**
-   * Alias for {@link getNodeIterator}.
-   * @param range - Sub-range to iterate.
-   * @returns An iterable iterator of nodes.
-   */
+  /** Alias for {@link getNodeIterator}. */
   getIterator(range?: DllRange<T>): IterableIterator<T>;
 
   /**
@@ -231,11 +210,7 @@ export class List<T extends object = object> extends HeadNode {
    */
   getReverseNodeIterator(range?: DllRange<T>): IterableIterator<T>;
 
-  /**
-   * Alias for {@link getReverseNodeIterator}.
-   * @param range - Sub-range to iterate.
-   * @returns An iterable iterator of nodes.
-   */
+  /** Alias for {@link getReverseNodeIterator}. */
   getReverseIterator(range?: DllRange<T>): IterableIterator<T>;
 
   /**

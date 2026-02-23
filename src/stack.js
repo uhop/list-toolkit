@@ -17,10 +17,7 @@ export class Stack {
   get top() {
     return this.list.isEmpty ? undefined : this.list.front.value;
   }
-  /**
-   * Alias for `top`.
-   * @returns {*} The top element, or `undefined`.
-   */
+  /** Alias for {@link Stack#top|top}. */
   peek() {
     return this.list.isEmpty ? undefined : this.list.front.value;
   }

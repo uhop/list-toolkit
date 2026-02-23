@@ -14,10 +14,7 @@ export class Queue<V = unknown> {
   /** The front element without removing it, or `undefined` if empty. */
   get top(): V | undefined;
 
-  /**
-   * Peek at the front element.
-   * @returns The front value, or `undefined` if empty.
-   */
+  /** Alias for {@link top}. */
   peek(): V | undefined;
 
   /**
@@ -27,25 +24,13 @@ export class Queue<V = unknown> {
    */
   add(value: V): this;
 
-  /**
-   * Alias for {@link add}.
-   * @param value - Value to enqueue.
-   * @returns `this` for chaining.
-   */
+  /** Alias for {@link add}. */
   push(value: V): this;
 
-  /**
-   * Alias for {@link add}.
-   * @param value - Value to enqueue.
-   * @returns `this` for chaining.
-   */
+  /** Alias for {@link add}. */
   pushBack(value: V): this;
 
-  /**
-   * Alias for {@link add}.
-   * @param value - Value to enqueue.
-   * @returns `this` for chaining.
-   */
+  /** Alias for {@link add}. */
   enqueue(value: V): this;
 
   /**
@@ -54,22 +39,13 @@ export class Queue<V = unknown> {
    */
   remove(): V | undefined;
 
-  /**
-   * Alias for {@link remove}.
-   * @returns The front value, or `undefined` if empty.
-   */
+  /** Alias for {@link remove}. */
   pop(): V | undefined;
 
-  /**
-   * Alias for {@link remove}.
-   * @returns The front value, or `undefined` if empty.
-   */
+  /** Alias for {@link remove}. */
   popFront(): V | undefined;
 
-  /**
-   * Alias for {@link remove}.
-   * @returns The front value, or `undefined` if empty.
-   */
+  /** Alias for {@link remove}. */
   dequeue(): V | undefined;
 
   /**

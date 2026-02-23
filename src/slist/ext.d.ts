@@ -54,11 +54,7 @@ export class ExtSList<T extends object = object> extends ExtListBase<T> {
    */
   addAfter(value: T | PtrBase<T>): Ptr<T>;
 
-  /**
-   * Alias for {@link addAfter}.
-   * @param value - Value or node to insert.
-   * @returns A Ptr to the inserted node.
-   */
+  /** Alias for {@link addAfter}. */
   add(value: T | PtrBase<T>): Ptr<T>;
 
   /**
@@ -141,11 +137,7 @@ export class ExtSList<T extends object = object> extends ExtListBase<T> {
    */
   getNodeIterator(range?: SllRange<T>): IterableIterator<T>;
 
-  /**
-   * Alias for {@link getNodeIterator}.
-   * @param range - Sub-range to iterate.
-   * @returns An iterable iterator of nodes.
-   */
+  /** Alias for {@link getNodeIterator}. */
   getIterator(range?: SllRange<T>): IterableIterator<T>;
 
   /**

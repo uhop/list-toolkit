@@ -62,10 +62,7 @@ export class SkewHeap extends HeapBase {
   get top() {
     return this.root ? this.root.value : undefined;
   }
-  /**
-   * Alias for `top`.
-   * @returns {*} The minimum element.
-   */
+  /** Alias for {@link SkewHeap#top|top}. */
   peek() {
     return this.root ? this.root.value : undefined;
   }

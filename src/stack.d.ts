@@ -14,10 +14,7 @@ export class Stack<V = unknown> {
   /** The top element without removing it, or `undefined` if empty. */
   get top(): V | undefined;
 
-  /**
-   * Peek at the top element.
-   * @returns The top value, or `undefined` if empty.
-   */
+  /** Alias for {@link top}. */
   peek(): V | undefined;
 
   /**
@@ -27,11 +24,7 @@ export class Stack<V = unknown> {
    */
   push(value: V): this;
 
-  /**
-   * Alias for {@link push}.
-   * @param value - Value to push.
-   * @returns `this` for chaining.
-   */
+  /** Alias for {@link push}. */
   pushFront(value: V): this;
 
   /**

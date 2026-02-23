@@ -49,11 +49,7 @@ export class ExtValueSList<V = unknown> extends ExtListBase<ValueNode<V>> {
    */
   addAfter(value: V | ValueNode<V> | PtrBase<ValueNode<V>>): Ptr<ValueNode<V>>;
 
-  /**
-   * Alias for {@link addAfter}.
-   * @param value - Raw value, ValueNode, or Ptr.
-   * @returns A Ptr to the inserted node.
-   */
+  /** Alias for {@link addAfter}. */
   add(value: V | ValueNode<V> | PtrBase<ValueNode<V>>): Ptr<ValueNode<V>>;
 
   /**
@@ -143,11 +139,7 @@ export class ExtValueSList<V = unknown> extends ExtListBase<ValueNode<V>> {
    */
   getValueIterator(range?: SllRange<ValueNode<V>>): IterableIterator<V>;
 
-  /**
-   * Alias for {@link getValueIterator}. Yields unwrapped values.
-   * @param range - Sub-range to iterate.
-   * @returns An iterable iterator of values.
-   */
+  /** Alias for {@link getValueIterator}. */
   getIterator(range?: SllRange<ValueNode<V>>): IterableIterator<V>;
 
   /**

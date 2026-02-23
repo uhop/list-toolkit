@@ -44,10 +44,7 @@ export class SkewHeap<T = unknown> extends HeapBase<T> {
   /** The minimum element without removing it. */
   get top(): T | undefined;
 
-  /**
-   * Alias for {@link top}.
-   * @returns The minimum element, or `undefined` if empty.
-   */
+  /** Alias for {@link top}. */
   peek(): T | undefined;
 
   /**

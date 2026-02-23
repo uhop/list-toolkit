@@ -282,11 +282,7 @@ export class ExtListBase<T extends object = object> {
    */
   adoptNode(nodeOrPtr: T | PtrBase<T>): T;
 
-  /**
-   * Alias for {@link adoptNode}.
-   * @param nodeOrPtr - Node or pointer to adopt.
-   * @returns The adopted node.
-   */
+  /** Alias for {@link adoptNode}. */
   adoptValue(nodeOrPtr: T | PtrBase<T>): T;
 
   /** Whether the list is empty. */

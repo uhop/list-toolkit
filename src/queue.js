@@ -17,10 +17,7 @@ export class Queue {
   get top() {
     return this.list.isEmpty ? undefined : this.list.front.value;
   }
-  /**
-   * Alias for `top`.
-   * @returns {*} The front element, or `undefined`.
-   */
+  /** Alias for {@link Queue#top|top}. */
   peek() {
     return this.list.isEmpty ? undefined : this.list.front.value;
   }

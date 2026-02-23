@@ -48,10 +48,7 @@ export class ExtList<T extends object = object> extends ExtListBase<T> {
    */
   removeNodeBefore(): T | null;
 
-  /**
-   * Alias for {@link removeNodeBefore}.
-   * @returns The removed node, or `null` if empty.
-   */
+  /** Alias for {@link removeNodeBefore}. */
   removeBefore(): T | null;
 
   /**
@@ -60,10 +57,7 @@ export class ExtList<T extends object = object> extends ExtListBase<T> {
    */
   removeNodeAfter(): T | null;
 
-  /**
-   * Alias for {@link removeNodeAfter}.
-   * @returns The removed node, or `null` if empty.
-   */
+  /** Alias for {@link removeNodeAfter}. */
   removeAfter(): T | null;
 
   /**
@@ -80,11 +74,7 @@ export class ExtList<T extends object = object> extends ExtListBase<T> {
    */
   addAfter(value: T | PtrBase<T>): Ptr<T>;
 
-  /**
-   * Alias for {@link addAfter}.
-   * @param value - Value or node to insert.
-   * @returns A Ptr to the inserted node.
-   */
+  /** Alias for {@link addAfter}. */
   add(value: T | PtrBase<T>): Ptr<T>;
 
   /**
@@ -190,11 +180,7 @@ export class ExtList<T extends object = object> extends ExtListBase<T> {
    */
   getNodeIterator(range?: DllRange<T>): IterableIterator<T>;
 
-  /**
-   * Alias for {@link getNodeIterator}.
-   * @param range - Sub-range to iterate.
-   * @returns An iterable iterator of nodes.
-   */
+  /** Alias for {@link getNodeIterator}. */
   getIterator(range?: DllRange<T>): IterableIterator<T>;
 
   /**
@@ -211,11 +197,7 @@ export class ExtList<T extends object = object> extends ExtListBase<T> {
    */
   getReverseNodeIterator(range?: DllRange<T>): IterableIterator<T>;
 
-  /**
-   * Alias for {@link getReverseNodeIterator}.
-   * @param range - Sub-range to iterate.
-   * @returns An iterable iterator of nodes.
-   */
+  /** Alias for {@link getReverseNodeIterator}. */
   getReverseIterator(range?: DllRange<T>): IterableIterator<T>;
 
   /**

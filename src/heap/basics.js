@@ -18,10 +18,7 @@ export class HeapBase {
   get top() {
     throw new Error('Not implemented');
   }
-  /**
-   * Alias for `top`.
-   * @returns {*} The minimum element.
-   */
+  /** Alias for {@link HeapBase#top|top}. */
   peek() {
     return this.top;
   }

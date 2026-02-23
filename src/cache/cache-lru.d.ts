@@ -28,11 +28,7 @@ export class CacheLRU<K = unknown, V = unknown> {
    */
   find(key: K): V | undefined;
 
-  /**
-   * Alias for {@link find}.
-   * @param key - Key to look up.
-   * @returns The value, or `undefined` if not found.
-   */
+  /** Alias for {@link find}. */
   get(key: K): V | undefined;
 
   /**
@@ -42,11 +38,7 @@ export class CacheLRU<K = unknown, V = unknown> {
    */
   remove(key: K): this;
 
-  /**
-   * Alias for {@link remove}.
-   * @param key - Key to remove.
-   * @returns `this` for chaining.
-   */
+  /** Alias for {@link remove}. */
   delete(key: K): this;
 
   /**
@@ -57,20 +49,10 @@ export class CacheLRU<K = unknown, V = unknown> {
    */
   register(key: K, value: V): this;
 
-  /**
-   * Alias for {@link register}.
-   * @param key - Key to register.
-   * @param value - Value to associate.
-   * @returns `this` for chaining.
-   */
+  /** Alias for {@link register}. */
   add(key: K, value: V): this;
 
-  /**
-   * Alias for {@link register}.
-   * @param key - Key to register.
-   * @param value - Value to associate.
-   * @returns `this` for chaining.
-   */
+  /** Alias for {@link register}. */
   set(key: K, value: V): this;
 
   /**

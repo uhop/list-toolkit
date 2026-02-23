@@ -64,10 +64,7 @@ export class MinHeap extends HeapBase {
     return this.array[0];
   }
 
-  /**
-   * Alias for `top`.
-   * @returns {*} The minimum element.
-   */
+  /** Alias for {@link MinHeap#top|top}. */
   peek() {
     return this.array[0];
   }

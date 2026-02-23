@@ -38,16 +38,10 @@ export class SList<T extends object = object> extends HeadNode {
    */
   popFrontNode(): T | undefined;
 
-  /**
-   * Alias for {@link popFrontNode}.
-   * @returns The removed node, or `undefined` if empty.
-   */
+  /** Alias for {@link popFrontNode}. */
   popFront(): T | undefined;
 
-  /**
-   * Alias for {@link popFrontNode}.
-   * @returns The removed node, or `undefined` if empty.
-   */
+  /** Alias for {@link popFrontNode}. */
   pop(): T | undefined;
 
   /**
@@ -57,11 +51,7 @@ export class SList<T extends object = object> extends HeadNode {
    */
   pushFront(value: T | PtrBase<T>): Ptr<T>;
 
-  /**
-   * Alias for {@link pushFront}.
-   * @param value - Node or value to insert.
-   * @returns A Ptr to the front.
-   */
+  /** Alias for {@link pushFront}. */
   push(value: T | PtrBase<T>): Ptr<T>;
 
   /**
@@ -99,11 +89,7 @@ export class SList<T extends object = object> extends HeadNode {
    */
   appendBack(list: HeadNode): Ptr<T>;
 
-  /**
-   * Alias for {@link appendBack}.
-   * @param list - Compatible list to consume.
-   * @returns A Ptr to the first appended node.
-   */
+  /** Alias for {@link appendBack}. */
   append(list: HeadNode): Ptr<T>;
 
   /**
@@ -204,11 +190,7 @@ export class SList<T extends object = object> extends HeadNode {
    */
   getNodeIterator(range?: SllRange<T>): IterableIterator<T>;
 
-  /**
-   * Alias for {@link getNodeIterator}.
-   * @param range - Sub-range to iterate.
-   * @returns An iterable iterator of nodes.
-   */
+  /** Alias for {@link getNodeIterator}. */
   getIterator(range?: SllRange<T>): IterableIterator<T>;
 
   /**
