@@ -161,9 +161,9 @@ import SList from 'list-toolkit/slist.js';
 Constructor: `new SList({nextName = 'next'} = {})`
 
 Same methods as `List` where applicable. Key differences:
-- No `back` in O(1) — `back` traverses the list.
+- `back` is O(1) via a cached `last` pointer (kept in sync by all mutations).
 - No reverse iterators.
-- `popBack` is O(n).
+- No `popBack` — removing the last node requires traversal in an SLL.
 
 ---
 

@@ -20,7 +20,6 @@ The `--recursive` flag is needed to clone the wiki submodule under `wiki/`.
 See [ARCHITECTURE.md](./ARCHITECTURE.md) for a detailed module map and dependency graph.
 
 - `src/` — all source code (ESM)
-- `cjs/` — CommonJS build output (generated, gitignored)
 - `tests/` — automated tests (`test-*.js`)
 - `bench/` — benchmarks
 - `wiki/` — GitHub wiki (git submodule)
@@ -38,12 +37,6 @@ npm run test:seq                  # Run sequentially (no workers)
 npm run test:proc                 # Run using subprocesses
 ```
 
-### Building CJS
-
-```bash
-npm run build                     # Babel transpile src/ → cjs/
-```
-
 ## Coding conventions
 
 ### General
@@ -55,11 +48,7 @@ npm run build                     # Babel transpile src/ → cjs/
 
 ### Patterns
 
-- All lists are **circular** — the last node links back to the head.
-- **Hosted lists** use a `HeadNode` sentinel. **External lists** are headless.
-- **Value lists** wrap values in `ValueNode`. **Node lists** use link properties on user objects.
-- Method aliases are created via `addAlias`/`addAliases` from `meta-utils.js`.
-- Top-level modules (e.g., `list.js`, `cache.js`) are thin re-exports of implementations in subdirectories.
+See [ARCHITECTURE.md](./ARCHITECTURE.md) for core concepts (circular lists, hosted vs external, value vs node, pointers, caches, heaps, method aliases, etc.).
 
 ### Adding new features
 

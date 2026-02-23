@@ -128,7 +128,7 @@ for (const node of people) {
 }
 
 // let's extract all people from Jill to Jim
-const ji = people.extract({from: jill, to: jim});
+const ji = people.extractRange({from: jill, to: jim});
 for (const node of people) console.log(node.name); // Jane, John
 for (const node of ji) console.log(node.name); // Jim, Jill
 
