@@ -1,0 +1,742 @@
+# list-toolkit
+
+> A zero-dependency JavaScript library providing efficient list-based data structures: doubly and singly linked circular lists, caches, heaps, queues, stacks, splay trees, and null-terminated list utilities.
+
+- NPM: https://npmjs.org/package/list-toolkit
+- GitHub: https://github.com/uhop/list-toolkit
+- Wiki: https://github.com/uhop/list-toolkit/wiki
+- License: BSD-3-Clause
+- Runtime: Node.js, Bun, Deno, browsers
+- Module system: ESM + CJS (Babel-generated)
+
+## Installation
+
+```bash
+npm install list-toolkit
+```
+
+## Quick start
+
+```js
+import ValueList from 'list-toolkit/value-list.js';
+
+const list = ValueList.from([1, 2, 3]);
+for (const value of list) console.log(value); // 1, 2, 3
+
+list.pushBack(4);
+list.pushFront(0);
+console.log(list.popFront().value); // 0
+```
+
+```js
+import List from 'list-toolkit/list.js';
+
+// Node-based: link properties added directly to your objects
+const a = {name: 'Alice'}, b = {name: 'Bob'};
+const people = List.from([a, b]);
+for (const node of people) console.log(node.name); // Alice, Bob
+
+// Custom link names allow objects in multiple lists
+const team = List.from([a, b], {nextName: 'teamNext', prevName: 'teamPrev'});
+```
+
+---
+
+## Key concepts
+
+- All lists are **circular** — the last node links back to the head.
+- **Hosted lists** use a `HeadNode` sentinel. **External (headless) lists** point into an existing circular list.
+- **Value lists** wrap values in `ValueNode` containers. **Node lists** use link properties directly on user objects.
+- **DLL** (doubly linked) uses `nextName`/`prevName` (default: `'next'`/`'prev'`). **SLL** (singly linked) uses `nextName` (default: `'next'`).
+- Custom link names allow the same object to participate in multiple lists simultaneously.
+- **Pointers** (`Ptr`) provide safe iteration with insert/remove during traversal.
+- Method aliases (e.g., `popFront` → `pop`) are created via `addAlias`/`addAliases`.
+
+---
+
+## Module: List (`list-toolkit/list.js`)
+
+Hosted node-based doubly linked circular list. Link properties are added directly to user objects.
+
+```js
+import List from 'list-toolkit/list.js';
+```
+
+### Constructor
+
+```js
+new List({nextName = 'next', prevName = 'prev'} = {})
+```
+
+### Static methods
+
+- `List.from(values, options)` — create a list from an iterable.
+- `List.fromRange(range, options)` — create from a `{from, to}` range.
+- `List.fromExtList(extList)` — create from an `ExtList`.
+
+### Properties
+
+- `isEmpty` — true if list has no nodes.
+- `isOne` — true if list has exactly one node.
+- `isOneOrEmpty` — true if list has zero or one node.
+- `front` — first node.
+- `back` — last node.
+- `frontPtr` — `Ptr` to first node.
+- `backPtr` — `Ptr` to last node.
+- `range` — `{from, to, list}` or null if empty.
+- `head` — the sentinel `HeadNode`.
+
+### Methods
+
+- `pushFront(value)` — add node to front. Returns `Ptr`. Alias: `push`.
+- `pushBack(value)` — add node to back. Returns `Ptr`.
+- `popFrontNode()` — remove and return front node. Aliases: `popFront`, `pop`.
+- `popBackNode()` — remove and return back node. Alias: `popBack`.
+- `pushFrontNode(nodeOrPtr)` — add existing node to front. Returns `Ptr`.
+- `pushBackNode(nodeOrPtr)` — add existing node to back. Returns `Ptr`.
+- `appendFront(list)` — move all nodes from another list to front.
+- `appendBack(list)` — move all nodes from another list to back. Alias: `append`.
+- `moveToFront(nodeOrPtr)` — move a node to front.
+- `moveToBack(nodeOrPtr)` — move a node to back.
+- `removeNode(nodeOrPtr)` — remove a specific node.
+- `removeRange(range, drop)` — remove a range of nodes.
+- `extractRange(range)` — extract a range into a new list.
+- `extractBy(condition)` — extract nodes matching condition into a new list.
+- `reverse()` — reverse the list in place.
+- `sort(lessFn)` — merge sort in place. `lessFn(a, b)` returns true if a < b.
+- `clear(drop)` — remove all nodes.
+- `getLength()` — count nodes (O(n)).
+- `makePtr(node)` — create a `Ptr` to a node.
+- `validateRange(range)` — check if range is valid.
+- `releaseRawList()` — detach nodes as a raw circular list.
+- `releaseNTList()` — detach nodes as a null-terminated list `{head, tail}`.
+
+### Iterators
+
+- `[Symbol.iterator]()` — iterates over nodes.
+- `getNodeIterator(range)` — node iterator over optional range. Alias: `getIterator`.
+- `getPtrIterator(range)` — `Ptr` iterator (safe for insert/remove).
+- `getReverseNodeIterator(range)` — reverse node iterator. Alias: `getReverseIterator`.
+- `getReversePtrIterator(range)` — reverse `Ptr` iterator.
+
+---
+
+## Module: ValueList (`list-toolkit/value-list.js`)
+
+Hosted value-based doubly linked circular list. Extends `List`. Wraps values in `ValueNode` containers.
+
+```js
+import ValueList from 'list-toolkit/value-list.js';
+```
+
+### Static methods
+
+- `ValueList.from(values, options)` — create from iterable.
+
+### Additional/overridden methods
+
+- `pushFront(value)` — wraps value in `ValueNode`, adds to front.
+- `pushBack(value)` — wraps value in `ValueNode`, adds to back.
+- `popFront()` — remove front node, return its `.value`. Alias: `pop`.
+- `popBack()` — remove back node, return its `.value`.
+- `clone()` — deep clone the list.
+
+### Iterators
+
+- `[Symbol.iterator]()` — iterates over **values** (not nodes).
+- `getValueIterator(range)` — value iterator. Alias: `getIterator`.
+- `getReverseValueIterator(range)` — reverse value iterator. Alias: `getReverseIterator`.
+- `getNodeIterator(range)` — node iterator (inherited from `List`).
+
+---
+
+## Module: SList (`list-toolkit/slist.js`)
+
+Hosted node-based singly linked circular list. Same API pattern as `List` but without `prev` links.
+
+```js
+import SList from 'list-toolkit/slist.js';
+```
+
+Constructor: `new SList({nextName = 'next'} = {})`
+
+Same methods as `List` where applicable. Key differences:
+- No `back` in O(1) — `back` traverses the list.
+- No reverse iterators.
+- `popBack` is O(n).
+
+---
+
+## Module: ValueSList (`list-toolkit/value-slist.js`)
+
+Hosted value-based singly linked circular list. Extends `SList`. Same relationship as `ValueList` to `List`.
+
+```js
+import ValueSList from 'list-toolkit/value-slist.js';
+```
+
+---
+
+## Module: ExtList (`list-toolkit/ext-list.js`)
+
+External (headless) node-based doubly linked list. Points into an existing circular list without a sentinel.
+
+```js
+import ExtList from 'list-toolkit/ext-list.js';
+```
+
+Constructor: `new ExtList(head = null, {nextName = 'next', prevName = 'prev'} = {})`
+
+### Properties
+
+- `isEmpty` — true if no head.
+- `isOne` — true if single node.
+- `front` — head node.
+- `back` — node before head.
+- `head` — current head node.
+
+### Methods
+
+- `attach(head)` — set head node. Returns old head.
+- `detach()` — clear head. Returns old head.
+- `next()` — advance head to next node.
+- `prev()` — advance head to previous node.
+- Plus node manipulation methods similar to `List`.
+
+---
+
+## Module: ExtValueList (`list-toolkit/ext-value-list.js`)
+
+External (headless) value-based doubly linked list.
+
+```js
+import ExtValueList from 'list-toolkit/ext-value-list.js';
+```
+
+---
+
+## Module: ExtSList (`list-toolkit/ext-slist.js`)
+
+External (headless) node-based singly linked list.
+
+```js
+import ExtSList from 'list-toolkit/ext-slist.js';
+```
+
+---
+
+## Module: ExtValueSList (`list-toolkit/ext-value-slist.js`)
+
+External (headless) value-based singly linked list.
+
+```js
+import ExtValueSList from 'list-toolkit/ext-value-slist.js';
+```
+
+---
+
+## Module: Ptr (`list-toolkit/list/ptr.js`)
+
+Pointer for safe DLL traversal with insert/remove during iteration.
+
+```js
+// Usually obtained from list methods, not imported directly
+const ptr = list.frontPtr;
+const ptr = list.makePtr(node);
+for (const ptr of list.getPtrIterator()) { /* ... */ }
+```
+
+### Properties
+
+- `list` — the owning list.
+- `node` — the current node.
+- `isHead` — true if pointing at the sentinel.
+- `nextNode` — next node.
+- `prevNode` — previous node.
+
+### Methods
+
+- `next()` — advance to next node. Returns `this`.
+- `prev()` — advance to previous node. Returns `this`.
+- `clone()` — create a copy of this pointer.
+- `removeCurrent()` — remove current node, advance to next. Returns removed node.
+- `addBefore(value)` — insert value before current. Returns `Ptr` to new node.
+- `addAfter(value)` — insert value after current. Returns `Ptr` to new node.
+- `addNodeBefore(node)` — insert existing node before current.
+- `addNodeAfter(node)` — insert existing node after current.
+- `insertBefore(list)` — splice entire list before current.
+- `insertAfter(list)` — splice entire list after current.
+
+---
+
+## Module: CacheLRU (`list-toolkit/cache.js`)
+
+Least recently used cache. Default export of `cache.js`.
+
+```js
+import CacheLRU from 'list-toolkit/cache.js';
+// or: import {CacheLRU} from 'list-toolkit/cache/cache-lru.js';
+```
+
+### Constructor
+
+```js
+new CacheLRU(capacity = 10)
+```
+
+### Properties
+
+- `isEmpty` — true if cache is empty.
+- `size` — number of entries.
+- `capacity` — maximum entries.
+
+### Methods
+
+- `has(key)` — check if key exists.
+- `find(key)` — get value by key (marks as recently used). Alias: `get`.
+- `register(key, value)` — add or update entry. Aliases: `add`, `set`.
+- `remove(key)` — remove entry. Alias: `delete`.
+- `clear()` — remove all entries.
+- `[Symbol.iterator]()` — iterate over entries.
+- `getReverseIterator()` — reverse iterator.
+
+---
+
+## Module: CacheFIFO (`list-toolkit/cache/cache-fifo.js`)
+
+First in first out cache. Same API as `CacheLRU`.
+
+```js
+import {CacheFIFO} from 'list-toolkit/cache/cache-fifo.js';
+```
+
+---
+
+## Module: CacheLFU (`list-toolkit/cache/cache-lfu.js`)
+
+Least frequently used cache. Same API as `CacheLRU`.
+
+```js
+import {CacheLFU} from 'list-toolkit/cache/cache-lfu.js';
+```
+
+---
+
+## Module: CacheRandom (`list-toolkit/cache/cache-random.js`)
+
+Random eviction cache. Same API as `CacheLRU`.
+
+```js
+import {CacheRandom} from 'list-toolkit/cache/cache-random.js';
+```
+
+---
+
+## Module: Cache decorator (`list-toolkit/cache.js`)
+
+Decorator to cache function/method results based on the first argument.
+
+```js
+import {cacheDecorator} from 'list-toolkit/cache.js';
+import {decorateFn, decorate, decorateMethod, getCache} from 'list-toolkit/cache/decorator.js';
+```
+
+- `cacheDecorator(object, key, cache?)` — decorate a method on an object.
+- `decorateFn(fn, cache)` — wrap a function with caching.
+- `decorate(object, key, cache)` — decorate via property descriptor.
+- `decorateMethod(object, key, cache)` — decorate by direct assignment.
+- `getCache(object, key)` — retrieve the cache from a decorated property.
+
+---
+
+## Module: MinHeap (`list-toolkit/heap.js`)
+
+Array-based binary min-heap. Default export of `heap.js`.
+
+```js
+import MinHeap from 'list-toolkit/heap.js';
+// or: import {MinHeap} from 'list-toolkit/heap/min-heap.js';
+```
+
+### Constructor
+
+```js
+new MinHeap(options?, ...initialData)
+```
+
+Options: `{less, equal, compare}`. If `compare` is provided, `less` is derived from it.
+
+### Properties
+
+- `isEmpty` — true if heap is empty.
+- `length` — number of elements.
+- `top` — minimum element (without removing).
+- `array` — the underlying array.
+
+### Instance methods
+
+- `peek()` — alias for `top`.
+- `push(value)` — add element. Returns `this`.
+- `pop()` — remove and return minimum.
+- `pushPop(value)` — push then pop (optimized).
+- `replaceTop(value)` — replace minimum with value, re-heapify.
+- `has(value)` — check if value exists.
+- `findIndex(value)` — find index of value.
+- `remove(value)` — remove a value.
+- `removeByIndex(index)` — remove by array index.
+- `replace(value, newValue)` — replace a value.
+- `replaceByIndex(index, newValue)` — replace by index.
+- `updateTop()` — re-heapify after mutating top element.
+- `updateByIndex(index, isDecreased)` — re-heapify after mutation.
+- `clear()` — remove all elements.
+- `merge(...heapsOrArrays)` — merge other heaps/arrays into this one.
+- `clone()` — shallow clone.
+- `releaseSorted()` — extract sorted array, clear heap.
+
+### Static methods (operate on raw arrays)
+
+- `MinHeap.build(array, less?)` — heapify an array in place.
+- `MinHeap.push(heapArray, item, less?)` — push to heap array.
+- `MinHeap.pop(heapArray, less?)` — pop from heap array.
+- `MinHeap.pushPop(heapArray, item, less?)` — push then pop.
+- `MinHeap.replaceTop(heapArray, item, less?)` — replace top.
+- `MinHeap.has(heapArray, item, equal?)` — check existence.
+- `MinHeap.findIndex(heapArray, item, equal?)` — find index.
+- `MinHeap.remove(heapArray, item, less?, equal?)` — remove item.
+- `MinHeap.removeByIndex(heapArray, index, less?)` — remove by index.
+- `MinHeap.replace(heapArray, item, newItem, less?, equal?)` — replace.
+- `MinHeap.replaceByIndex(heapArray, index, newItem, less?)` — replace by index.
+- `MinHeap.updateByIndex(heapArray, index, isDecreased, less?)` — re-heapify.
+- `MinHeap.sort(heapArray, less?)` — heap sort in place.
+- `MinHeap.from(array, options?)` — create heap from array.
+
+---
+
+## Module: LeftistHeap (`list-toolkit/heap/leftist-heap.js`)
+
+Node-based merge heap using the leftist property. Efficient O(log n) merge.
+
+```js
+import {LeftistHeap} from 'list-toolkit/heap/leftist-heap.js';
+```
+
+### Constructor
+
+```js
+new LeftistHeap(options?, ...heapsToMerge)
+```
+
+### Methods
+
+- `push(value)` — add element. Returns `this`.
+- `pop()` — remove and return minimum.
+- `pushPop(value)` — push then pop (optimized).
+- `replaceTop(value)` — replace minimum.
+- `merge(...heaps)` — merge other heaps (destructive to arguments).
+- `clone()` — deep clone.
+- `clear()` — remove all.
+- `LeftistHeap.from(array, options?)` — create from array.
+
+Properties: `isEmpty`, `length` (alias: `size`), `top`, `peek()`.
+
+---
+
+## Module: SkewHeap (`list-toolkit/heap/skew-heap.js`)
+
+Node-based merge heap. Simpler than leftist, same asymptotic complexity (amortized).
+
+```js
+import {SkewHeap} from 'list-toolkit/heap/skew-heap.js';
+```
+
+Same API as `LeftistHeap`.
+
+---
+
+## Module: Queue (`list-toolkit/queue.js`)
+
+FIFO queue adapter wrapping a `ValueList`.
+
+```js
+import Queue from 'list-toolkit/queue.js';
+```
+
+### Constructor
+
+```js
+new Queue(underlyingList = new ValueList())
+```
+
+### Properties
+
+- `isEmpty` — true if empty.
+- `size` — number of elements.
+- `top` — front element value.
+
+### Methods
+
+- `peek()` — return front value.
+- `add(value)` — add to back. Aliases: `push`, `pushBack`, `enqueue`.
+- `remove()` — remove from front. Aliases: `pop`, `popFront`, `dequeue`.
+- `addValues(values)` — add multiple values.
+- `clear()` — remove all.
+- `[Symbol.iterator]()` — iterate over values.
+- `getReverseIterator()` — reverse iterator.
+
+---
+
+## Module: Stack (`list-toolkit/stack.js`)
+
+LIFO stack adapter wrapping a `ValueList`.
+
+```js
+import Stack from 'list-toolkit/stack.js';
+```
+
+### Constructor
+
+```js
+new Stack(UnderlyingList = ValueList)
+```
+
+### Properties
+
+- `isEmpty` — true if empty.
+- `size` — number of elements.
+- `top` — top element value.
+
+### Methods
+
+- `peek()` — return top value.
+- `push(value)` — push to top. Alias: `pushFront`.
+- `pop()` — remove and return top value.
+- `pushValues(values)` — push multiple values.
+- `clear()` — remove all.
+- `[Symbol.iterator]()` — iterate over values.
+- `getReverseIterator()` — reverse iterator.
+
+---
+
+## Module: SplayTree (`list-toolkit/tree/splay-tree.js`)
+
+Self-adjusting binary search tree. Frequently accessed elements move to the root.
+
+```js
+import SplayTree from 'list-toolkit/tree/splay-tree.js';
+```
+
+### Constructor
+
+```js
+new SplayTree({less?, compare?} = {})
+```
+
+If `compare` is provided, `less` is derived. Default `less`: `(a, b) => a < b`.
+
+### Properties
+
+- `isEmpty` — true if tree is empty.
+- `length` (alias: `size`) — number of nodes.
+- `root` — root `SplayTreeNode` or null.
+
+### Methods
+
+- `insert(value)` — insert value (no duplicates). Returns `this`.
+- `find(value)` — find node by value. Returns `SplayTreeNode` or null.
+- `promote(value)` — find and splay to root. Returns node or null.
+- `splay(node)` — splay a node to root. Returns `this`.
+- `remove(value)` — remove by value. Returns `this`.
+- `getMin()` — return node with minimum value.
+- `getMax()` — return node with maximum value.
+- `splitMaxTree(value)` — split: values > value go to new tree. Returns new `SplayTree`.
+- `join(tree)` — merge another tree into this one (destructive to argument).
+- `clear()` — remove all nodes.
+- `[Symbol.iterator]()` — in-order iteration over values.
+- `getReverseIterator()` — reverse in-order iteration.
+- `SplayTree.from(values, options?)` — create from iterable.
+
+### SplayTreeNode
+
+- `value` — the stored value.
+- `left`, `right`, `parent` — child and parent pointers.
+- `getMin()` — find minimum in subtree.
+- `getMax()` — find maximum in subtree.
+
+---
+
+## Module: list-utils (`list-toolkit/list-utils.js`)
+
+Utility functions for working with lists.
+
+```js
+import {pushValuesFront, pushValuesBack, findNodeBy, removeNodeBy} from 'list-toolkit/list-utils.js';
+```
+
+- `isValidList(list)` — validate DLL circular structure.
+- `isValidSList(list)` — validate SLL circular structure.
+- `pushValuesFront(list, values)` — push multiple values to front.
+- `pushValuesBack(list, values)` — push multiple values to back.
+- `appendValuesFront(list, values)` — append values to front (uses `appendFront` if compatible).
+- `appendValuesBack(list, values)` — append values to back (uses `appendBack` if compatible).
+- `addValuesBefore(ptr, values)` — add values before pointer.
+- `addValuesAfter(ptr, values)` — add values after pointer.
+- `insertValuesBefore(ptr, values)` — insert values before pointer (bulk if compatible).
+- `insertValuesAfter(ptr, values)` — insert values after pointer (bulk if compatible).
+- `findNodeBy(list, condition)` — find first node matching condition.
+- `findPtrBy(list, condition)` — find first `Ptr` matching condition.
+- `removeNodeBy(list, condition)` — remove first node matching condition.
+- `backPusher(ExtListClass, options)` — create adapter for building lists by pushing to back.
+- `frontPusher(ExtListClass, options)` — create adapter for building lists by pushing to front.
+
+---
+
+## Module: nt-utils (`list-toolkit/nt-utils.js`)
+
+Utilities for null-terminated lists. Convert between NT and circular formats.
+
+```js
+import {makeListFromNTList, makeNTListFromList} from 'list-toolkit/nt-utils.js';
+```
+
+- `isNTList(head, {nextName?})` — check if list is null-terminated.
+- `getNTListTail(head, {nextName?})` — find tail of NT list.
+- `getNTListHead(node, {prevName?})` — find head of NT list (via prev links).
+- `getNTListLength(head, {nextName?})` — count nodes in NT list.
+- `makeListFromNTList(node, {nextName?, prevName?})` — convert NT DLL to circular. Returns `{head, tail}`.
+- `makeSListFromNTList(head, {nextName?})` — convert NT SLL to circular. Returns `{head, tail}`.
+- `makeNTListFromList(head, {nextName?, prevName?})` — convert circular DLL to NT. Returns `{head, tail}`.
+- `makeNTListFromSList(head, {nextName?})` — convert circular SLL to NT. Returns `{head, tail}`.
+- `makeNTListFromSListFast(head, {nextName?})` — fast convert (head becomes tail). Returns `{head, tail}`.
+
+---
+
+## Module: meta-utils (`list-toolkit/meta-utils.js`)
+
+Internal utilities used throughout the library. Also useful for extending it.
+
+```js
+import {addAlias, addAliases, copyOptions} from 'list-toolkit/meta-utils.js';
+```
+
+- `addAlias(object, name, aliases, force?)` — create method aliases.
+- `addAliases(object, dict, force?)` — create multiple aliases. Dict: `{methodName: 'alias1, alias2'}`.
+- `copyOptions(target, pattern, ...sources)` — copy known keys from sources to target.
+- `copyDescriptors(target, source, names, force?)` — copy property descriptors.
+- `mapIterator(iterator, callbackFn)` — map over an iterator.
+- `normalizeIterator(iterator)` — ensure `[Symbol.iterator]` is present.
+- Name-casing utilities: `capitalize`, `toCamelCase`, `fromCamelCase`, `toPascalCase`, `toSnakeCase`, `toKebabCase`, etc.
+
+---
+
+## Common patterns
+
+### Creating and iterating a value list
+
+```js
+import ValueList from 'list-toolkit/value-list.js';
+
+const list = ValueList.from([10, 20, 30]);
+for (const value of list) console.log(value); // 10, 20, 30
+
+list.pushBack(40);
+list.pushFront(0);
+console.log(list.popFront()); // 0
+console.log(list.getLength()); // 4
+```
+
+### Node-based list with custom link names
+
+```js
+import List from 'list-toolkit/list.js';
+
+const a = {id: 1}, b = {id: 2}, c = {id: 3};
+const list1 = List.from([a, b, c]);
+const list2 = List.from([a, c], {nextName: 'n2', prevName: 'p2'});
+
+// a is now in both lists simultaneously
+for (const node of list1) console.log(node.id); // 1, 2, 3
+for (const node of list2) console.log(node.id); // 1, 3
+```
+
+### Safe iteration with Ptr (insert/remove during traversal)
+
+```js
+import List from 'list-toolkit/list.js';
+
+const list = List.from([{v: 1}, {v: 2}, {v: 3}, {v: 4}]);
+for (const ptr of list.getPtrIterator()) {
+  if (ptr.node.v % 2 === 0) ptr.removeCurrent();
+}
+// list now contains: {v: 1}, {v: 3}
+```
+
+### LRU cache
+
+```js
+import CacheLRU from 'list-toolkit/cache.js';
+
+const cache = new CacheLRU(100);
+cache.set('key1', 'value1');
+cache.set('key2', 'value2');
+console.log(cache.get('key1')); // 'value1'
+console.log(cache.has('key3')); // false
+cache.delete('key2');
+```
+
+### Min-heap as priority queue
+
+```js
+import MinHeap from 'list-toolkit/heap.js';
+
+const heap = new MinHeap();
+heap.push(5).push(1).push(3);
+console.log(heap.top);  // 1
+console.log(heap.pop()); // 1
+console.log(heap.pop()); // 3
+
+// With custom comparator
+const maxHeap = new MinHeap({less: (a, b) => a > b});
+maxHeap.push(1).push(5).push(3);
+console.log(maxHeap.pop()); // 5
+```
+
+### Splay tree
+
+```js
+import SplayTree from 'list-toolkit/tree/splay-tree.js';
+
+const tree = SplayTree.from([5, 3, 7, 1, 4]);
+console.log(tree.find(3)?.value); // 3
+tree.insert(6);
+tree.remove(1);
+for (const value of tree) console.log(value); // 3, 4, 5, 6, 7
+```
+
+### Queue and Stack
+
+```js
+import Queue from 'list-toolkit/queue.js';
+import Stack from 'list-toolkit/stack.js';
+
+const q = new Queue();
+q.enqueue(1).enqueue(2).enqueue(3);
+console.log(q.dequeue()); // 1
+
+const s = new Stack();
+s.push(1).push(2).push(3);
+console.log(s.pop()); // 3
+```
+
+### Converting null-terminated lists
+
+```js
+import {makeListFromNTList, makeNTListFromList} from 'list-toolkit/nt-utils.js';
+
+// Convert an existing NT doubly-linked list to circular
+const head = {value: 1, next: {value: 2, next: null, prev: null}, prev: null};
+head.next.prev = head;
+const {head: circHead} = makeListFromNTList(head);
+
+// Convert back
+const {head: ntHead, tail: ntTail} = makeNTListFromList(circHead);
+```

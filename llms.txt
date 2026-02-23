@@ -1,0 +1,99 @@
+# list-toolkit
+
+> Zero-dependency JavaScript library providing efficient list-based data structures: linked lists, caches, heaps, queues, stacks, and splay trees.
+
+- NPM: https://npmjs.org/package/list-toolkit
+- GitHub: https://github.com/uhop/list-toolkit
+- Wiki: https://github.com/uhop/list-toolkit/wiki
+- License: BSD-3-Clause
+
+## Install
+
+```bash
+npm install list-toolkit
+```
+
+## Quick start
+
+```js
+import ValueList from 'list-toolkit/value-list.js';
+
+const list = ValueList.from([1, 2, 3]);
+for (const value of list) console.log(value); // 1, 2, 3
+
+list.pushBack(4);
+list.pushFront(0);
+console.log(list.popFront().value); // 0
+```
+
+```js
+import List from 'list-toolkit/list.js';
+
+// Node-based list: link properties are added directly to your objects
+const a = {name: 'Alice'}, b = {name: 'Bob'};
+const people = List.from([a, b]);
+for (const node of people) console.log(node.name); // Alice, Bob
+```
+
+## Modules
+
+### Linked lists (doubly linked, circular)
+
+- **List** (`list-toolkit/list.js`) — hosted node-based DLL. Link properties (`next`/`prev`) are added to user objects. Customizable link names.
+- **ValueList** (`list-toolkit/value-list.js`) — hosted value-based DLL. Wraps values in `ValueNode` containers.
+- **ExtList** (`list-toolkit/ext-list.js`) — external (headless) node-based DLL. Points into an existing circular list.
+- **ExtValueList** (`list-toolkit/ext-value-list.js`) — external (headless) value-based DLL.
+
+### Linked lists (singly linked, circular)
+
+- **SList** (`list-toolkit/slist.js`) — hosted node-based SLL.
+- **ValueSList** (`list-toolkit/value-slist.js`) — hosted value-based SLL.
+- **ExtSList** (`list-toolkit/ext-slist.js`) — external (headless) node-based SLL.
+- **ExtValueSList** (`list-toolkit/ext-value-slist.js`) — external (headless) value-based SLL.
+
+### Caches
+
+- **CacheLRU** (`list-toolkit/cache.js`) — least recently used eviction. Default export.
+- **CacheFIFO** (`list-toolkit/cache/cache-fifo.js`) — first in first out eviction.
+- **CacheLFU** (`list-toolkit/cache/cache-lfu.js`) — least frequently used eviction.
+- **CacheRandom** (`list-toolkit/cache/cache-random.js`) — random eviction.
+- **cacheDecorator** (`list-toolkit/cache.js`) — decorator to cache function/method results.
+
+All caches share the same API: `has(key)`, `find(key)`/`get(key)`, `register(key, value)`/`set(key, value)`, `remove(key)`/`delete(key)`, `clear()`.
+
+### Heaps (priority queues)
+
+- **MinHeap** (`list-toolkit/heap.js`) — array-based binary min-heap. Default export.
+- **LeftistHeap** (`list-toolkit/heap/leftist-heap.js`) — merge-based leftist heap.
+- **SkewHeap** (`list-toolkit/heap/skew-heap.js`) — merge-based skew heap.
+
+All heaps support `less` or `compare` for ordering. Common API: `push(value)`, `pop()`, `top`/`peek()`, `merge()`, `has(value)`, `remove(value)`.
+
+### Adapters
+
+- **Queue** (`list-toolkit/queue.js`) — FIFO queue adapter. Methods: `add`/`push`/`enqueue`, `remove`/`pop`/`dequeue`, `peek`, `top`, `clear`.
+- **Stack** (`list-toolkit/stack.js`) — LIFO stack adapter. Methods: `push`, `pop`, `peek`, `top`, `clear`.
+
+### Trees
+
+- **SplayTree** (`list-toolkit/tree/splay-tree.js`) — self-adjusting BST. Methods: `insert`, `find`, `remove`, `promote`, `split` (via `splitMaxTree`), `join`.
+
+### Utilities
+
+- **list-utils** (`list-toolkit/list-utils.js`) — push/append values, find/remove nodes by condition, validation.
+- **nt-utils** (`list-toolkit/nt-utils.js`) — convert between null-terminated and circular lists.
+- **meta-utils** (`list-toolkit/meta-utils.js`) — `addAlias`, `addAliases`, iterator helpers, `copyOptions`.
+
+## Key concepts
+
+- All lists are **circular** — the last node links back to the head.
+- **Hosted lists** use a `HeadNode` sentinel. **External lists** are headless.
+- **Value lists** wrap values in `ValueNode`. **Node lists** use link properties directly on user objects.
+- Link names (`nextName`/`prevName`) are customizable, allowing objects to be in multiple lists.
+- **Pointers** (`Ptr`) provide safe iteration with insert/remove during traversal.
+
+## Links
+
+- Docs: https://github.com/uhop/list-toolkit/wiki
+- npm: https://www.npmjs.com/package/list-toolkit
+- Full LLM reference: https://github.com/uhop/list-toolkit/blob/master/llms-full.txt

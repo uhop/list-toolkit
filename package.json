@@ -1,7 +1,7 @@
 {
   "name": "list-toolkit",
   "version": "2.2.6",
-  "description": "List-based data structures to organize your objects.",
+  "description": "Zero-dependency list-based data structures: linked lists (doubly/singly linked, circular), caches (LRU, LFU, FIFO), heaps, queues, stacks, splay trees.",
   "type": "module",
   "exports": {
     "./*": {
@@ -31,9 +31,23 @@
   "keywords": [
     "list",
     "lists",
+    "linked-list",
+    "doubly-linked-list",
+    "singly-linked-list",
+    "circular-list",
     "cache",
+    "lru-cache",
+    "lfu-cache",
+    "fifo-cache",
     "heap",
-    "data structures"
+    "min-heap",
+    "priority-queue",
+    "queue",
+    "stack",
+    "splay-tree",
+    "data-structures",
+    "esm",
+    "zero-dependency"
   ],
   "author": "Eugene Lazutkin <eugene.lazutkin@gmail.com> (http://www.lazutkin.com/)",
   "funding": "https://github.com/sponsors/uhop",
@@ -41,7 +55,10 @@
   "bugs": {
     "url": "https://github.com/uhop/list-toolkit/issues"
   },
+  "github": "http://github.com/uhop/list-toolkit",
   "homepage": "https://github.com/uhop/list-toolkit#readme",
+  "llms": "https://raw.githubusercontent.com/uhop/list-toolkit/master/llms.txt",
+  "llmsFull": "https://raw.githubusercontent.com/uhop/list-toolkit/master/llms-full.txt",
   "devDependencies": {
     "@babel/cli": "^7.28.6",
     "@babel/core": "^7.29.0",
@@ -52,7 +69,9 @@
   },
   "files": [
     "/src",
-    "/cjs"
+    "/cjs",
+    "llms.txt",
+    "llms-full.txt"
   ],
   "babel": {
     "presets": [
