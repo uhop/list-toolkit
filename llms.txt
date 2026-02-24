@@ -91,6 +91,7 @@ All heaps support `less` or `compare` for ordering. Common API: `push(value)`, `
 - **Value lists** wrap values in `ValueNode`. **Node lists** use link properties directly on user objects.
 - Link names (`nextName`/`prevName`) are customizable, allowing objects to be in multiple lists.
 - **Pointers** (`Ptr`) provide safe iteration with insert/remove during traversal.
+- **TypeScript** declarations (`.d.ts`) are included for all modules.
 
 ## Links
 

@@ -51,6 +51,7 @@ src/                      # All source code (ESM)
 ├── list-helpers.js       # Node/range normalization helpers
 ├── nt-utils.js           # Null-terminated list utilities (convert NT ↔ circular)
 └── meta-utils.js         # addAlias, addAliases, iterators, copyOptions
+# Every .js module has a co-located .d.ts file providing TypeScript declarations.
 tests/                    # Automated tests (tape-six framework)
 bench/                    # Benchmarks (nano-benchmark)
 wiki/                     # GitHub wiki documentation (git submodule)

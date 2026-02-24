@@ -8,6 +8,7 @@
 - License: BSD-3-Clause
 - Runtime: Node.js, Bun, Deno, browsers
 - Module system: ESM (CJS supported via Node.js 22+ native ESM loader)
+- TypeScript: built-in `.d.ts` declarations for all modules
 
 ## Installation
 
