@@ -19,6 +19,14 @@ npm install
 - `node tests/test-<name>.js` — run a single test file directly
 - `npm run test:bun` — run with Bun
 - `npm run test:deno` — run with Deno
+- `npm run ts-check` — TypeScript type checking (tsc --noEmit)
+- `npm run ts-test` — run TypeScript typing tests (Node)
+- `npm run lint` — Prettier format check
+- `npm run lint:fix` — Prettier auto-format
+
+## Writing tests
+
+Tests use [tape-six](https://github.com/uhop/tape-six). For the full testing API, patterns, and conventions see `node_modules/tape-six/TESTING.md`.
 
 ## Critical rules
 

@@ -1,35 +1,10 @@
 <!-- Canonical source: AGENTS.md — keep this file in sync -->
 # list-toolkit — AI Agent Rules
 
-## Project identity
+> `list-toolkit` is a zero-dependency ESM JavaScript library providing list-based data structures. Works in Node.js, Bun, Deno, and browsers.
 
-list-toolkit is a zero-dependency ESM JavaScript library providing list-based data structures: doubly and singly linked circular lists, caches (LRU, LFU, FIFO, random), heaps (min, leftist, skew), queues, stacks, splay trees, and null-terminated list utilities. Works in Node.js, Bun, Deno, and browsers.
-
-## Critical rules
-
-- **ESM-only.** `'use strict'` at the top of every source file.
-- **No runtime dependencies.** Never add packages to `dependencies`. Only `devDependencies` are allowed.
-- **Do not modify or delete test expectations** without understanding why they changed.
-- **Do not add comments or remove comments** unless explicitly asked.
-
-## Code style
-
-- Prettier: 160 char width, single quotes, no bracket spacing, no trailing commas, arrow parens "avoid".
-- 2-space indentation (`.editorconfig`).
-- Imports at top of file. No dynamic imports unless necessary.
-
-## Architecture quick reference
-
-- All lists are **circular**: the last node links back to the head.
-- **DLL** uses customizable `nextName`/`prevName` link properties (default: `next`/`prev`).
-- **SLL** uses a customizable `nextName` link property (default: `next`).
-- **Hosted lists** (`List`, `ValueList`, `SList`, `ValueSList`) use a `HeadNode` sentinel.
-- **External (headless) lists** (`ExtList`, `ExtValueList`, `ExtSList`, `ExtValueSList`) point into an existing circular list.
-- **Value lists** wrap values in `ValueNode` containers. **Node lists** use link properties directly on user objects.
-- **Caches** are built on `ValueList` + `Map`. All share the same API: `has`, `find`/`get`, `register`/`set`, `remove`/`delete`, `clear`.
-- **Heaps** support `less` or `compare` for ordering. `MinHeap` is array-based; `LeftistHeap` and `SkewHeap` are merge heaps.
-- **SplayTree** is a self-adjusting BST with `insert`, `find`, `remove`, `split`, `join`.
-- Method aliases are created via `addAlias`/`addAliases` from `meta-utils.js`.
+For project structure, core concepts, and the module dependency graph see ARCHITECTURE.md.
+For detailed usage docs and API references see the wiki.
 
 ## Verification commands
 
@@ -37,18 +12,30 @@ list-toolkit is a zero-dependency ESM JavaScript library providing list-based da
 - `node tests/test-<name>.js` — run a single test file directly
 - `npm run test:bun` — run with Bun
 - `npm run test:deno` — run with Deno
-- `npm run build` — Babel transpile `src/` → `cjs/`
+- `npm run ts-check` — TypeScript type checking (tsc --noEmit)
+- `npm run ts-test` — run TypeScript typing tests (Node)
+- `npm run lint` — Prettier format check
+- `npm run lint:fix` — Prettier auto-format
 
-## File layout
+## Writing tests
 
-- Source: `src/` (ESM), `cjs/` (generated CJS, gitignored)
-- Top-level re-exports: `src/list.js`, `src/cache.js`, `src/heap.js`, etc.
-- Implementations: `src/list/`, `src/slist/`, `src/cache/`, `src/heap/`, `src/tree/`
-- Tests: `tests/test-*.js`
-- Wiki docs: `wiki/` (git submodule)
+Tests use tape-six. For the full testing API, patterns, and conventions see `node_modules/tape-six/TESTING.md`.
+
+## Critical rules
+
+- **ESM-only.** `'use strict'` is not used; the project is `"type": "module"`.
+- **No runtime dependencies.** Never add packages to `dependencies`. Only `devDependencies` are allowed.
+- **Do not modify or delete test expectations** without understanding why they changed.
+- **Do not add comments or remove comments** unless explicitly asked.
+
+## Code style
+
+- Prettier: 160 char width, single quotes, no bracket spacing, no trailing commas, arrow parens "avoid" (see `.prettierrc`).
+- 2-space indentation (`.editorconfig`).
+- Imports at top of file. No dynamic imports unless necessary.
 
 ## When reading the codebase
 
-- Start with `ARCHITECTURE.md` for the module map and dependency graph.
+- Start with ARCHITECTURE.md for the module map and dependency graph.
 - Wiki markdown files in `wiki/` contain detailed usage docs and API references.
-- `list/nodes.js` and `slist/nodes.js` are the foundational modules.
+- `list/nodes.js` and `slist/nodes.js` are the foundational modules — read them first to understand the class hierarchy.
