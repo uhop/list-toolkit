@@ -36,6 +36,7 @@ Follow these steps when adding a new public module.
 ## Verification
 
     // turbo
+
 12. Run the full test suite: `npm test`
     // turbo
 13. Run TypeScript type checking: `npm run ts-check`

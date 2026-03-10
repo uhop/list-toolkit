@@ -184,5 +184,5 @@ export class ExtValueSList<V = unknown> extends ExtListBase<ValueNode<V>> {
   static ValueNode: typeof ValueNode;
 }
 
-export { ValueNode };
+export {ValueNode};
 export default ExtValueSList;

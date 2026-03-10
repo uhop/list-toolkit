@@ -232,13 +232,7 @@ export class MinHeap<T = unknown> extends HeapBase<T> {
    * @param equal - Equality function.
    * @returns The array.
    */
-  static replace<T = unknown>(
-    heapArray: T[],
-    item: T,
-    newItem: T,
-    less?: (a: T, b: T) => boolean,
-    equal?: (a: T, b: T) => boolean
-  ): T[];
+  static replace<T = unknown>(heapArray: T[], item: T, newItem: T, less?: (a: T, b: T) => boolean, equal?: (a: T, b: T) => boolean): T[];
 
   /**
    * Re-sift an element at a given index in a heap array.

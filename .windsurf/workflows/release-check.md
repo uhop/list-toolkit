@@ -20,7 +20,7 @@ Run through this checklist before publishing a new version.
 8. Bump `version` in `package.json`.
 9. Update release history in `README.md`.
 10. Run `npm install` to regenerate `package-lock.json`.
-   // turbo
+    // turbo
 11. Run the full test suite with Node: `npm test`
     // turbo
 12. Run tests with Bun: `npm run test:bun`

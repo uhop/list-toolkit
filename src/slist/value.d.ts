@@ -165,7 +165,7 @@ export class ValueSList<V = unknown> extends HeadNode {
    * Detach all nodes as a null-terminated list.
    * @returns Object with `head` and `tail`, or `null` if empty.
    */
-  releaseNTList(): { head: ValueNode<V>; tail: ValueNode<V> } | null;
+  releaseNTList(): {head: ValueNode<V>; tail: ValueNode<V>} | null;
 
   /**
    * Validate that a range is reachable within this list.
@@ -242,5 +242,5 @@ export class ValueSList<V = unknown> extends HeadNode {
   static ValueNode: typeof ValueNode;
 }
 
-export { ValueNode, Ptr };
+export {ValueNode, Ptr};
 export default ValueSList;

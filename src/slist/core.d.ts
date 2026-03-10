@@ -171,7 +171,7 @@ export class SList<T extends object = object> extends HeadNode {
    * Detach all nodes as a null-terminated list.
    * @returns Object with `head` and `tail`, or `null` if empty.
    */
-  releaseNTList(): { head: T; tail: T } | null;
+  releaseNTList(): {head: T; tail: T} | null;
 
   /**
    * Validate that a range is reachable within this list.
@@ -247,5 +247,5 @@ export class SList<T extends object = object> extends HeadNode {
   static Ptr: typeof Ptr;
 }
 
-export { Ptr };
+export {Ptr};
 export default SList;

@@ -3,7 +3,7 @@ import {SllOptions} from './nodes.js';
 /** Result of extracting or popping nodes from a circular SLL. */
 export interface SllExtractResult<T extends object> {
   /** The extracted sub-range descriptor. */
-  extracted: { prevFrom: T; to: T };
+  extracted: {prevFrom: T; to: T};
   /** The remaining circular list head, or `null` if nothing remains. */
   rest: T | null;
 }
@@ -44,4 +44,4 @@ export function splice<T extends object>(options: SllOptions, target: T, range: 
 /**
  * Alias for {@link splice}.
  */
-export { splice as append };
+export {splice as append};

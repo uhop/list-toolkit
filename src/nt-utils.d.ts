@@ -40,7 +40,7 @@ export function getNTListTail<T extends object>(head: T | null, options?: NTOpti
  * @param options - Link property names (uses `prevName`).
  * @returns The head node, or `null` if empty or circular.
  */
-export function getNTListHead<T extends object>(node: T | null, options?: { prevName?: string }): T | null;
+export function getNTListHead<T extends object>(node: T | null, options?: {prevName?: string}): T | null;
 
 /**
  * Count the number of nodes in a null-terminated list.
