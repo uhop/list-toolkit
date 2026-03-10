@@ -1,7 +1,5 @@
 import HeapBase from './basics.js';
 
-const defaultLess = (a, b) => a < b;
-
 const merge = (a, b, less) => {
   if (!a) return b;
   if (!b) return a;

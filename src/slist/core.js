@@ -469,7 +469,7 @@ export class SList extends HeadNode {
    */
   static fromPtrRange(ptrRange, options) {
     const list = new SList(options);
-    if (!list.isCompatiblePtrRange(ptrRange)) throw new Error('"range" is not a compatible range');
+    ptrRange = list.normalizePtrRange(ptrRange);
     if (ptrRange) append(list, list, ptrRange);
     return list;
   }
@@ -499,7 +499,6 @@ SList.Ptr = Ptr;
 
 addAliases(SList.prototype, {
   popFrontNode: 'popFront, pop',
-  popBackNode: 'popBack',
   pushFront: 'push',
   appendBack: 'append',
   getNodeIterator: 'getIterator'

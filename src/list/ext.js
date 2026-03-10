@@ -1,6 +1,6 @@
 import {ExtListBase, PtrBase} from './nodes.js';
 import {pop, extract, splice, append} from './basics.js';
-import {addAliases, normalizeIterator} from '../meta-utils.js';
+import {addAliases, mapIterator, normalizeIterator} from '../meta-utils.js';
 
 /** Pointer for navigating and mutating an external doubly linked list. */
 export class Ptr extends PtrBase {
