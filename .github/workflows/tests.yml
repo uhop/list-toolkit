@@ -12,6 +12,8 @@ on:
 jobs:
   tests:
     name: Node.js ${{matrix.node-version}} on ubuntu-latest
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
 
     strategy:
