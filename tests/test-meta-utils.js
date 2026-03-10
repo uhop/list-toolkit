@@ -44,7 +44,11 @@ test('utils: case conversions', t => {
 });
 
 test('utils: addAlias()', t => {
-  const obj = {foo() { return 42; }};
+  const obj = {
+    foo() {
+      return 42;
+    }
+  };
   addAlias(obj, 'foo', 'bar');
   t.equal(obj.bar(), 42);
 
@@ -54,7 +58,14 @@ test('utils: addAlias()', t => {
 });
 
 test('utils: addAliases()', t => {
-  const obj = {x() { return 1; }, y() { return 2; }};
+  const obj = {
+    x() {
+      return 1;
+    },
+    y() {
+      return 2;
+    }
+  };
   addAliases(obj, {x: 'a', y: 'b, c'});
   t.equal(obj.a(), 1);
   t.equal(obj.b(), 2);

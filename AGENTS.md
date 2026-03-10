@@ -19,14 +19,14 @@ npm install
 - `node tests/test-<name>.js` — run a single test file directly
 - `npm run test:bun` — run with Bun
 - `npm run test:deno` — run with Deno
-- `npm run ts-check` — TypeScript type checking (tsc --noEmit)
-- `npm run ts-test` — run TypeScript typing tests (Node)
+- `npm run ts-check` — TypeScript type-check (tsc --noEmit)
+- `npm run ts-test` — run TypeScript typing tests (`tests/test-*.ts`)
 - `npm run lint` — Prettier format check
 - `npm run lint:fix` — Prettier auto-format
 
 ## Writing tests
 
-Tests use [tape-six](https://github.com/uhop/tape-six). For the full testing API, patterns, and conventions see `node_modules/tape-six/TESTING.md`.
+Tests use [tape-six](https://github.com/uhop/tape-six). JS tests (`tests/test-*.js`) cover functionality; TS tests (`tests/test-*.ts`) cover typing only. See `node_modules/tape-six/TESTING.md` for the full testing API and patterns.
 
 ## Critical rules
 

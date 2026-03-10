@@ -1,6 +1,6 @@
 # Architecture
 
-`list-toolkit` is a pure JavaScript (ESM) library providing efficient list-based data structures. It has **zero runtime dependencies** — only dev dependencies for testing and benchmarking.
+`list-toolkit` is a pure JavaScript (ESM) library providing efficient list-based data structures. **Zero runtime dependencies** — only dev dependencies for testing and benchmarking.
 
 ## Project layout
 
@@ -61,7 +61,7 @@ wiki/                     # GitHub wiki documentation (git submodule)
 
 ### Circular lists
 
-All lists in the toolkit are **circular** — the last node's `next` pointer links back to the head (and `prev` links back for DLL). This eliminates null checks and simplifies operations.
+All lists are **circular** — the last node's `next` links back to the head (and `prev` links back for DLL). This eliminates null checks and simplifies operations.
 
 ### Node types
 
@@ -82,11 +82,11 @@ All lists in the toolkit are **circular** — the last node's `next` pointer lin
 
 ### Customizable link names
 
-DLL uses `nextName` and `prevName` (default: `'next'` and `'prev'`). SLL uses `nextName` (default: `'next'`). This allows the same object to participate in multiple lists simultaneously using different link property names.
+DLL uses `nextName` and `prevName` (default: `'next'` and `'prev'`). SLL uses `nextName` only (default: `'next'`). Different link names let the same object participate in multiple lists simultaneously.
 
 ### Pointers
 
-`Ptr` objects provide safe iteration with the ability to insert and remove nodes during traversal. Available for both DLL and SLL via `list/ptr.js` and `slist/ptr.js`.
+`Ptr` objects provide safe iteration with insert/remove during traversal. Available for both DLL (`list/ptr.js`) and SLL (`slist/ptr.js`).
 
 ### Caches
 
@@ -109,7 +109,7 @@ All heaps support `less` function or `compare` function for ordering:
 
 ### SplayTree
 
-Self-adjusting binary search tree. Frequently accessed elements move to the root. Supports `insert`, `find`, `remove`, `split` (via `splitMaxTree`), and `join`.
+Self-adjusting binary search tree — frequently accessed elements move to the root. Supports `insert`, `find`, `remove`, `split` (via `splitMaxTree`), and `join`.
 
 ## Module dependency graph (simplified)
 
@@ -142,7 +142,7 @@ meta-utils.js ← (used by most modules for aliases and iterators)
 
 ## Method aliases
 
-The library uses `addAlias`/`addAliases` from `meta-utils.js` to create method aliases on prototypes. For example, `List.prototype.popFrontNode` is aliased as `popFront` and `pop`. This provides a familiar API while keeping the canonical method names descriptive.
+`addAlias`/`addAliases` from `meta-utils.js` create method aliases on prototypes. For example, `List.prototype.popFrontNode` is aliased as `popFront` and `pop` — familiar names alongside descriptive canonical ones.
 
 ## Testing
 
@@ -151,7 +151,8 @@ The library uses `addAlias`/`addAliases` from `meta-utils.js` to create method a
 - **Run single file**: `node tests/test-<name>.js`
 - **Run with Bun**: `npm run test:bun`
 - **Run with Deno**: `npm run test:deno`
-- **Test files**: `tests/test-*.js`
+- **JS tests**: `tests/test-*.js` — functionality
+- **TS tests**: `tests/test-*.ts` — typing only (`npm run ts-test`)
 
 ## Import paths
 
@@ -166,4 +167,4 @@ import Queue from 'list-toolkit/queue.js';
 import SplayTree from 'list-toolkit/tree/splay-tree.js';
 ```
 
-The wildcard export `./*` maps to `./src/*`. CJS consumers can use `require()` with Node.js 22+ which natively loads ESM modules.
+The wildcard export `./*` maps to `./src/*`.

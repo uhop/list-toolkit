@@ -3,52 +3,31 @@
 [npm-img]: https://img.shields.io/npm/v/list-toolkit.svg
 [npm-url]: https://npmjs.org/package/list-toolkit
 
-List-based **efficient** data structures to organize your objects.
-This is a pure JavaScript module with no dependencies
-suitable to use in all environments including browsers.
+Efficient list-based data structures for JavaScript.
+Pure ESM, zero dependencies, works in Node.js, Bun, Deno, and browsers.
 
-The toolkit provides the following data structures with a full set of efficiently implemented operations:
+Data structures included:
 
-- Converters for `null`-terminated (NT) lists, both singly and doubly linked. They convert in place from NT lists to circular lists and back.
-- Various lists:
-  - Doubly linked circular lists (DLL) and singly linked circular lists (SLL).
-  - Value-based lists, where a list serves as a container for external objects, and node-based lists, where a list uses custom properties on external objects to link them around.
-  - Hosted lists, which use a special head node to manage nodes, and headless lists, which point to an external list without including any headers.
-- Heaps:
-  - Priority queues: min heap, leftist heap, skew heap.
-- Various list-based data structures:
-  - Caches with various eviction algorithms: least recently used (LRU), least frequently used (LFU), first in first out (FIFO), and random.
-    - A decorator is provided to decorate functions, methods, and getters with a cache of your choice.
-  - Queue and Stack: adapters for lists.
-- Trees:
-  - Splay tree: a self-adjusting binary search tree.
-- Numerous list utilities.
+- **Linked lists** — doubly and singly linked, circular. Node-based (link properties on your objects) or value-based (wraps values in nodes). Hosted (sentinel head) or headless (external pointer).
+- **NT list converters** — convert null-terminated lists to/from circular lists in place.
+- **Heaps** — min heap, leftist heap, skew heap.
+- **Caches** — LRU, LFU, FIFO, random eviction. Includes a decorator for functions, methods, and getters.
+- **Queue and Stack** — list-backed adapters.
+- **Splay tree** — self-adjusting binary search tree.
+- **Utilities** — push/append values, find, remove, validate, and more.
 
-All lists can be used without the toolkit. Your existing lists, either doubly or singly linked,
-can be used. The toolkit provides a few utilities that you would write yourself if you wanted to use them.
+Works with your existing linked lists — no wrapper objects required.
 
-The implementation philosophy was very simple:
-
-- Flexibility, efficiency, and simplicity.
-- No dependencies. No unexpected surprises.
-- You never pay for what you don't use.
-- Suitable for all environments.
-- Should be usable with already existing lists.
-- Could be used as a foundation for other list-based data structures.
+- Flexible, efficient, simple.
+- Zero dependencies, no surprises.
+- Pay only for what you use.
+- Usable as a foundation for other data structures.
 
 **Read all about the implemented ideas in the [Backgrounder](https://github.com/uhop/list-toolkit/wiki/Backgrounder).**
 
-All lists support similar intuitive interfaces:
+All lists share a consistent API: create from iterables, push/pop, insert/extract/remove, forward and reverse iterators, sort, reverse, and customizable link names.
 
-- Creating from existing objects.
-- Adding, inserting, extracting and removing nodes.
-- Forward and reverse iterators.
-- General manipulations like reversing and sorting.
-- Link names for the next and previous links (for doubly linked lists) are customizable.
-
-All facilities are efficient, well-debugged, and battle-tested.
-
-**All documentation is in the [wiki](https://github.com/uhop/list-toolkit/wiki).**
+**Full documentation: [wiki](https://github.com/uhop/list-toolkit/wiki).**
 
 ## Installation
 
@@ -58,9 +37,9 @@ npm install list-toolkit
 
 ## Introduction
 
-The full documentation is available in the project's [wiki](https://github.com/uhop/list-toolkit/wiki). Below is a cheat sheet of the API.
+See the [wiki](https://github.com/uhop/list-toolkit/wiki) for full documentation. Quick examples below.
 
-Value lists are containers for arbitrary values:
+Value lists wrap arbitrary values:
 
 ```js
 import ValueList from 'list-toolkit/value-list.js';
