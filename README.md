@@ -130,12 +130,12 @@ for (const node of people) {
 // let's extract all people from Jill to Jim
 const ji = people.extractRange({from: jill, to: jim});
 for (const node of people) console.log(node.name); // Jane, John
-for (const node of ji) console.log(node.name); // Jim, Jill
+for (const node of ji) console.log(node.name); // Jill, Jim
 
 // add them back:
 people.append(ji);
 for (const node of people.getReverseIterator()) {
-  console.log(node.name); // Jill, Jim, John, Jane
+  console.log(node.name); // Jim, Jill, John, Jane
 }
 ji.isEmpty === true;
 
