@@ -60,10 +60,10 @@
   "llms": "https://raw.githubusercontent.com/uhop/list-toolkit/master/llms.txt",
   "llmsFull": "https://raw.githubusercontent.com/uhop/list-toolkit/master/llms-full.txt",
   "devDependencies": {
-    "nano-benchmark": "^1.0.10",
+    "nano-benchmark": "^1.0.12",
     "prettier": "^3.8.1",
-    "tape-six": "^1.7.2",
-    "tape-six-proc": "^1.2.3",
+    "tape-six": "^1.7.11",
+    "tape-six-proc": "^1.2.6",
     "typescript": "^5.9.3"
   },
   "files": [
