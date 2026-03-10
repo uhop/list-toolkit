@@ -310,4 +310,28 @@ test('ExtList iterators', t => {
     for (const value of extList.getReverseNodeIterator({from: b, to: c})) array.push(value.x);
     t.deepEqual(array, [3, 2]);
   }
+
+  {
+    const array = [];
+    for (const ptr of extList.getPtrIterator()) array.push(ptr.node.x);
+    t.deepEqual(array, [1, 2, 3]);
+  }
+
+  {
+    const array = [];
+    for (const ptr of extList.getPtrIterator({from: b, to: c})) array.push(ptr.node.x);
+    t.deepEqual(array, [2, 3]);
+  }
+
+  {
+    const array = [];
+    for (const ptr of extList.getReversePtrIterator()) array.push(ptr.node.x);
+    t.deepEqual(array, [3, 2, 1]);
+  }
+
+  {
+    const array = [];
+    for (const ptr of extList.getReversePtrIterator({from: b, to: c})) array.push(ptr.node.x);
+    t.deepEqual(array, [3, 2]);
+  }
 });

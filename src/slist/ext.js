@@ -359,14 +359,14 @@ export class ExtSList extends ExtListBase {
    * @returns {Iterable} An iterable iterator of Ptrs.
    */
   getPtrIterator(ptrRange = {}) {
-    if (!ptrRange.from) ptrRange = Object.assign({from: this.makePtr()}, ptrRange);
+    if (!ptrRange.from) ptrRange = Object.assign({from: this.makePtr(this.head)}, ptrRange);
     ptrRange = this.normalizePtrRange(ptrRange);
     const {from: fromPtr, to} = ptrRange;
     return {
       [Symbol.iterator]: () => {
         let current = fromPtr.clone(),
           readyToStop = this.isEmpty;
-        const stop = to ? to[this.nextName] : this;
+        const stop = to ? to[this.nextName] : this.head;
         return normalizeIterator({
           next: () => {
             if (readyToStop && current.node === stop) return {done: true};

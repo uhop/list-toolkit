@@ -1,5 +1,6 @@
 import test from 'tape-six';
 import SList from 'list-toolkit/slist.js';
+import ExtSList from 'list-toolkit/ext-slist.js';
 import {pushValuesFront, appendValuesFront} from 'list-toolkit/list-utils.js';
 
 test('Elementary SList operations', t => {
@@ -256,6 +257,45 @@ test('SList.sort()', t => {
     Array.from(list).map(value => value.x),
     array.sort((a, b) => a - b)
   );
+});
+
+test('SList.fromPtrRange()', t => {
+  const a = {x: 1},
+    b = {x: 2},
+    c = {x: 3};
+  const list = SList.from([a, b, c]);
+
+  const fromPtr = list.frontPtr;
+  fromPtr.next();
+  const copy = SList.fromPtrRange({from: fromPtr, to: c});
+  t.deepEqual(
+    Array.from(copy).map(value => value.x),
+    [2, 3]
+  );
+
+  const empty = SList.fromPtrRange(null);
+  t.ok(empty.isEmpty);
+});
+
+test('SList.fromExtList()', t => {
+  const a = {x: 1},
+    b = {x: 2},
+    c = {x: 3};
+
+  const source = SList.from([a, b, c]);
+  const extList = new ExtSList(source.releaseRawList(), source);
+  t.ok(source.isEmpty);
+
+  const result = SList.fromExtList(extList);
+  t.ok(extList.isEmpty);
+  t.deepEqual(
+    Array.from(result).map(value => value.x),
+    [2, 3, 1]
+  );
+
+  const emptyExt = new ExtSList();
+  const emptyResult = SList.fromExtList(emptyExt);
+  t.ok(emptyResult.isEmpty);
 });
 
 test('SList.validateRange()', t => {

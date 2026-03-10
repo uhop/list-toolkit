@@ -470,7 +470,10 @@ export class SList extends HeadNode {
   static fromPtrRange(ptrRange, options) {
     const list = new SList(options);
     ptrRange = list.normalizePtrRange(ptrRange);
-    if (ptrRange) append(list, list, ptrRange);
+    if (ptrRange) {
+      append(list, list, {prevFrom: ptrRange.from.prevNode, to: ptrRange.to});
+      list.last = ptrRange.to;
+    }
     return list;
   }
 
@@ -487,7 +490,8 @@ export class SList extends HeadNode {
 
     const range = extList.range;
     if (range) {
-      append(list, list, range);
+      append(list, list, {prevFrom: range.to, to: range.to});
+      list.last = range.to;
       extList.clear();
     }
 

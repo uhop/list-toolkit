@@ -146,6 +146,30 @@ test('List iterators', t => {
     for (const value of list.getReverseIterator({from: b, to: b})) array.push(value.x);
     t.deepEqual(array, [2]);
   }
+
+  {
+    const array = [];
+    for (const ptr of list.getPtrIterator()) array.push(ptr.node.x);
+    t.deepEqual(array, [1, 2, 3]);
+  }
+
+  {
+    const array = [];
+    for (const ptr of list.getPtrIterator({from: a, to: b})) array.push(ptr.node.x);
+    t.deepEqual(array, [1, 2]);
+  }
+
+  {
+    const array = [];
+    for (const ptr of list.getReversePtrIterator()) array.push(ptr.node.x);
+    t.deepEqual(array, [3, 2, 1]);
+  }
+
+  {
+    const array = [];
+    for (const ptr of list.getReversePtrIterator({from: a, to: b})) array.push(ptr.node.x);
+    t.deepEqual(array, [2, 1]);
+  }
 });
 
 test('List helpers', t => {

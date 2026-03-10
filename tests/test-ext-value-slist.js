@@ -158,4 +158,18 @@ test('ExtValueSList iterators', t => {
     for (const node of extList.getNodeIterator({from: b, to: c})) array.push(node.value);
     t.deepEqual(array, [2, 3]);
   }
+
+  {
+    const array = [];
+    const b = extList.makePtr(),
+      c = b.clone().next();
+    for (const value of extList.getIterator({from: b, to: c})) array.push(value);
+    t.deepEqual(array, [2, 3]);
+  }
+
+  {
+    const array = [];
+    for (const value of extList.getValueIterator()) array.push(value);
+    t.deepEqual(array, [1, 2, 3]);
+  }
 });
