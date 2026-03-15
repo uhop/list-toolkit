@@ -127,6 +127,7 @@ BSD 3-Clause "New" or "Revised" License. See the LICENSE file for details.
 
 ## Release History
 
+- 2.3.2 _Updated dev dependencies._
 - 2.3.1 _Bugfixes. Improved TS typing tests. Updated docs. Updated dev dependencies._
 - 2.3.0 _Added TypeScript declarations for all modules. Added JSDoc. Removed CJS build. Bugfixes. Added missing methods._
 - 2.2.6 _Updated dev dependencies._
