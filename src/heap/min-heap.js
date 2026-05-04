@@ -1,5 +1,7 @@
 import HeapBase from './basics.js';
 
+const defaultLess = (a, b) => a < b;
+
 // the following functions are inlined:
 
 // const left = i => (i << 1) + 1;
