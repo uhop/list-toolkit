@@ -50,7 +50,7 @@ src/                      # All source code (ESM)
 ├── list-utils.js         # Utility functions: push/append values, find, remove
 ├── list-helpers.js       # Node/range normalization helpers
 ├── nt-utils.js           # Null-terminated list utilities (convert NT ↔ circular)
-└── meta-utils.js         # addAlias, addAliases, iterators, copyOptions
+└── meta-utils.js         # name-casing helpers, property descriptor builders/installers (addAlias/addAliases, addDescriptor, fromGetter/fromSetter/fromAccessors, addAccessor/addGetters, copyDescriptors), iterator helpers (mapIterator, filterIterator, augmentIterator, normalizeIterator), comparator adapters (lessFromCompare, compareFromLess, equalFromLess, reverseLess, reverseCompare), copyOptions
 # Every .js module has a co-located .d.ts file providing TypeScript declarations.
 tests/                    # Automated tests (tape-six framework)
 bench/                    # Benchmarks (nano-benchmark)
