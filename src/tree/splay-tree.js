@@ -91,10 +91,10 @@ export class SplayTree {
     return this.size;
   }
   getMin() {
-    return this.root.getMin();
+    return this.root && this.root.getMin();
   }
   getMax() {
-    return this.root.getMax();
+    return this.root && this.root.getMax();
   }
   find(value) {
     for (let z = this.root; z; ) {

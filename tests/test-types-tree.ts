@@ -24,11 +24,16 @@ test('SplayTree<T>: find/promote return SplayTreeNode<T> | null', t => {
   t.pass('compiles');
 });
 
-test('SplayTree<T>: getMin/getMax return SplayTreeNode<T>', t => {
+test('SplayTree<T>: getMin/getMax return SplayTreeNode<T> | null', t => {
   const tree = SplayTree.from<number>([10, 20, 30]);
-  const min: SplayTreeNode<number> = tree.getMin();
-  const max: SplayTreeNode<number> = tree.getMax();
-  const _val: number = min.value;
+  const min: SplayTreeNode<number> | null = tree.getMin();
+  const max: SplayTreeNode<number> | null = tree.getMax();
+  if (min) {
+    const _val: number = min.value;
+  }
+  if (max) {
+    const _val: number = max.value;
+  }
   t.pass('compiles');
 });
 

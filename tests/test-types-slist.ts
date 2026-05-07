@@ -72,11 +72,11 @@ test('SList<T>: Ptr mutation types', t => {
 test('SList<T>: append/move return types', t => {
   const list = SList.from<SNode>([{id: 1}]);
   const list2 = SList.from<SNode>([{id: 2}]);
-  const pA: Ptr<SNode> = list.append(list2);
+  const pA: Ptr<SNode> | SList<SNode> = list.append(list2);
   const list3 = SList.from<SNode>([{id: 3}]);
-  const pAF: Ptr<SNode> = list.appendFront(list3);
+  const pAF: Ptr<SNode> | SList<SNode> = list.appendFront(list3);
   const list4 = SList.from<SNode>([{id: 4}]);
-  const pAB: Ptr<SNode> = list.appendBack(list4);
+  const pAB: Ptr<SNode> | SList<SNode> = list.appendBack(list4);
   const pMF: Ptr<SNode> | SList<SNode> = list.moveToFront(list.frontPtr);
   const pMB: Ptr<SNode> | SList<SNode> = list.moveToBack(list.frontPtr);
   t.pass('compiles');

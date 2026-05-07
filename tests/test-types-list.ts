@@ -61,11 +61,11 @@ test('List<T>: Ptr types and navigation', t => {
 test('List<T>: append/move return types', t => {
   const list = List.from<DNode>([{x: 1}]);
   const list2 = List.from<DNode>([{x: 2}]);
-  const pA: Ptr<DNode> = list.append(list2);
+  const pA: Ptr<DNode> | List<DNode> = list.append(list2);
   const list3 = List.from<DNode>([{x: 3}]);
-  const pAF: Ptr<DNode> = list.appendFront(list3);
+  const pAF: Ptr<DNode> | List<DNode> = list.appendFront(list3);
   const list4 = List.from<DNode>([{x: 4}]);
-  const pAB: Ptr<DNode> = list.appendBack(list4);
+  const pAB: Ptr<DNode> | List<DNode> = list.appendBack(list4);
   const pMF: Ptr<DNode> = list.moveToFront(list.frontPtr);
   const pMB: Ptr<DNode> = list.moveToBack(list.frontPtr);
   t.pass('compiles');

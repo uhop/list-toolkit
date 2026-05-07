@@ -65,10 +65,12 @@ export class Queue<V = unknown> {
   [Symbol.iterator](): IterableIterator<V>;
 
   /**
-   * Iterate over values from back to front.
-   * @returns An iterable iterator.
+   * Iterate over values from back to front. Delegates to the underlying list's
+   * `getReverseIterator` if it has one (DLL-based lists do; SLL-based lists don't),
+   * otherwise returns `undefined`.
+   * @returns An iterable iterator, or `undefined` when the underlying list does not support reverse iteration.
    */
-  getReverseIterator(): IterableIterator<V>;
+  getReverseIterator(): IterableIterator<V> | undefined;
 }
 
 export default Queue;

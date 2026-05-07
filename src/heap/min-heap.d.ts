@@ -44,11 +44,12 @@ export class MinHeap<T = unknown> extends HeapBase<T> {
   pushPop(value: T): T;
 
   /**
-   * Pop the minimum then push a new value.
+   * Pop the minimum then push a new value. On an empty heap, sets index 0 to `value`
+   * and returns `undefined` (no element to "replace").
    * @param value - Value to push after popping.
-   * @returns The old minimum element.
+   * @returns The old minimum element, or `undefined` if the heap was empty.
    */
-  replaceTop(value: T): T;
+  replaceTop(value: T): T | undefined;
 
   /**
    * Check whether a value exists in the heap.
@@ -168,13 +169,14 @@ export class MinHeap<T = unknown> extends HeapBase<T> {
   static pushPop<T = unknown>(heapArray: T[], item: T, less?: (a: T, b: T) => boolean): T;
 
   /**
-   * Replace the top of a heap array.
+   * Replace the top of a heap array. On an empty array, sets index 0 to `item`
+   * and returns `undefined` (no element to "replace").
    * @param heapArray - Heap-ordered array.
    * @param item - Replacement value.
    * @param less - Ordering function.
-   * @returns The old top element.
+   * @returns The old top element, or `undefined` if the array was empty.
    */
-  static replaceTop<T = unknown>(heapArray: T[], item: T, less?: (a: T, b: T) => boolean): T;
+  static replaceTop<T = unknown>(heapArray: T[], item: T, less?: (a: T, b: T) => boolean): T | undefined;
 
   /**
    * Check whether a value exists in a heap array.

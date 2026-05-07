@@ -55,15 +55,15 @@ export class SplayTree<T = unknown> {
 
   /**
    * Find the node with the minimum value.
-   * @returns The minimum node.
+   * @returns The minimum node, or `null` if the tree is empty.
    */
-  getMin(): SplayTreeNode<T>;
+  getMin(): SplayTreeNode<T> | null;
 
   /**
    * Find the node with the maximum value.
-   * @returns The maximum node.
+   * @returns The maximum node, or `null` if the tree is empty.
    */
-  getMax(): SplayTreeNode<T>;
+  getMax(): SplayTreeNode<T> | null;
 
   /**
    * Find a node by value.

@@ -87,19 +87,19 @@ export class List<T extends object = object> extends HeadNode {
   /**
    * Move all nodes from another list to the front.
    * @param list - Compatible list to consume.
-   * @returns A Ptr to the new front.
+   * @returns A Ptr to the new front, or this list itself when `list` was empty (no-op chainable).
    */
-  appendFront(list: HeadNode): Ptr<T>;
+  appendFront(list: HeadNode): Ptr<T> | this;
 
   /**
    * Move all nodes from another list to the back.
    * @param list - Compatible list to consume.
-   * @returns A Ptr to the first appended node.
+   * @returns A Ptr to the first appended node, or this list itself when `list` was empty (no-op chainable).
    */
-  appendBack(list: HeadNode): Ptr<T>;
+  appendBack(list: HeadNode): Ptr<T> | this;
 
   /** Alias for {@link appendBack}. */
-  append(list: HeadNode): Ptr<T>;
+  append(list: HeadNode): Ptr<T> | this;
 
   /**
    * Move a node to the front of the list.

@@ -78,19 +78,19 @@ export class SList<T extends object = object> extends HeadNode {
   /**
    * Move all nodes from another list to the front.
    * @param list - Compatible list to consume.
-   * @returns A Ptr to the new front.
+   * @returns A Ptr to the new front, or this list itself when `list` was empty (no-op chainable).
    */
-  appendFront(list: HeadNode): Ptr<T>;
+  appendFront(list: HeadNode): Ptr<T> | this;
 
   /**
    * Move all nodes from another list to the back.
    * @param list - Compatible list to consume.
-   * @returns A Ptr to the first appended node.
+   * @returns A Ptr to the first appended node, or this list itself when `list` was empty (no-op chainable).
    */
-  appendBack(list: HeadNode): Ptr<T>;
+  appendBack(list: HeadNode): Ptr<T> | this;
 
   /** Alias for {@link appendBack}. */
-  append(list: HeadNode): Ptr<T>;
+  append(list: HeadNode): Ptr<T> | this;
 
   /**
    * Move a pointed-to node to the front.
@@ -235,6 +235,15 @@ export class SList<T extends object = object> extends HeadNode {
    * @returns A new SList.
    */
   static fromPtrRange<T extends object = object>(ptrRange: SllPtrRange<T>, options?: SllOptions): SList<T>;
+
+  /**
+   * Build an SList from a node range. Requires `range.list` (SLL has no back pointer
+   * to derive `prevFrom` from `range.from`); for Ptr-bearing ranges prefer `fromPtrRange`.
+   * @param range - Node range to copy. Must include `list` for prev-walking.
+   * @param options - Link property names.
+   * @returns A new SList.
+   */
+  static fromRange<T extends object = object>(range: SllRange<T> | null, options?: SllOptions): SList<T>;
 
   /**
    * Build an SList from an external list, consuming it.

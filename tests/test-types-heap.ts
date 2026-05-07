@@ -19,7 +19,7 @@ test('MinHeap<T>: push/pop/pushPop/replaceTop return types', t => {
   const popped: number | undefined = heap.pop();
   heap.push(1).push(2).push(3);
   const pp: number = heap.pushPop(5);
-  const rt: number = heap.replaceTop(0);
+  const rt: number | undefined = heap.replaceTop(0);
   t.pass('compiles');
 });
 

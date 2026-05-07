@@ -282,7 +282,7 @@ export class MinHeap extends HeapBase {
   }
 
   static removeByIndex(heapArray, index, less = MinHeap.defaults.less) {
-    if (index < 0 || index >= heapArray.length) return this;
+    if (index < 0 || index >= heapArray.length) return heapArray;
     const last = heapArray.length - 1;
     if (index !== last) {
       const item = heapArray[index],
@@ -299,7 +299,7 @@ export class MinHeap extends HeapBase {
   }
 
   static replaceByIndex(heapArray, index, newItem, less = MinHeap.defaults.less) {
-    if (index < 0 || index >= heapArray.length) return this;
+    if (index < 0 || index >= heapArray.length) return heapArray;
     const item = heapArray[index];
     heapArray[index] = newItem;
     return MinHeap.updateByIndex(heapArray, index, less(newItem, item), less);
@@ -311,7 +311,7 @@ export class MinHeap extends HeapBase {
   }
 
   static updateByIndex(heapArray, index, isDecreased, less = MinHeap.defaults.less) {
-    if (index < 0 || index >= heapArray.length) return this;
+    if (index < 0 || index >= heapArray.length) return heapArray;
     return (isDecreased ? up : down)(heapArray, index, less);
   }
 

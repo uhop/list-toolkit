@@ -333,6 +333,27 @@ export class SList extends HeadNode {
     return list;
   }
 
+  static fromRange(range, options) {
+    const list = new SList(options);
+    if (!range) return list;
+
+    range = list.normalizeRange(range);
+    if (!range.from || !range.to) throw new Error('"range" should be fully specified');
+
+    const source = range.list;
+    if (!source) throw new Error('"range.list" is required for SList.fromRange');
+
+    let prevFrom = source;
+    while (prevFrom[list.nextName] !== range.from) {
+      prevFrom = prevFrom[list.nextName];
+      if (prevFrom === source) throw new Error('"range.from" not found in "range.list"');
+    }
+
+    append(list, list, {prevFrom, to: range.to});
+    list.last = range.to;
+    return list;
+  }
+
   static fromExtList(extList) {
     if (!(extList instanceof ExtListBase)) throw new Error('Not a circular list');
 
