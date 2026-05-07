@@ -8,7 +8,7 @@ For detailed usage docs and API references see the [wiki](https://github.com/uho
 ## Setup
 
 ```bash
-git clone --recursive git@github.com:uhop/list-toolkit.git
+git clone --recursive https://github.com/uhop/list-toolkit.git
 cd list-toolkit
 npm install
 ```

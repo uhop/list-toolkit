@@ -52,6 +52,9 @@
   "author": "Eugene Lazutkin <eugene.lazutkin@gmail.com> (http://www.lazutkin.com/)",
   "funding": "https://github.com/sponsors/uhop",
   "license": "BSD-3-Clause",
+  "engines": {
+    "node": ">=22"
+  },
   "bugs": {
     "url": "https://github.com/uhop/list-toolkit/issues"
   },
