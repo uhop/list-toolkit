@@ -1,3 +1,5 @@
+// @ts-self-types="./slist.d.ts"
+
 export * from './slist/core.js';
 import SList from './slist/core.js';
 

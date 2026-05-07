@@ -43,21 +43,20 @@ Run through this checklist before publishing a new version.
     - `wiki/Release-notes.md` — the canonical longer-form history. A paragraph
       per substantive release with **bold** feature names; cover internal
       changes, calibration notes, related wiki / repo updates, and credits.
-      Per-release date in the heading (use `git for-each-ref --sort=-creatordate
-      --format='%(refname:short) %(creatordate:short)' refs/tags`).
+      Per-release date in the heading (use `git for-each-ref --sort=-creatordate --format='%(refname:short) %(creatordate:short)' refs/tags`).
       The wiki is a git submodule — it gets its own commit + parent-pointer bump.
-    Don't update only the README — readers who follow the "for more info"
-    link land on a stale page if you do.
+      Don't update only the README — readers who follow the "for more info"
+      link land on a stale page if you do.
 12. **Cross-runtime test sweep:**
     // turbo
     - `npm test` (Node, parallel)
-    // turbo
+      // turbo
     - `npm run test:bun` (Bun)
-    // turbo
+      // turbo
     - `npm run test:deno` (Deno)
-    // turbo
+      // turbo
     - `npm run test:proc` (Node, subprocess runner)
-    // turbo
+      // turbo
     - `npm run test:seq` (Node, sequential)
 13. Run TypeScript typing tests: `npm run ts-test`
     // turbo

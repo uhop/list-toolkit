@@ -1,3 +1,5 @@
+// @ts-self-types="./list.d.ts"
+
 export * from './list/core.js';
 import List from './list/core.js';
 
