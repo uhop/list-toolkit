@@ -69,7 +69,7 @@ export const toKebabCase = names => names.map(name => name.toLowerCase()).join('
 export const fromKebabCase = name => name.split('-');
 
 /** @type {PropertyDescriptor} Default property descriptor: configurable and enumerable. */
-export const defaultDescriptor = {configurable: true, enumerable: true};
+export const defaultDescriptor = {configurable: true, enumerable: false};
 
 /**
  * Create a property descriptor from a getter function.
@@ -119,7 +119,7 @@ export const fromAccessors = (getter, setter, defaultDescriptor = defaultDescrip
  */
 export const addDescriptor = (target, names, descriptor, force) => {
   if (!descriptor) return target;
-  if (typeof names == 'string') names = names.trim().split(/\s*,\s*/);
+  if (typeof names == 'string') names = names.split(',').map(s => s.trim());
   if (!Array.isArray(names)) names = [names];
   for (const name of names) {
     if (!force && Object.hasOwn(target, name)) continue;
@@ -184,7 +184,7 @@ export const addGetters = (target, dict, force) => {
 export const copyDescriptors = (target, source, names, force) => {
   switch (typeof names) {
     case 'string':
-      names = names.trim().split(/\s*,\s*/);
+      names = names.split(',').map(s => s.trim());
       break;
     case 'symbol':
       names = [names];
