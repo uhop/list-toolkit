@@ -613,49 +613,19 @@ import {makeListFromNTList, makeNTListFromList} from 'list-toolkit/nt-utils.js';
 
 ## Module: meta-utils (`list-toolkit/meta-utils.js`)
 
-Internal utilities used throughout the library. Also useful for extending it. Vendored copy of `meta-toolkit` — see project conventions.
+Internal utilities used throughout the library. Also useful for extending it.
 
 ```js
-import {addAlias, addAliases, copyOptions, lessFromCompare} from 'list-toolkit/meta-utils.js';
+import {addAlias, addAliases, copyOptions} from 'list-toolkit/meta-utils.js';
 ```
 
-### Property descriptor helpers
-
-- `defaultDescriptor` — `{configurable: true, enumerable: false}`. Default base for descriptor builders.
-- `fromGetter(getter, base?)` — build a getter-only property descriptor.
-- `fromSetter(setter, base?)` — build a setter-only property descriptor.
-- `fromAccessors(getter, setter, base?)` — build a getter+setter property descriptor.
-- `addDescriptor(target, names, descriptor, force?)` — define a property descriptor on `target` for one or more names (string `'a, b'`, array, or single key/symbol). Skips owned names unless `force`.
-- `addDescriptors(target, dict, force?)` — apply many descriptors at once.
-- `addAccessor(target, names, getter, setter, force?)` — convenience wrapper around `addDescriptor` + `fromAccessors`.
-- `addGetters(target, dict, force?)` — install getter-only accessors from a dict of `name → getter`.
-- `addAlias(object, name, aliases, force?)` — create method aliases (preserves source descriptor).
+- `addAlias(object, name, aliases, force?)` — create method aliases.
 - `addAliases(object, dict, force?)` — create multiple aliases. Dict: `{methodName: 'alias1, alias2'}`.
-- `copyDescriptors(target, source, names, force?)` — copy property descriptors between objects.
-
-### Iterator helpers
-
-- `augmentIterator(iterator)` — ensure `[Symbol.iterator]` is present (mutates).
-- `normalizeIterator(iterator)` — return an iterable iterator (uses `Iterator.from` if available, otherwise `augmentIterator`).
+- `copyOptions(target, pattern, ...sources)` — copy known keys from sources to target.
+- `copyDescriptors(target, source, names, force?)` — copy property descriptors.
 - `mapIterator(iterator, callbackFn)` — map over an iterator.
-- `filterIterator(iterator, callbackFn)` — filter an iterator by predicate.
-
-### Comparator adapters
-
-- `compareFromLess(lessFn)` — adapt a less function to a compare function returning `-1` / `0` / `1`.
-- `lessFromCompare(compareFn)` — adapt a compare function to a less function.
-- `equalFromLess(lessFn)` — derive an equal function from a less function.
-- `reverseLess(lessFn)` — flip argument order of a less function.
-- `reverseCompare(compareFn)` — flip argument order of a compare function.
-
-### Options helpers
-
-- `copyOptions(target, pattern, ...sources)` — copy known keys (those defined on `pattern`, ignoring `undefined` values) from sources to target.
-- `canHaveProps` — `{object: 1, function: 1}`. Lookup table of `typeof` results that can carry properties.
-
-### Name-casing utilities
-
-`capitalize`, `toCamelCase`, `fromCamelCase`, `toPascalCase`, `fromPascalCase`, `toAllCapsSnakeCase`, `toSnakeCase`, `fromSnakeCase`, `toKebabCase`, `fromKebabCase`.
+- `normalizeIterator(iterator)` — ensure `[Symbol.iterator]` is present.
+- Name-casing utilities: `capitalize`, `toCamelCase`, `fromCamelCase`, `toPascalCase`, `toSnakeCase`, `toKebabCase`, etc.
 
 ---
 

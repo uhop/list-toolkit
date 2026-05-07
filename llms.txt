@@ -82,7 +82,7 @@ All heaps support `less` or `compare` for ordering. Common API: `push(value)`, `
 
 - **list-utils** (`list-toolkit/list-utils.js`) — push/append values, find/remove nodes by condition, validation.
 - **nt-utils** (`list-toolkit/nt-utils.js`) — convert between null-terminated and circular lists.
-- **meta-utils** (`list-toolkit/meta-utils.js`) — name-casing helpers; descriptor builders/installers (`addAlias`, `addAliases`, `addDescriptor`, `fromGetter`/`fromSetter`/`fromAccessors`, `addAccessor`, `addGetters`, `copyDescriptors`); iterator helpers (`mapIterator`, `filterIterator`, `augmentIterator`, `normalizeIterator`); comparator adapters (`lessFromCompare`, `compareFromLess`, `equalFromLess`, `reverseLess`, `reverseCompare`); `copyOptions`.
+- **meta-utils** (`list-toolkit/meta-utils.js`) — `addAlias`, `addAliases`, iterator helpers, `copyOptions`.
 
 ## Key concepts
 
