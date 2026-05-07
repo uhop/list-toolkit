@@ -1,4 +1,5 @@
 import HeapBase from './basics.js';
+import {lessFromCompare} from '../meta-utils.js';
 
 const defaultLess = (a, b) => a < b;
 
@@ -44,7 +45,7 @@ export class MinHeap extends HeapBase {
   constructor(options, ...args) {
     super(options);
     if (typeof this.compare == 'function') {
-      this.less = (a, b) => this.compare(a, b) < 0;
+      this.less = lessFromCompare(this.compare);
       this.equal = (a, b) => !this.compare(a, b);
     }
     this.array = [];

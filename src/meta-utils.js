@@ -122,7 +122,7 @@ export const addDescriptor = (target, names, descriptor, force) => {
   if (typeof names == 'string') names = names.trim().split(/\s*,\s*/);
   if (!Array.isArray(names)) names = [names];
   for (const name of names) {
-    if (!force && target.hasOwnProperty(name)) continue;
+    if (!force && Object.hasOwn(target, name)) continue;
     Object.defineProperty(target, name, descriptor);
   }
   return target;
@@ -247,7 +247,7 @@ export const augmentIterator = iterator => {
  */
 let normalizeIterator = augmentIterator;
 if (typeof globalThis.Iterator?.from == 'function') {
-  normalizeIterator = iterator => Iterator.from(iterator);
+  normalizeIterator = iterator => globalThis.Iterator.from(iterator);
 }
 export {normalizeIterator};
 
@@ -274,6 +274,66 @@ export const mapIterator = (iterator, callbackFn) => {
   };
 };
 
+/**
+ * Filter values from an iterable, producing a new iterable.
+ * @param {Iterable} iterator - Source iterable.
+ * @param {Function} callbackFn - Predicate receiving (value, index).
+ * @returns {Iterable} An iterable of values for which callbackFn returns true.
+ */
+export const filterIterator = (iterator, callbackFn) => {
+  if (typeof iterator?.filter == 'function') return iterator.filter(callbackFn);
+  return {
+    [Symbol.iterator]: () => {
+      const iterable = iterator[Symbol.iterator]();
+      let index = 0;
+      return normalizeIterator({
+        next: () => {
+          for (;;) {
+            const result = iterable.next();
+            if (result.done) return result;
+            if (callbackFn(result.value, index++)) return result;
+          }
+        }
+      });
+    }
+  };
+};
+
+/**
+ * Adapt a less function to a compare function.
+ * @param {Function} lessFn - Returns true if first argument is less than the second.
+ * @returns {Function} A function that returns -1, 0, or 1.
+ */
+export const compareFromLess = lessFn => (a, b) => (lessFn(a, b) ? -1 : lessFn(b, a) ? 1 : 0);
+
+/**
+ * Adapt a compare function to a less function.
+ * @param {Function} compareFn - Returns negative, zero, or positive.
+ * @returns {Function} A function that returns true if first argument is less than the second.
+ */
+export const lessFromCompare = compareFn => (a, b) => compareFn(a, b) < 0;
+
+/**
+ * Adapt a less function to an equal function.
+ * @param {Function} lessFn - Returns true if first argument is less than the second.
+ * @returns {Function} A function that returns true if the arguments are equal.
+ */
+export const equalFromLess = lessFn => (a, b) => Boolean(lessFn(a, b)) === Boolean(lessFn(b, a));
+
+/**
+ * Reverse a less function.
+ * @param {Function} lessFn - Less function to reverse.
+ * @returns {Function} A function with reversed argument order.
+ */
+export const reverseLess = lessFn => (a, b) => lessFn(b, a);
+
+/**
+ * Reverse a compare function.
+ * @param {Function} compareFn - Compare function to reverse.
+ * @returns {Function} A function with reversed argument order.
+ */
+export const reverseCompare = compareFn => (a, b) => compareFn(b, a);
+
 /** @type {Object<string, number>} Map of `typeof` results that can have properties set on them. */
 export const canHaveProps = {object: 1, function: 1};
 
@@ -288,6 +348,7 @@ export const copyOptions = (target, pattern, ...sources) => {
   target = target || {};
   const keys = Object.keys(pattern);
   for (const key of keys) {
+    if (pattern[key] === undefined) continue;
     target[key] = pattern[key];
   }
   for (const source of sources) {

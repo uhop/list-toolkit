@@ -199,6 +199,49 @@ export function normalizeIterator<T>(iterator: Iterator<T>): IterableIterator<T>
  */
 export function mapIterator<T, U>(iterator: Iterable<T>, callbackFn: (value: T, index: number) => U): Iterable<U>;
 
+/**
+ * Filter values from an iterable, producing a new iterable.
+ * @param iterator - Source iterable.
+ * @param callbackFn - Predicate receiving value and index.
+ * @returns An iterable of values for which `callbackFn` returns true.
+ */
+export function filterIterator<T>(iterator: Iterable<T>, callbackFn: (value: T, index: number) => boolean): Iterable<T>;
+
+/**
+ * Adapt a less function to a compare function.
+ * @param lessFn - Returns `true` if `a` should precede `b`.
+ * @returns A function that returns -1, 0, or 1.
+ */
+export function compareFromLess<T>(lessFn: (a: T, b: T) => boolean): (a: T, b: T) => number;
+
+/**
+ * Adapt a compare function to a less function.
+ * @param compareFn - Returns negative, zero, or positive.
+ * @returns A function that returns true if `a` should precede `b`.
+ */
+export function lessFromCompare<T>(compareFn: (a: T, b: T) => number): (a: T, b: T) => boolean;
+
+/**
+ * Adapt a less function to an equal function.
+ * @param lessFn - Returns `true` if `a` should precede `b`.
+ * @returns A function that returns true if `a` and `b` are equal.
+ */
+export function equalFromLess<T>(lessFn: (a: T, b: T) => boolean): (a: T, b: T) => boolean;
+
+/**
+ * Reverse a less function.
+ * @param lessFn - Less function to reverse.
+ * @returns A function with reversed argument order.
+ */
+export function reverseLess<T>(lessFn: (a: T, b: T) => boolean): (a: T, b: T) => boolean;
+
+/**
+ * Reverse a compare function.
+ * @param compareFn - Compare function to reverse.
+ * @returns A function with reversed argument order.
+ */
+export function reverseCompare<T>(compareFn: (a: T, b: T) => number): (a: T, b: T) => number;
+
 /** Map of `typeof` results that can have properties set on them. */
 export const canHaveProps: Record<string, number>;
 

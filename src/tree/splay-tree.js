@@ -1,4 +1,4 @@
-import {copyOptions} from '../meta-utils.js';
+import {copyOptions, lessFromCompare} from '../meta-utils.js';
 
 const defaultLess = (a, b) => a < b;
 
@@ -86,7 +86,7 @@ export class SplayTree {
   constructor(options) {
     copyOptions(this, SplayTree.defaults, options);
     if (typeof this.compare == 'function') {
-      this.less = (a, b) => this.compare(a, b) < 0;
+      this.less = lessFromCompare(this.compare);
       this.find = this.findWithCompare;
       this.insert = this.insertWithCompare;
       this.splitMaxTree = this.splitMaxTreeWithCompare;
