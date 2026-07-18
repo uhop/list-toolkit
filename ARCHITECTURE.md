@@ -52,6 +52,7 @@ src/                      # All source code (ESM)
 ├── deque.js              # Deque — double-ended adapter wrapping a ValueList
 ├── ring-buffer.js        # RingBuffer — array-backed deque on a circular buffer
 ├── skip-list.js          # SkipList — probabilistic ordered container
+├── timer-wheel.js        # TimerWheel — hashed timing wheel (logical time)
 ├── list-utils.js         # Utility functions: push/append values, find, remove
 ├── list-helpers.js       # Node/range normalization helpers
 ├── nt-utils.js           # Null-terminated list utilities (convert NT ↔ circular)
@@ -122,6 +123,10 @@ Self-adjusting binary search tree — frequently accessed elements move to the r
 
 Probabilistic ordered container — layered singly linked lanes over a doubly linked bottom lane. Expected O(log n) `insert`, `find`, `remove`, `floor`, `ceil`; ordered, reverse, and bounded-range iteration; O(1) `getMin`/`getMax`/`popFront`. Reads do not mutate the structure (contrast with `SplayTree`).
 
+### TimerWheel
+
+Hashed timing wheel (Varghese & Lauck) over per-slot node-based `List`s: O(1) `schedule`/`cancel`/`reschedule` by handle, O(1) amortized per timer per `tick`. Logical time — the caller drives the clock (`tick`/`advance`), keeping the structure runtime-agnostic (no `setTimeout`/`Date`).
+
 ## Module dependency graph (simplified)
 
 ```
@@ -153,6 +158,8 @@ heap/basics.js ← heap/min-heap.js
                ← heap/pairing-heap.js
 
 skip-list.js ← meta-utils.js only (self-contained)
+
+timer-wheel.js ← List (per-slot storage) + list/basics.js (raw splice/pop)
 
 meta-utils.js ← (used by most modules for aliases and iterators)
 ```

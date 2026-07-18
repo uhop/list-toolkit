@@ -810,6 +810,53 @@ If `compare` is provided, `less` is derived. Default `less`: `(a, b) => a < b`. 
 
 ---
 
+## Module: TimerWheel (`list-toolkit/timer-wheel.js`)
+
+Hashed timing wheel (Varghese & Lauck): O(1) `schedule`/`cancel`/`reschedule`, O(1) amortized per timer per tick. Logical time — the caller drives the clock (`tick`/`advance`) from any time source; the wheel never touches `setTimeout` or `Date`.
+
+```js
+import TimerWheel from 'list-toolkit/timer-wheel.js';
+
+const wheel = new TimerWheel({slots: 1024});
+const handle = wheel.schedule(task, 150); // due in 150 ticks
+wheel.reschedule(handle, 42);
+wheel.cancel(handle);
+setInterval(() => {
+  for (const task of wheel.tick()) task.run();
+}, 10); // 1 tick = 10ms resolution
+```
+
+### Constructor
+
+```js
+new TimerWheel({slots = 256} = {})
+```
+
+`slots` is rounded up to a power of two; delays longer than `slots` are handled with revolution counting.
+
+### Properties
+
+- `isEmpty` — true if no timers are pending.
+- `size` — number of pending timers.
+- `position` — current slot position.
+- `currentTick` — ticks processed since construction.
+
+### Methods
+
+- `schedule(value, delay)` — schedule a payload after `delay` ticks (clamped to ≥ 1). Returns the timer handle. O(1).
+- `isScheduled(handle)` — true when pending. O(1).
+- `cancel(handle)` — cancel a pending timer; returns whether it was pending. O(1).
+- `reschedule(handle, delay)` — move a timer (also revives a fired/cancelled handle). O(1).
+- `remainingTicks(handle)` — ticks until due, or undefined when not scheduled. O(1).
+- `tick()` — advance one tick; returns payloads that came due (same-tick timers fire in scheduling order).
+- `advance(ticks)` — advance several ticks; returns due payloads in firing order.
+- `clear()` — cancel everything.
+- `[Symbol.iterator]()` — pending payloads in wheel-slot order (not time order).
+
+Delays quantize to whole ticks — pick slot count and tick duration for the needed resolution/horizon. Handles are owned by the wheel; entry properties (`slot`, `rounds`, `next`, `prev`) are wheel bookkeeping. Prefer `IndexedHeap` when priorities are exact arbitrary values or nothing drives a tick.
+
+---
+
 ## Module: list-utils (`list-toolkit/list-utils.js`)
 
 Utility functions for working with lists.

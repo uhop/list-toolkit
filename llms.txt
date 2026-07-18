@@ -86,6 +86,10 @@ All heaps support `less` or `compare` for ordering. Common API: `push(value)`, `
 
 - **SkipList** (`list-toolkit/skip-list.js`) — probabilistic ordered container, expected O(log n) operations, reads don't mutate. Methods: `insert`, `find`, `has`, `remove`, `floor`, `ceil`, `getMin`/`getMax`, `popFront`, ordered/reverse/range iteration.
 
+### Timer wheel
+
+- **TimerWheel** (`list-toolkit/timer-wheel.js`) — hashed timing wheel, logical time (caller drives the clock). Methods: `schedule(value, delay)` → handle, `cancel(handle)`, `reschedule(handle, delay)`, `isScheduled`, `remainingTicks`, `tick()` → due values, `advance(n)`, `clear`. All scheduling ops O(1).
+
 ### Utilities
 
 - **list-utils** (`list-toolkit/list-utils.js`) — push/append values, find/remove nodes by condition, validation.

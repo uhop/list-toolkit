@@ -16,6 +16,7 @@ Data structures included:
 - **Ring buffer** — array-backed deque on a circular buffer: fastest raw throughput, O(1) random access, optional keep-last-N bounded mode.
 - **Splay tree** — self-adjusting binary search tree.
 - **Skip list** — probabilistic ordered container: expected O(log n) search/insert/remove, floor/ceil, ordered and range iteration.
+- **Timer wheel** — hashed timing wheel: O(1) schedule/cancel/reschedule, logical-time ticks driven by your clock.
 - **Utilities** — push/append values, find, remove, validate, and more.
 
 Works with your existing linked lists — no wrapper objects required.
