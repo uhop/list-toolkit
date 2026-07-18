@@ -50,6 +50,7 @@ src/                      # All source code (ESM)
 ├── queue.js              # Queue — adapter class wrapping a ValueList
 ├── stack.js              # Stack — adapter class wrapping a ValueList
 ├── deque.js              # Deque — double-ended adapter wrapping a ValueList
+├── ring-buffer.js        # RingBuffer — array-backed deque on a circular buffer
 ├── skip-list.js          # SkipList — probabilistic ordered container
 ├── list-utils.js         # Utility functions: push/append values, find, remove
 ├── list-helpers.js       # Node/range normalization helpers

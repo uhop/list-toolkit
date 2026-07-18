@@ -665,6 +665,54 @@ Accepts a list instance (adopted) or a list class (instantiated). The list must 
 
 ---
 
+## Module: RingBuffer (`list-toolkit/ring-buffer.js`)
+
+Array-backed double-ended queue on a circular buffer — contiguous, O(1) at both ends, O(1) random access, no allocation at steady state. Shares the Deque API (drop-in replacements for each other); measured ~5× faster than Array/list-deque on steady-state queue churn.
+
+```js
+import RingBuffer from 'list-toolkit/ring-buffer.js';
+
+const queue = new RingBuffer();
+queue.push(1).push(2);
+queue.shift(); // 1 — Array-parity names without Array.shift's O(n)
+
+const lastFive = new RingBuffer({capacity: 5}); // bounded: keeps the last 5 pushed
+```
+
+### Constructor
+
+```js
+new RingBuffer({capacity?, initialCapacity?} = {})
+```
+
+`capacity` — hard bound: pushing onto a full buffer evicts from the opposite end (keep-last-N). Omit for a growable buffer. `initialCapacity` — allocation hint (default 16, rounded to a power of two).
+
+### Properties
+
+- `isEmpty` — true if empty.
+- `isFull` — true when a bounded buffer reached capacity.
+- `size` — number of elements.
+- `capacity` — the bound, or Infinity when growable.
+- `front` / `back` — first/last element value.
+
+### Methods
+
+- `peekFront()` / `peekBack()` — first/last value.
+- `at(index)` — O(1) random access; negative counts from the back (like `Array#at`).
+- `pushFront(value)` — add to front (evicts back when bounded+full). Aliases: `unshift`, `addFront`.
+- `pushBack(value)` — add to back (evicts front when bounded+full). Aliases: `push`, `add`, `addBack`.
+- `popFront()` — remove from front. Aliases: `shift`, `removeFront`.
+- `popBack()` — remove from back. Aliases: `pop`, `removeBack`.
+- `pushValuesFront(values)` / `pushValuesBack(values)` — bulk adds.
+- `rotate(n = 1)` — Python `deque.rotate` semantics; O(1) when the ring is physically full, else ≤ size/2 moves.
+- `clear()` — remove all (keeps the allocation, releases references).
+- `[Symbol.iterator]()` / `getReverseIterator()` — iterate front-to-back / back-to-front.
+- `RingBuffer.from(values, options?)` — create from an iterable.
+
+Popped slots are cleared, so the ring never pins dead references. Choose the list-backed `Deque` when stable node identity matters; choose `RingBuffer` for throughput.
+
+---
+
 ## Module: SplayTree (`list-toolkit/tree/splay-tree.js`)
 
 Self-adjusting binary search tree. Frequently accessed elements move to the root.

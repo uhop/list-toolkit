@@ -13,6 +13,7 @@ Data structures included:
 - **Heaps** — min heap, leftist heap, skew heap, pairing heap (O(1) push/merge, decrease-key by handle), indexed heap (O(1) membership, update/remove by handle).
 - **Caches** — LRU, LFU, FIFO, random eviction. Includes a decorator for functions, methods, and getters.
 - **Queue, Stack, and Deque** — list-backed adapters; the deque adds O(1) both-end operations and `rotate()`.
+- **Ring buffer** — array-backed deque on a circular buffer: fastest raw throughput, O(1) random access, optional keep-last-N bounded mode.
 - **Splay tree** — self-adjusting binary search tree.
 - **Skip list** — probabilistic ordered container: expected O(log n) search/insert/remove, floor/ceil, ordered and range iteration.
 - **Utilities** — push/append values, find, remove, validate, and more.

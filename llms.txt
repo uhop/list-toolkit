@@ -76,6 +76,7 @@ All heaps support `less` or `compare` for ordering. Common API: `push(value)`, `
 - **Queue** (`list-toolkit/queue.js`) — FIFO queue adapter. Methods: `add`/`push`/`enqueue`, `remove`/`pop`/`dequeue`, `peek`, `top`, `clear`.
 - **Stack** (`list-toolkit/stack.js`) — LIFO stack adapter. Methods: `push`, `pop`, `peek`, `top`, `clear`.
 - **Deque** (`list-toolkit/deque.js`) — double-ended queue adapter. Methods: `pushFront`/`unshift`, `pushBack`/`push`, `popFront`/`shift`, `popBack`/`pop`, `peekFront`/`peekBack`, `rotate(n)`, `clear`. O(1) at both ends.
+- **RingBuffer** (`list-toolkit/ring-buffer.js`) — array-backed deque on a circular buffer, same API as Deque plus `at(index)` (O(1) random access) and optional `{capacity}` bounded keep-last-N mode. Fastest queue/deque for raw throughput.
 
 ### Trees
 
