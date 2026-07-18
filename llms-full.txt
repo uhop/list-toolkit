@@ -297,8 +297,11 @@ new CacheLRU(capacity = 10)
 
 - `has(key)` — check if key exists.
 - `find(key)` — get value by key (marks as recently used). Alias: `get`.
+- `peek(key)` — get value by key **without side effects** (no promotion/counting; all policies).
 - `register(key, value)` — add or update entry. Aliases: `add`, `set`.
 - `remove(key)` — remove entry. Alias: `delete`.
+- `evict()` — evict one entry per the cache's policy.
+- `setCapacity(capacity)` — change capacity, evicting down until the cache fits.
 - `clear()` — remove all entries.
 - `[Symbol.iterator]()` — iterate over entries.
 - `getReverseIterator()` — reverse iterator.
@@ -331,6 +334,28 @@ Random eviction cache. Same API as `CacheLRU`.
 
 ```js
 import {CacheRandom} from 'list-toolkit/cache/cache-random.js';
+```
+
+---
+
+## Module: CacheSLRU (`list-toolkit/cache/cache-slru.js`)
+
+Segmented LRU — scan-resistant. New entries land in a probationary segment; a hit promotes into the protected segment (protected overflow demotes its LRU back to probation). Eviction takes the probationary LRU first, so one-shot scans never displace proven-hot entries. Same API as `CacheLRU` plus `protectedCapacity`/`protectedSize` properties.
+
+```js
+import CacheSLRU from 'list-toolkit/cache/cache-slru.js';
+const cache = new CacheSLRU(100, 80); // capacity, protected-segment capacity (default 80%)
+```
+
+---
+
+## Module: CacheClock (`list-toolkit/cache/cache-clock.js`)
+
+CLOCK (second chance) — reads only set a reference bit (cheapest read path, no list bookkeeping); on eviction a hand sweeps the ring, sparing entries referenced since its last pass. Approximates LRU at FIFO cost. Same API as `CacheLRU`.
+
+```js
+import CacheClock from 'list-toolkit/cache/cache-clock.js';
+const cache = new CacheClock(100);
 ```
 
 ---

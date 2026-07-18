@@ -20,6 +20,14 @@ export class CacheFIFO extends CacheLRU {
     node.value = {key, value};
     return node;
   }
+  evict() {
+    if (!this.list.isEmpty) {
+      const node = this.list.front;
+      this.dict.delete(node.value.key);
+      this.list.removeNode(node);
+    }
+    return this;
+  }
 }
 
 export default CacheFIFO;

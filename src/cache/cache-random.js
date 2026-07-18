@@ -40,6 +40,16 @@ export class CacheRandom extends CacheLRU {
 
     return node;
   }
+  evict() {
+    if (this.heap.length) {
+      const index = Math.floor(this.heap.length * Math.random()),
+        node = this.heap.array[index];
+      this.dict.delete(node.value.key);
+      this.list.removeNode(node);
+      this.heap.removeByIndex(index);
+    }
+    return this;
+  }
   remove(key) {
     const node = this.dict.get(key);
     if (node) {

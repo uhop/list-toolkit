@@ -11,7 +11,7 @@ Data structures included:
 - **Linked lists** — doubly and singly linked, circular. Node-based (link properties on your objects) or value-based (wraps values in nodes). Hosted (sentinel head) or headless (external pointer).
 - **NT list converters** — convert null-terminated lists to/from circular lists in place.
 - **Heaps** — min heap, leftist heap, skew heap, pairing heap (O(1) push/merge, decrease-key by handle), indexed heap (O(1) membership, update/remove by handle).
-- **Caches** — LRU, LFU, FIFO, random eviction. Includes a decorator for functions, methods, and getters.
+- **Caches** — LRU, LFU, FIFO, random, segmented LRU (scan-resistant), CLOCK (second chance). Includes a decorator for functions, methods, and getters.
 - **Queue, Stack, and Deque** — list-backed adapters; the deque adds O(1) both-end operations and `rotate()`.
 - **Ring buffer** — array-backed deque on a circular buffer: fastest raw throughput, O(1) random access, optional keep-last-N bounded mode.
 - **Splay tree** — self-adjusting binary search tree.

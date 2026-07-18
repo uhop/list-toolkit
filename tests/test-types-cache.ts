@@ -4,6 +4,8 @@ import {CacheLRU} from 'list-toolkit/cache/cache-lru.js';
 import {CacheFIFO} from 'list-toolkit/cache/cache-fifo.js';
 import {CacheLFU} from 'list-toolkit/cache/cache-lfu.js';
 import {CacheRandom} from 'list-toolkit/cache/cache-random.js';
+import {CacheSLRU} from 'list-toolkit/cache/cache-slru.js';
+import {CacheClock} from 'list-toolkit/cache/cache-clock.js';
 
 test('CacheLRU<K,V>: constructor and basic property types', t => {
   const cache = new CacheLRU<string, number>(5);
@@ -69,5 +71,28 @@ test('Cache default export is CacheLRU', t => {
   const cache = new Cache<string, number>(3);
   const _self: Cache<string, number> = cache.set('x', 42);
   const val: number | undefined = cache.get('x');
+  t.pass('compiles');
+});
+
+test('peek/evict/setCapacity types', t => {
+  const cache = new CacheLRU<string, number>(5);
+  const _peeked: number | undefined = cache.peek('a');
+  const _self: CacheLRU<string, number> = cache.evict().setCapacity(3);
+  t.pass('compiles');
+});
+
+test('CacheSLRU<K,V>: types', t => {
+  const cache = new CacheSLRU<string, number>(10, 8);
+  const _self: CacheSLRU<string, number> = cache.set('a', 1);
+  const _val: number | undefined = cache.find('a');
+  const _protectedCapacity: number = cache.protectedCapacity;
+  const _protectedSize: number = cache.protectedSize;
+  t.pass('compiles');
+});
+
+test('CacheClock<K,V>: types', t => {
+  const cache = new CacheClock<string, number>(10);
+  const _self: CacheClock<string, number> = cache.set('a', 1).evict();
+  const _val: number | undefined = cache.peek('a');
   t.pass('compiles');
 });

@@ -27,6 +27,8 @@ src/                      # All source code (ESM)
 │   ├── cache-fifo.js     # CacheFIFO — first in first out eviction
 │   ├── cache-lfu.js      # CacheLFU — least frequently used eviction
 │   ├── cache-random.js   # CacheRandom — random eviction
+│   ├── cache-slru.js     # CacheSLRU — segmented LRU (scan-resistant)
+│   ├── cache-clock.js    # CacheClock — CLOCK (second chance) eviction
 │   └── decorator.js      # Cache decorator for functions/methods/getters
 ├── heap/                 # Heap (priority queue) implementations
 │   ├── basics.js         # HeapBase — shared defaults (less, equal, compare)
@@ -102,8 +104,10 @@ All caches share a common API and are built on `ValueList` + `Map`:
 - `CacheFIFO` — evicts oldest entry
 - `CacheLFU` — evicts least frequently used
 - `CacheRandom` — evicts a random entry
+- `CacheSLRU` — segmented LRU: hits promote entries into a protected segment; scans can't flush it
+- `CacheClock` — CLOCK (second chance): reads set a bit; a hand sweeps on eviction
 
-Common methods: `has(key)`, `find(key)`/`get(key)`, `register(key, value)`/`set(key, value)`, `remove(key)`/`delete(key)`, `clear()`.
+Common methods: `has(key)`, `find(key)`/`get(key)`, `peek(key)` (no side effects), `register(key, value)`/`set(key, value)`, `remove(key)`/`delete(key)`, `evict()`, `setCapacity(n)`, `clear()`.
 
 ### Heaps
 
@@ -150,6 +154,8 @@ cache/cache-lru.js ← ValueList + Map
 cache/cache-fifo.js (same pattern)
 cache/cache-lfu.js ← frequency buckets (ValueList of ValueLists) + Map
 cache/cache-random.js ← MinHeap + Map
+cache/cache-slru.js ← two ValueLists (probation + protected) + Map
+cache/cache-clock.js ← ValueList ring + hand pointer + Map
 
 heap/basics.js ← heap/min-heap.js
                ← heap/indexed-heap.js

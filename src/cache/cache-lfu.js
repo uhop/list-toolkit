@@ -60,13 +60,19 @@ export class CacheLFU extends CacheLRU {
     return itemNode;
   }
   evictAndReplace(key, value) {
-    const bucketNode = this.buckets.front,
-      items = bucketNode.value.items,
-      victim = items.back;
-    this.dict.delete(victim.value.key);
-    items.removeNode(victim);
-    if (items.isEmpty) this.buckets.removeNode(bucketNode);
+    this.evict();
     return this.addNew(key, value);
+  }
+  evict() {
+    if (this.dict.size) {
+      const bucketNode = this.buckets.front,
+        items = bucketNode.value.items,
+        victim = items.back;
+      this.dict.delete(victim.value.key);
+      items.removeNode(victim);
+      if (items.isEmpty) this.buckets.removeNode(bucketNode);
+    }
+    return this;
   }
   remove(key) {
     const itemNode = this.dict.get(key);

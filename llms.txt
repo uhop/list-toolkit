@@ -57,9 +57,11 @@ for (const node of people) console.log(node.name); // Alice, Bob
 - **CacheFIFO** (`list-toolkit/cache/cache-fifo.js`) — first in first out eviction.
 - **CacheLFU** (`list-toolkit/cache/cache-lfu.js`) — least frequently used eviction.
 - **CacheRandom** (`list-toolkit/cache/cache-random.js`) — random eviction.
+- **CacheSLRU** (`list-toolkit/cache/cache-slru.js`) — segmented LRU: scan-resistant (hits promote into a protected segment).
+- **CacheClock** (`list-toolkit/cache/cache-clock.js`) — CLOCK (second chance): reads only set a bit; approximates LRU at FIFO cost.
 - **cacheDecorator** (`list-toolkit/cache.js`) — decorator to cache function/method results.
 
-All caches share the same API: `has(key)`, `find(key)`/`get(key)`, `register(key, value)`/`set(key, value)`, `remove(key)`/`delete(key)`, `clear()`.
+All caches share the same API: `has(key)`, `find(key)`/`get(key)`, `peek(key)` (no side effects), `register(key, value)`/`set(key, value)`, `remove(key)`/`delete(key)`, `evict()`, `setCapacity(n)`, `clear()`.
 
 ### Heaps (priority queues)
 

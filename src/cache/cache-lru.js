@@ -22,6 +22,10 @@ export class CacheLRU {
     const node = this.use(key);
     return node ? node.value.value : undefined;
   }
+  peek(key) {
+    const node = this.dict.get(key);
+    return node ? node.value.value : undefined;
+  }
   remove(key) {
     const node = this.dict.get(key);
     if (node) {
@@ -65,6 +69,19 @@ export class CacheLRU {
     this.dict.set(key, node);
     node.value = {key, value};
     return node;
+  }
+  evict() {
+    if (!this.list.isEmpty) {
+      const node = this.list.back;
+      this.dict.delete(node.value.key);
+      this.list.removeNode(node);
+    }
+    return this;
+  }
+  setCapacity(capacity) {
+    this.capacity = Math.max(1, Math.floor(capacity));
+    while (this.dict.size > this.capacity) this.evict();
+    return this;
   }
   clear() {
     this.dict.clear();

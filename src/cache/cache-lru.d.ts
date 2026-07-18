@@ -32,6 +32,14 @@ export class CacheLRU<K = unknown, V = unknown> {
   get(key: K): V | undefined;
 
   /**
+   * Look up a value by key **without side effects** — no recency promotion, no
+   * frequency counting, no reference bit (works across all cache policies).
+   * @param key - Key to look up.
+   * @returns The value, or `undefined` if not found.
+   */
+  peek(key: K): V | undefined;
+
+  /**
    * Remove an entry by key.
    * @param key - Key to remove.
    * @returns `this` for chaining.
@@ -54,6 +62,19 @@ export class CacheLRU<K = unknown, V = unknown> {
 
   /** Alias for {@link register}. */
   set(key: K, value: V): this;
+
+  /**
+   * Evict one entry according to the cache's policy.
+   * @returns `this` for chaining.
+   */
+  evict(): this;
+
+  /**
+   * Change the capacity, evicting entries (per the cache's policy) until the cache fits.
+   * @param capacity - New maximum number of entries (clamped to ≥ 1).
+   * @returns `this` for chaining.
+   */
+  setCapacity(capacity: number): this;
 
   /**
    * Remove all entries.
