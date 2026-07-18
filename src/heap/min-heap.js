@@ -81,7 +81,7 @@ export class MinHeap extends HeapBase {
     this.array[0] = this.array.pop();
     // down(this.array, 0, this.less); // inlined
     const n = this.array.length;
-    for (let i = 0; ; ) {
+    for (let i = 0; ;) {
       const l = (i << 1) + 1;
       if (l >= n) break;
       const r = l + 1,
@@ -118,7 +118,7 @@ export class MinHeap extends HeapBase {
     this.array[0] = value;
     // down(this.array, 0, this.less); // inlined
     const n = this.array.length;
-    for (let i = 0; ; ) {
+    for (let i = 0; ;) {
       const l = (i << 1) + 1;
       if (l >= n) break;
       const r = l + 1,
@@ -139,7 +139,7 @@ export class MinHeap extends HeapBase {
     this.array[0] = value;
     // down(this.array, 0, this.less); // inlined
     const n = this.array.length;
-    for (let i = 0; ; ) {
+    for (let i = 0; ;) {
       const l = (i << 1) + 1;
       if (l >= n) break;
       const r = l + 1,
@@ -230,7 +230,7 @@ export class MinHeap extends HeapBase {
     if (array.length <= 1) return array;
     for (let n = array.length, j = (n >> 1) - 1; j >= 0; --j) {
       // down(array, j, less, n); // inlined
-      for (let i = j; ; ) {
+      for (let i = j; ;) {
         const l = (i << 1) + 1;
         if (l >= n) break;
         const r = l + 1,

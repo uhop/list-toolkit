@@ -122,7 +122,7 @@ export class SplayTree {
     return this.root && this.root.getMax();
   }
   find(value) {
-    for (let z = this.root; z; ) {
+    for (let z = this.root; z;) {
       if (this.less(z.value, value)) z = z.right;
       else if (this.less(value, z.value)) z = z.left;
       else return z;
@@ -130,7 +130,7 @@ export class SplayTree {
     return null;
   }
   findWithCompare(value) {
-    for (let z = this.root; z; ) {
+    for (let z = this.root; z;) {
       const cmp = this.compare(value, z.value);
       if (cmp < 0) z = z.left;
       else if (cmp > 0) z = z.right;
@@ -143,7 +143,7 @@ export class SplayTree {
   }
   floor(value) {
     let result = null;
-    for (let z = this.root; z; ) {
+    for (let z = this.root; z;) {
       if (this.less(value, z.value)) z = z.left;
       else {
         result = z;
@@ -154,7 +154,7 @@ export class SplayTree {
   }
   ceil(value) {
     let result = null;
-    for (let z = this.root; z; ) {
+    for (let z = this.root; z;) {
       if (this.less(z.value, value)) z = z.right;
       else {
         result = z;
@@ -178,7 +178,7 @@ export class SplayTree {
   }
   indexOf(value) {
     let index = 0;
-    for (let z = this.root; z; ) {
+    for (let z = this.root; z;) {
       if (this.less(z.value, value)) {
         index += (z.left ? z.left.size : 0) + 1;
         z = z.right;
@@ -189,7 +189,7 @@ export class SplayTree {
   }
   indexOfWithCompare(value) {
     let index = 0;
-    for (let z = this.root; z; ) {
+    for (let z = this.root; z;) {
       const cmp = this.compare(value, z.value);
       if (cmp > 0) {
         index += (z.left ? z.left.size : 0) + 1;

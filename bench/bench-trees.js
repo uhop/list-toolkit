@@ -83,7 +83,7 @@ class OldSplayTree {
     return this.root && this.root.getMin();
   }
   find(value) {
-    for (let z = this.root; z; ) {
+    for (let z = this.root; z;) {
       if (this.less(z.value, value)) z = z.right;
       else if (this.less(value, z.value)) z = z.left;
       else return z;

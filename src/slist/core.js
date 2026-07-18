@@ -160,7 +160,7 @@ export class SList extends HeadNode {
     const extracted = this.make();
     if (this.isEmpty) return extracted;
 
-    for (const ptr = this.frontPtr; !ptr.isHead; ) {
+    for (const ptr = this.frontPtr; !ptr.isHead;) {
       if (condition(ptr.node)) {
         extracted.pushBackNode(ptr.removeCurrent());
       } else {

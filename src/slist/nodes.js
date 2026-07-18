@@ -248,7 +248,7 @@ export class ExtListBase {
 
   getBack() {
     if (!this.head) return null;
-    for (let current = this.head; ; ) {
+    for (let current = this.head; ;) {
       const next = current[this.nextName];
       if (next === this.head) return current;
       current = next;

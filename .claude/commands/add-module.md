@@ -38,5 +38,4 @@ Follow these steps when adding a new public module.
     // turbo
 
 12. Run the full test suite: `npm test`
-    // turbo
-13. Run TypeScript type checking: `npm run ts-check`
+// turbo 13. Run TypeScript type checking: `npm run ts-check`
