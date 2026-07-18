@@ -16,7 +16,7 @@ export class SkewHeapNode<T = unknown> {
   clear(): void;
 
   /**
-   * Create a deep copy of this subtree. Recursive — O(height) stack, worst O(n) on deep spines.
+   * Create a deep copy of this subtree. Iterative — the explicit stack is heap-allocated (no call-stack overflow on deep spines).
    * @returns A new SkewHeapNode tree.
    */
   clone(): SkewHeapNode<T>;
@@ -81,14 +81,14 @@ export class SkewHeap<T = unknown> extends HeapBase<T> {
   clear(): this;
 
   /**
-   * Merge other skew heaps into this one, consuming them. The skew merge is recursive along the merge path: O(log n) amortized stack, worst O(n) for a single operation (also reached through push/pop/pushPop/replaceTop).
+   * Merge other skew heaps into this one, consuming them. The skew merge is iterative — O(1) auxiliary space; a single operation can still take worst O(n) time (amortized O(log n)).
    * @param args - Heaps to merge (they are cleared).
    * @returns `this` for chaining.
    */
   merge(...args: SkewHeap<T>[]): this;
 
   /**
-   * Create a deep copy of this heap. Recursive over the tree — O(height) stack, worst O(n) on deep spines.
+   * Create a deep copy of this heap. Iterative — the explicit stack is heap-allocated (no call-stack overflow on deep spines).
    * @returns A new SkewHeap with the same elements.
    */
   clone(): SkewHeap<T>;

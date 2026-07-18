@@ -102,3 +102,22 @@ test('SkewHeap', t => {
   t.ok(heap2 !== heap3);
   heap3.clear();
 });
+
+test('SkewHeap: deep spines (iterative merge and clone)', t => {
+  const N = 200_000,
+    heap = new SkewHeap();
+  for (let i = N; i > 0; --i) heap.push(i);
+  heap.push(N + 1);
+  heap.push(N + 2);
+  t.equal(heap.size, N + 2);
+  t.equal(heap.top, 1);
+
+  const copy = heap.clone();
+  t.equal(copy.size, heap.size);
+  t.equal(copy.top, heap.top);
+
+  t.equal(heap.pop(), 1);
+  t.equal(heap.pop(), 2);
+  t.equal(copy.pop(), 1);
+  t.equal(copy.size, N + 1);
+});

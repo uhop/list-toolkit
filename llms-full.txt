@@ -569,7 +569,7 @@ new LeftistHeap(options?, ...heapsToMerge)
 - `pushPop(value)` — push then pop (optimized).
 - `replaceTop(value)` — replace minimum.
 - `merge(...heaps)` — merge other heaps (destructive to arguments).
-- `clone()` — deep clone. Recursive over the tree: O(height) stack, worst O(n) on deep spines.
+- `clone()` — deep clone. Iterative (explicit heap-allocated stack — no call-stack overflow on deep spines).
 - `clear()` — remove all.
 - `LeftistHeap.from(array, options?)` — create from array.
 
@@ -579,7 +579,7 @@ Properties: `isEmpty`, `length` (alias: `size`), `top`, `peek()`.
 
 ## Module: SkewHeap (`list-toolkit/heap/skew-heap.js`)
 
-Node-based merge heap. Simpler than leftist, same asymptotic complexity (amortized). The skew merge is recursive with no structural bound: O(log n) amortized stack, worst O(n) for a single operation (reached through push/pop/pushPop/replaceTop too). `clone()` is recursive as well: worst O(n) stack.
+Node-based merge heap. Simpler than leftist, same asymptotic complexity (amortized). The skew merge is iterative — O(1) auxiliary space; a single operation can still take worst O(n) time (amortized O(log n), reached through push/pop/pushPop/replaceTop too). `clone()` is iterative as well (explicit heap-allocated stack).
 
 ```js
 import {SkewHeap} from 'list-toolkit/heap/skew-heap.js';
@@ -622,7 +622,7 @@ If `compare` is provided, `less` is derived. Heap arguments are melded in O(1) e
 
 - `peek()` — alias for `top`.
 - `push(value)` — add a value. **Returns the `PairingHeapNode` handle** (keep it for `update`/`remove`). O(1).
-- `pop()` — remove and return the minimum value. O(log n) amortized; the two-pass pairing transiently allocates an array proportional to the removed root's child count (worst O(n) for a single call).
+- `pop()` — remove and return the minimum value. O(log n) amortized; the two-pass pairing chains pair winners through their free sibling pointers — O(1) auxiliary space.
 - `pushPop(value)` — push then pop (optimized).
 - `replaceTop(value)` — pop then push.
 - `update(node, isDecreased?)` — restore the heap after mutating `node.value`; `isDecreased = true` is the O(1)-amortized decrease-key fast path, omitted/false handles both directions in O(log n) amortized.

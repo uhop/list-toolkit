@@ -2,16 +2,30 @@
 
 import HeapBase from './basics.js';
 
+// iterative top-down formulation of the recursive merge — identical decisions and
+// resulting shape, O(1) auxiliary space instead of a worst-O(n) recursion stack
 const merge = (a, b, less) => {
   if (!a) return b;
   if (!b) return a;
   if (less(b.value, a.value)) [a, b] = [b, a]; // swap
 
-  const temp = a.right;
-  a.right = a.left;
-  a.left = merge(b, temp, less);
-
-  return a;
+  const root = a;
+  for (;;) {
+    const temp = a.right;
+    a.right = a.left;
+    if (!temp) {
+      a.left = b;
+      return root;
+    }
+    if (less(temp.value, b.value)) {
+      a.left = temp;
+      a = temp;
+    } else {
+      a.left = b;
+      a = b;
+      b = temp;
+    }
+  }
 };
 
 export class SkewHeapNode {
@@ -23,9 +37,19 @@ export class SkewHeapNode {
     this.left = this.right = null;
   }
   clone() {
-    const node = new SkewHeapNode(this.value);
-    node.left = this.left && this.left.clone();
-    node.right = this.right && this.right.clone();
+    const node = new SkewHeapNode(this.value),
+      stack = [[this, node]];
+    while (stack.length) {
+      const [source, copy] = stack.pop();
+      if (source.left) {
+        copy.left = new SkewHeapNode(source.left.value);
+        stack.push([source.left, copy.left]);
+      }
+      if (source.right) {
+        copy.right = new SkewHeapNode(source.right.value);
+        stack.push([source.right, copy.right]);
+      }
+    }
     return node;
   }
 }

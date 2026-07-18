@@ -34,8 +34,21 @@ export class LeftistHeapNode {
   }
   clone() {
     const node = new LeftistHeapNode(this.value);
-    node.left = this.left && this.left.clone();
-    node.right = this.right && this.right.clone();
+    node.s = this.s;
+    const stack = [[this, node]];
+    while (stack.length) {
+      const [source, copy] = stack.pop();
+      if (source.left) {
+        copy.left = new LeftistHeapNode(source.left.value);
+        copy.left.s = source.left.s;
+        stack.push([source.left, copy.left]);
+      }
+      if (source.right) {
+        copy.right = new LeftistHeapNode(source.right.value);
+        copy.right.s = source.right.s;
+        stack.push([source.right, copy.right]);
+      }
+    }
     return node;
   }
 }

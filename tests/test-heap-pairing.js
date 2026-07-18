@@ -200,3 +200,28 @@ test('PairingHeap - deterministic stress', t => {
   while (!heap.isEmpty) drained.push(heap.pop().p);
   t.deepEqual(drained, expected);
 });
+
+test('PairingHeap: wide root (constant-space two-pass pairing)', t => {
+  const N = 100_000,
+    heap = new PairingHeap();
+  for (let i = 1; i <= N; ++i) heap.push(i);
+  t.equal(heap.size, N);
+
+  const drained = [];
+  for (let i = 0; i < 5; ++i) drained.push(heap.pop());
+  t.deepEqual(drained, [1, 2, 3, 4, 5]);
+  t.ok(isValidHeap(heap));
+  t.equal(heap.size, N - 5);
+
+  let previous = heap.pop(),
+    sorted = true;
+  while (!heap.isEmpty) {
+    const value = heap.pop();
+    if (value < previous) {
+      sorted = false;
+      break;
+    }
+    previous = value;
+  }
+  t.ok(sorted);
+});

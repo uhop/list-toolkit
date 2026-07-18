@@ -102,3 +102,26 @@ test('LeftistHeap', t => {
   t.ok(heap2 !== heap3);
   heap3.clear();
 });
+
+test('LeftistHeap: deep spines (iterative clone)', t => {
+  const N = 200_000,
+    heap = new LeftistHeap();
+  for (let i = N; i > 0; --i) heap.push(i);
+  heap.push(N + 1);
+  heap.push(N + 2);
+  t.equal(heap.size, N + 2);
+  t.equal(heap.top, 1);
+
+  const copy = heap.clone();
+  t.equal(copy.size, heap.size);
+  t.equal(copy.top, heap.top);
+  t.equal(copy.pop(), 1);
+  t.equal(copy.pop(), 2);
+});
+
+test('LeftistHeap: clone preserves ranks', t => {
+  const heap = LeftistHeap.from([5, 3, 8, 1, 9, 2, 7, 4, 6, 0]),
+    copy = heap.clone(),
+    ranks = node => (node ? [node.s, ranks(node.left), ranks(node.right)] : null);
+  t.deepEqual(ranks(copy.root), ranks(heap.root));
+});

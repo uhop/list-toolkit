@@ -26,24 +26,35 @@ const cut = node => {
   return node;
 };
 
-// two-pass pairing: pair adjacent siblings left to right, then meld right to left
+// two-pass pairing: pair adjacent siblings left to right, then meld right to left;
+// pass 1 chains pair winners in reverse through their free sibling pointers — O(1) auxiliary space
 const mergePairs = (node, less) => {
   if (!node) return null;
-  const pairs = [];
+  let chain = null;
   while (node) {
     const a = node,
       b = a.sibling;
     if (!b) {
-      a.prev = a.sibling = null;
-      pairs.push(a);
+      a.prev = null;
+      a.sibling = chain;
+      chain = a;
       break;
     }
     node = b.sibling;
     a.prev = a.sibling = b.prev = b.sibling = null;
-    pairs.push(meld(a, b, less));
+    const winner = meld(a, b, less);
+    winner.sibling = chain;
+    chain = winner;
   }
-  let result = pairs[pairs.length - 1];
-  for (let i = pairs.length - 2; i >= 0; --i) result = meld(pairs[i], result, less);
+  let result = chain;
+  chain = chain.sibling;
+  result.sibling = null;
+  while (chain) {
+    const next = chain.sibling;
+    chain.sibling = null;
+    result = meld(chain, result, less);
+    chain = next;
+  }
   return result;
 };
 
