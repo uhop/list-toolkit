@@ -1,6 +1,6 @@
 import {CacheLRU} from './cache-lru.js';
 
-/** LFU (Least Frequently Used) cache. Evicts the least frequently accessed entry. */
+/** LFU (Least Frequently Used) cache. Evicts the least frequently accessed entry; ties are broken by evicting the least recently used among them. All operations are O(1). */
 export class CacheLFU<K = unknown, V = unknown> extends CacheLRU<K, V> {
   /**
    * @param capacity - Maximum number of entries (default 10).

@@ -81,10 +81,8 @@ test('CacheLFU.resetCounters()', t => {
 
   cache.resetCounters(1);
 
-  const counters = [];
-  for (const item of cache.heap.array) {
-    counters.push(item.value.counter);
-  }
+  const counters = Array.from(cache).map(item => item.counter);
+  t.equal(counters.length, 3);
   t.ok(counters.every(c => c === 1));
 });
 

@@ -131,7 +131,9 @@ slist/nodes.js ← slist/basics.js ← slist/core.js (SList)
 slist/ptr.js
 
 cache/cache-lru.js ← ValueList + Map
-cache/cache-fifo.js, cache-lfu.js, cache-random.js (same pattern)
+cache/cache-fifo.js (same pattern)
+cache/cache-lfu.js ← frequency buckets (ValueList of ValueLists) + Map
+cache/cache-random.js ← MinHeap + Map
 
 heap/basics.js ← heap/min-heap.js
                ← heap/leftist-heap.js

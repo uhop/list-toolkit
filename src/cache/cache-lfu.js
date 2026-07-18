@@ -1,58 +1,108 @@
 // @ts-self-types="./cache-lfu.d.ts"
 
 import {addAlias} from '../meta-utils.js';
-import MinHeap from '../heap/min-heap.js';
+import ValueList from '../value-list.js';
 import CacheLRU from './cache-lru.js';
 
+// Exact O(1) LFU (Shah et al.): ascending frequency buckets, each holding its
+// entries in recency order; evicts the LRU entry among the least frequent.
+// Entries live in the buckets; the inherited this.list stays unused.
 export class CacheLFU extends CacheLRU {
   constructor(capacity = 10) {
     super(capacity);
-    this.heap = new MinHeap({less: (a, b) => a.value.counter < b.value.counter});
+    this.buckets = new ValueList();
+  }
+  frontBucketNode() {
+    const bucketNode = this.buckets.isEmpty ? null : this.buckets.front;
+    if (bucketNode && bucketNode.value.freq === 1) return bucketNode;
+    this.buckets.pushFront({freq: 1, items: new ValueList()});
+    return this.buckets.front;
   }
   use(key) {
-    const node = this.dict.get(key);
-    if (node) ++node.value.counter;
-    return node;
+    const itemNode = this.dict.get(key);
+    if (!itemNode) return itemNode;
+    const entry = itemNode.value,
+      bucketNode = entry.bucketNode,
+      bucket = bucketNode.value,
+      counter = ++entry.counter,
+      nextBucketNode = bucketNode.next;
+    bucket.items.removeNode(itemNode);
+    if (nextBucketNode !== this.buckets && nextBucketNode.value.freq === counter) {
+      entry.bucketNode = nextBucketNode;
+      nextBucketNode.value.items.pushFrontNode(itemNode);
+      if (bucket.items.isEmpty) this.buckets.removeNode(bucketNode);
+    } else if (bucket.items.isEmpty) {
+      bucket.freq = counter;
+      bucket.items.pushFrontNode(itemNode);
+    } else {
+      entry.bucketNode = this.buckets.makePtr(bucketNode).addAfter({freq: counter, items: new ValueList()}).node;
+      entry.bucketNode.value.items.pushFrontNode(itemNode);
+    }
+    return itemNode;
   }
-  update(node, value) {
-    node.value.counter = 1;
-    node.value.value = value;
+  update(itemNode, value) {
+    const entry = itemNode.value,
+      bucketNode = entry.bucketNode;
+    entry.value = value;
+    entry.counter = 1;
+    bucketNode.value.items.removeNode(itemNode);
+    if (bucketNode.value.items.isEmpty) this.buckets.removeNode(bucketNode);
+    entry.bucketNode = this.frontBucketNode();
+    entry.bucketNode.value.items.pushFrontNode(itemNode);
     return this;
   }
   addNew(key, value) {
-    this.list.pushFront({key, value, counter: 1});
-    const node = this.list.front;
-    this.dict.set(key, node);
-    this.heap.push(node);
-    return node;
+    const bucketNode = this.frontBucketNode(),
+      entry = {key, value, counter: 1, bucketNode};
+    bucketNode.value.items.pushFront(entry);
+    const itemNode = bucketNode.value.items.front;
+    this.dict.set(key, itemNode);
+    return itemNode;
   }
   evictAndReplace(key, value) {
-    const node = this.heap.top;
-    this.dict.delete(node.value.key);
-    node.value = {key, value, counter: 1};
-    this.dict.set(key, node);
-    this.heap.updateTop();
-    return node;
+    const bucketNode = this.buckets.front,
+      items = bucketNode.value.items,
+      victim = items.back;
+    this.dict.delete(victim.value.key);
+    items.removeNode(victim);
+    if (items.isEmpty) this.buckets.removeNode(bucketNode);
+    return this.addNew(key, value);
   }
   remove(key) {
-    const node = this.dict.get(key);
-    if (node) {
+    const itemNode = this.dict.get(key);
+    if (itemNode) {
       this.dict.delete(key);
-      this.list.removeNode(node);
-      this.heap.remove(node);
+      const bucketNode = itemNode.value.bucketNode;
+      bucketNode.value.items.removeNode(itemNode);
+      if (bucketNode.value.items.isEmpty) this.buckets.removeNode(bucketNode);
     }
     return this;
   }
   clear() {
-    super.clear();
-    this.heap.clear();
+    this.dict.clear();
+    this.buckets.clear();
     return this;
   }
   resetCounters(initialValue = 1) {
-    for (const item of this.heap.array) {
-      item.value.counter = initialValue;
+    if (this.buckets.isEmpty) return this;
+    const merged = new ValueList();
+    while (!this.buckets.isEmpty) {
+      // ascending walk + appendFront: former-frequent entries end up front (evicted last)
+      merged.appendFront(this.buckets.popFront().items);
+    }
+    this.buckets.pushFront({freq: initialValue, items: merged});
+    const bucketNode = this.buckets.front;
+    for (const entry of merged) {
+      entry.counter = initialValue;
+      entry.bucketNode = bucketNode;
     }
     return this;
+  }
+  *[Symbol.iterator]() {
+    for (const bucket of this.buckets) yield* bucket.items;
+  }
+  *getReverseIterator() {
+    for (const bucket of this.buckets.getReverseIterator()) yield* bucket.items.getReverseIterator();
   }
 }
 
