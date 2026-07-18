@@ -140,6 +140,8 @@ export class RingBuffer<V = unknown> {
 
   /**
    * Grow the backing array (doubling). Called automatically; exposed for pre-sizing.
+   * Transiently holds both the old and new arrays — O(n) peak auxiliary space
+   * during growth.
    * @returns `this` for chaining.
    */
   grow(): this;

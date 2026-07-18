@@ -108,6 +108,8 @@ export class SplayTree<T = unknown> {
 
   /**
    * Split the tree: values ≤ `value` stay, values > `value` go to the returned tree.
+   * O(n): subtree sizes are recomputed by a recursive walk — which is also O(n)
+   * stack on degenerate (chain-shaped) trees.
    * @param value - Split point.
    * @returns A new SplayTree containing values greater than `value`.
    */

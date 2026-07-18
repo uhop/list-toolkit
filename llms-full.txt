@@ -460,7 +460,7 @@ Options: `{less, equal, compare}`. If `compare` is provided, `less` is derived f
 - `updateTop()` — re-heapify after mutating top element.
 - `updateByIndex(index, isDecreased)` — re-heapify after mutation.
 - `clear()` — remove all elements.
-- `merge(...heapsOrArrays)` — merge other heaps/arrays into this one.
+- `merge(...heapsOrArrays)` — merge other heaps/arrays into this one; the concatenation transiently duplicates the combined storage (O(n + k) peak auxiliary).
 - `clone()` — shallow clone.
 - `releaseSorted()` — extract sorted array, clear heap.
 
@@ -528,7 +528,7 @@ If `compare` is provided, `less` is derived. `indexName` is the property (string
 - `remove(value)` — remove by handle. O(log n).
 - `removeByIndex(index)` — remove by position.
 - `replace(value, newValue)` / `replaceByIndex(index, newValue)` — replace, re-heapify.
-- `merge(...args)` — merge heaps/arrays/iterables, rebuild in O(n). Heap arguments are drained.
+- `merge(...args)` — merge heaps/arrays/iterables, rebuild in O(n). Heap arguments are drained. Transiently duplicates the combined storage (O(n + k) peak auxiliary).
 - `build()` — heapify `array` in place, restamp indices. O(n).
 - `clear()` — remove all elements.
 - `releaseSorted()` — heap-sort in place (reverse `less` order), detach and return the array; indices reset.
@@ -559,7 +559,7 @@ new LeftistHeap(options?, ...heapsToMerge)
 - `pushPop(value)` — push then pop (optimized).
 - `replaceTop(value)` — replace minimum.
 - `merge(...heaps)` — merge other heaps (destructive to arguments).
-- `clone()` — deep clone.
+- `clone()` — deep clone. Recursive over the tree: O(height) stack, worst O(n) on deep spines.
 - `clear()` — remove all.
 - `LeftistHeap.from(array, options?)` — create from array.
 
@@ -569,7 +569,7 @@ Properties: `isEmpty`, `length` (alias: `size`), `top`, `peek()`.
 
 ## Module: SkewHeap (`list-toolkit/heap/skew-heap.js`)
 
-Node-based merge heap. Simpler than leftist, same asymptotic complexity (amortized).
+Node-based merge heap. Simpler than leftist, same asymptotic complexity (amortized). The skew merge is recursive with no structural bound: O(log n) amortized stack, worst O(n) for a single operation (reached through push/pop/pushPop/replaceTop too). `clone()` is recursive as well: worst O(n) stack.
 
 ```js
 import {SkewHeap} from 'list-toolkit/heap/skew-heap.js';
@@ -612,7 +612,7 @@ If `compare` is provided, `less` is derived. Heap arguments are melded in O(1) e
 
 - `peek()` — alias for `top`.
 - `push(value)` — add a value. **Returns the `PairingHeapNode` handle** (keep it for `update`/`remove`). O(1).
-- `pop()` — remove and return the minimum value. O(log n) amortized.
+- `pop()` — remove and return the minimum value. O(log n) amortized; the two-pass pairing transiently allocates an array proportional to the removed root's child count (worst O(n) for a single call).
 - `pushPop(value)` — push then pop (optimized).
 - `replaceTop(value)` — pop then push.
 - `update(node, isDecreased?)` — restore the heap after mutating `node.value`; `isDecreased = true` is the O(1)-amortized decrease-key fast path, omitted/false handles both directions in O(log n) amortized.
@@ -812,7 +812,7 @@ If `compare` is provided, `less` is derived. Default `less`: `(a, b) => a < b`.
 - `remove(value)` — remove by value. Returns `this`.
 - `getMin()` — return node with minimum value.
 - `getMax()` — return node with maximum value.
-- `splitMaxTree(value)` — split: values > value go to new tree. Returns new `SplayTree`.
+- `splitMaxTree(value)` — split: values > value go to new tree. Returns new `SplayTree`. O(n); the size-recomputing walk is recursive (O(n) stack on degenerate trees).
 - `join(tree)` — merge another tree into this one (destructive to argument).
 - `clear()` — remove all nodes.
 - `[Symbol.iterator]()` — in-order iteration over values.

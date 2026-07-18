@@ -18,7 +18,7 @@ export class LeftistHeapNode<T = unknown> {
   clear(): void;
 
   /**
-   * Create a deep copy of this subtree.
+   * Create a deep copy of this subtree. Recursive — O(height) stack, worst O(n) on deep spines.
    * @returns A new LeftistHeapNode tree.
    */
   clone(): LeftistHeapNode<T>;
@@ -90,7 +90,7 @@ export class LeftistHeap<T = unknown> extends HeapBase<T> {
   merge(...args: LeftistHeap<T>[]): this;
 
   /**
-   * Create a deep copy of this heap.
+   * Create a deep copy of this heap. Recursive over the tree — O(height) stack, worst O(n) on deep spines.
    * @returns A new LeftistHeap with the same elements.
    */
   clone(): LeftistHeap<T>;

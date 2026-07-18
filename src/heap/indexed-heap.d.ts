@@ -148,6 +148,8 @@ export class IndexedHeap<T extends object = object> {
   /**
    * Merge heaps, arrays, or iterables into this heap, then rebuild in O(n).
    * Heap arguments are drained (an element tracks one position per index name).
+   * The concatenation transiently duplicates the combined storage — O(n + k)
+   * peak auxiliary space.
    * @param args - Sources to merge.
    * @returns `this` for chaining.
    */

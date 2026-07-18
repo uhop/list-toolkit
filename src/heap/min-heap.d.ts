@@ -122,7 +122,8 @@ export class MinHeap<T = unknown> extends HeapBase<T> {
   releaseSorted(): T[];
 
   /**
-   * Merge other heaps or arrays into this heap.
+   * Merge other heaps or arrays into this heap. The concatenation transiently
+   * duplicates this heap and all arguments — O(n + k) peak auxiliary space.
    * @param args - Heaps or arrays to merge.
    * @returns `this` for chaining.
    */

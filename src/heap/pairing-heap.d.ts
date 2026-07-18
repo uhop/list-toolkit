@@ -72,7 +72,9 @@ export class PairingHeap<T = unknown> {
   push(value: T): PairingHeapNode<T>;
 
   /**
-   * Remove and return the minimum value. O(log n) amortized.
+   * Remove and return the minimum value. O(log n) amortized. The two-pass pairing
+   * transiently allocates an array proportional to the removed root's child count —
+   * worst O(n) peak auxiliary space for a single call.
    * @returns The removed value, or `undefined` if empty.
    */
   pop(): T | undefined;
@@ -94,7 +96,8 @@ export class PairingHeap<T = unknown> {
   /**
    * Restore the heap after mutating a node's value. Pass `isDecreased = true` when
    * the value got smaller (the classic decrease-key — O(1) amortized: cut + meld);
-   * omit it or pass `false` for the general case (O(log n) amortized).
+   * omit it or pass `false` for the general case (O(log n) amortized; the general
+   * path re-pairs the node's children — same transient pairing array as `pop`).
    * @param node - Handle returned by `push()`.
    * @param isDecreased - `true` if the value moved toward the top.
    * @returns `this` for chaining.
@@ -102,7 +105,8 @@ export class PairingHeap<T = unknown> {
   update(node: PairingHeapNode<T>, isDecreased?: boolean): this;
 
   /**
-   * Remove an element by handle. O(log n) amortized.
+   * Remove an element by handle. O(log n) amortized (re-pairs the node's children —
+   * same transient pairing array as `pop`).
    * @param node - Handle returned by `push()`.
    * @returns `this` for chaining.
    */
