@@ -4,6 +4,7 @@ import {copyOptions, lessFromCompare} from '../meta-utils.js';
 
 const defaultLess = (a, b) => a < b;
 
+// rotations recompute sizes from children: ancestor sizes on the splay path are stale after an insert
 const zig = tree => {
   const newTree = tree.left,
     parent = (newTree.parent = tree.parent);
@@ -15,6 +16,8 @@ const zig = tree => {
   const child = (tree.left = newTree.right);
   if (child) child.parent = tree;
   newTree.right = tree;
+  tree.size = (tree.left ? tree.left.size : 0) + (tree.right ? tree.right.size : 0) + 1;
+  newTree.size = (newTree.left ? newTree.left.size : 0) + tree.size + 1;
   return newTree;
 };
 
@@ -29,6 +32,8 @@ const zag = tree => {
   const child = (tree.right = newTree.left);
   if (child) child.parent = tree;
   newTree.left = tree;
+  tree.size = (tree.left ? tree.left.size : 0) + (tree.right ? tree.right.size : 0) + 1;
+  newTree.size = tree.size + (newTree.right ? newTree.right.size : 0) + 1;
   return newTree;
 };
 
@@ -53,11 +58,30 @@ const splay = node => {
   return node;
 };
 
-const count = tree => (tree ? count(tree.left) + count(tree.right) + 1 : 0);
+const successor = node => {
+  if (node.right) return node.right.getMin();
+  let parent = node.parent;
+  while (parent && parent.right === node) {
+    node = parent;
+    parent = node.parent;
+  }
+  return parent;
+};
+
+const predecessor = node => {
+  if (node.left) return node.left.getMax();
+  let parent = node.parent;
+  while (parent && parent.left === node) {
+    node = parent;
+    parent = node.parent;
+  }
+  return parent;
+};
 
 export class SplayTreeNode {
   constructor(value) {
     this.left = this.right = this.parent = null;
+    this.size = 1;
     this.value = value;
   }
   getMin() {
@@ -79,6 +103,7 @@ export class SplayTree {
       this.less = lessFromCompare(this.compare);
       this.find = this.findWithCompare;
       this.insert = this.insertWithCompare;
+      this.indexOf = this.indexOfWithCompare;
       this.splitMaxTree = this.splitMaxTreeWithCompare;
     }
     this.root = null;
@@ -112,6 +137,67 @@ export class SplayTree {
       else return z;
     }
     return null;
+  }
+  has(value) {
+    return !!this.find(value);
+  }
+  floor(value) {
+    let result = null;
+    for (let z = this.root; z; ) {
+      if (this.less(value, z.value)) z = z.left;
+      else {
+        result = z;
+        z = z.right;
+      }
+    }
+    return result;
+  }
+  ceil(value) {
+    let result = null;
+    for (let z = this.root; z; ) {
+      if (this.less(z.value, value)) z = z.right;
+      else {
+        result = z;
+        z = z.left;
+      }
+    }
+    return result;
+  }
+  at(index) {
+    if (index < 0) index += this.size;
+    if (index < 0 || index >= this.size) return null;
+    let z = this.root;
+    for (;;) {
+      const leftSize = z.left ? z.left.size : 0;
+      if (index < leftSize) z = z.left;
+      else if (index > leftSize) {
+        index -= leftSize + 1;
+        z = z.right;
+      } else return z;
+    }
+  }
+  indexOf(value) {
+    let index = 0;
+    for (let z = this.root; z; ) {
+      if (this.less(z.value, value)) {
+        index += (z.left ? z.left.size : 0) + 1;
+        z = z.right;
+      } else if (this.less(value, z.value)) z = z.left;
+      else return index + (z.left ? z.left.size : 0);
+    }
+    return -1;
+  }
+  indexOfWithCompare(value) {
+    let index = 0;
+    for (let z = this.root; z; ) {
+      const cmp = this.compare(value, z.value);
+      if (cmp > 0) {
+        index += (z.left ? z.left.size : 0) + 1;
+        z = z.right;
+      } else if (cmp < 0) z = z.left;
+      else return index + (z.left ? z.left.size : 0);
+    }
+    return -1;
   }
   promote(value) {
     const z = this.find(value);
@@ -181,8 +267,10 @@ export class SplayTree {
       this.root = splay(maxNode);
     }
     if (z.right) {
-      if (maxNode) maxNode.right = z.right;
-      else this.root = z.right;
+      if (maxNode) {
+        maxNode.right = z.right;
+        maxNode.size += z.right.size;
+      } else this.root = z.right;
       z.right.parent = maxNode;
     }
 
@@ -217,8 +305,9 @@ export class SplayTree {
       newTree.root = this.root.right;
       if (newTree.root) {
         newTree.root.parent = null;
-        newTree.size = count(newTree.root);
+        newTree.size = newTree.root.size;
         this.root.right = null;
+        this.root.size -= newTree.size;
         this.size -= newTree.size;
       }
     } else {
@@ -227,9 +316,12 @@ export class SplayTree {
       this.root = this.root.left;
       if (this.root) {
         this.root.parent = null;
-        this.size = count(this.root);
+        this.size = this.root.size;
         newTree.root.left = null;
+        newTree.root.size -= this.size;
         newTree.size -= this.size;
+      } else {
+        this.size = 0;
       }
     }
     return newTree;
@@ -257,8 +349,9 @@ export class SplayTree {
       newTree.root = this.root.right;
       if (newTree.root) {
         newTree.root.parent = null;
-        newTree.size = count(newTree.root);
+        newTree.size = newTree.root.size;
         this.root.right = null;
+        this.root.size -= newTree.size;
         this.size -= newTree.size;
       }
     } else {
@@ -267,9 +360,12 @@ export class SplayTree {
       this.root = this.root.left;
       if (this.root) {
         this.root.parent = null;
-        this.size = count(this.root);
+        this.size = this.root.size;
         newTree.root.left = null;
+        newTree.root.size -= this.size;
         newTree.size -= this.size;
+      } else {
+        this.size = 0;
       }
     }
     return newTree;
@@ -281,6 +377,7 @@ export class SplayTree {
 
     this.root.right = tree.root;
     tree.root.parent = this.root;
+    this.root.size += tree.size;
     this.size += tree.size;
 
     tree.clear();
@@ -314,24 +411,41 @@ export class SplayTree {
     return {
       next: () => {
         if (!current) return {done: true};
-        const last = current;
-        if (current.right) {
-          current = current.right.getMin();
-        } else {
-          for (;;) {
-            const parent = current.parent;
-            if (!parent) {
-              current = null;
-              break;
-            }
-            if (parent.left === current) {
-              current = parent;
-              break;
-            }
-            current = parent;
+        const value = current.value;
+        current = successor(current);
+        return {value};
+      }
+    };
+  }
+  getIterator(range = {}) {
+    return {
+      [Symbol.iterator]: () => {
+        let current = 'from' in range ? this.ceil(range.from) : this.root ? this.root.getMin() : null;
+        const hasTo = 'to' in range;
+        return {
+          next: () => {
+            if (!current || (hasTo && this.less(range.to, current.value))) return {done: true};
+            const value = current.value;
+            current = successor(current);
+            return {value};
           }
-        }
-        return {value: last.value};
+        };
+      }
+    };
+  }
+  getNodeIterator(range = {}) {
+    return {
+      [Symbol.iterator]: () => {
+        let current = 'from' in range ? this.ceil(range.from) : this.root ? this.root.getMin() : null;
+        const hasTo = 'to' in range;
+        return {
+          next: () => {
+            if (!current || (hasTo && this.less(range.to, current.value))) return {done: true};
+            const node = current;
+            current = successor(current);
+            return {value: node};
+          }
+        };
       }
     };
   }
@@ -342,24 +456,9 @@ export class SplayTree {
         return {
           next: () => {
             if (!current) return {done: true};
-            const last = current;
-            if (current.left) {
-              current = current.left.getMax();
-            } else {
-              for (;;) {
-                const parent = current.parent;
-                if (!parent) {
-                  current = null;
-                  break;
-                }
-                if (parent.right === current) {
-                  current = parent;
-                  break;
-                }
-                current = parent;
-              }
-            }
-            return {value: last.value};
+            const value = current.value;
+            current = predecessor(current);
+            return {value};
           }
         };
       }

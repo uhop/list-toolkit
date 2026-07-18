@@ -6,6 +6,14 @@ export interface SplayTreeOptions<T = unknown> {
   compare?: ((a: T, b: T) => number) | null;
 }
 
+/** Value range for bounded iteration. Both bounds are inclusive and optional. */
+export interface SplayTreeRange<T = unknown> {
+  /** Start value (inclusive). */
+  from?: T;
+  /** End value (inclusive). */
+  to?: T;
+}
+
 /** Node used internally by {@link SplayTree}. */
 export class SplayTreeNode<T = unknown> {
   /** The stored value. */
@@ -16,6 +24,8 @@ export class SplayTreeNode<T = unknown> {
   right: SplayTreeNode<T> | null;
   /** Parent node, or `null` for the root. */
   parent: SplayTreeNode<T> | null;
+  /** Subtree size: this node plus all descendants. Maintained by the tree. */
+  size: number;
 
   /** @param value - Value to store. */
   constructor(value: T);
@@ -33,7 +43,15 @@ export class SplayTreeNode<T = unknown> {
   getMax(): SplayTreeNode<T>;
 }
 
-/** Self-adjusting binary search tree. */
+/**
+ * Self-adjusting binary search tree with subtree-size augmentation (order statistics).
+ * Set semantics: duplicates are not stored. Splaying operations (`promote`, `insert`,
+ * `remove`, `splitMaxTree`, `join`) restructure the tree and carry the amortized
+ * O(log n) bound; read-only lookups (`find`, `has`, `floor`, `ceil`, `at`, `indexOf`,
+ * iteration) do not splay — they cost O(depth), which is O(n) on a degenerate shape,
+ * and contribute nothing to the amortization. Use `promote` when the access pattern
+ * should adapt the tree.
+ */
 export class SplayTree<T = unknown> {
   /** Returns `true` if `a` should be ordered before `b`. */
   less: (a: T, b: T) => boolean;
@@ -54,26 +72,64 @@ export class SplayTree<T = unknown> {
   get length(): number;
 
   /**
-   * Find the node with the minimum value.
+   * Find the node with the minimum value. Read-only: does not splay.
    * @returns The minimum node, or `null` if the tree is empty.
    */
   getMin(): SplayTreeNode<T> | null;
 
   /**
-   * Find the node with the maximum value.
+   * Find the node with the maximum value. Read-only: does not splay.
    * @returns The maximum node, or `null` if the tree is empty.
    */
   getMax(): SplayTreeNode<T> | null;
 
   /**
-   * Find a node by value.
+   * Find a node by value. Read-only: does not splay — see {@link promote}
+   * for the access that restructures the tree.
    * @param value - Value to search for.
    * @returns The matching node, or `null` if not found.
    */
   find(value: T): SplayTreeNode<T> | null;
 
   /**
-   * Find and splay a node to the root.
+   * Check if a value is present. Read-only: does not splay.
+   * @param value - Value to search for.
+   * @returns `true` if found.
+   */
+  has(value: T): boolean;
+
+  /**
+   * Find the node with the greatest value ≤ `value`. Read-only: does not splay.
+   * @param value - Upper bound (inclusive).
+   * @returns The floor node, or `null` if all values are greater.
+   */
+  floor(value: T): SplayTreeNode<T> | null;
+
+  /**
+   * Find the node with the smallest value ≥ `value`. Read-only: does not splay.
+   * @param value - Lower bound (inclusive).
+   * @returns The ceiling node, or `null` if all values are smaller.
+   */
+  ceil(value: T): SplayTreeNode<T> | null;
+
+  /**
+   * Find the node at a position in sorted order. Negative indices count from the end.
+   * Read-only: does not splay.
+   * @param index - Zero-based position.
+   * @returns The node, or `null` if the index is out of range.
+   */
+  at(index: number): SplayTreeNode<T> | null;
+
+  /**
+   * Find the position of a value in sorted order. Read-only: does not splay.
+   * @param value - Value to search for.
+   * @returns The zero-based position, or `-1` if not found.
+   */
+  indexOf(value: T): number;
+
+  /**
+   * Find and splay a node to the root. This is the access that maintains
+   * the amortized O(log n) bound.
    * @param value - Value to search for and promote.
    * @returns The matching node, or `null` if not found.
    */
@@ -87,7 +143,8 @@ export class SplayTree<T = unknown> {
   splay(node: SplayTreeNode<T>): this;
 
   /**
-   * Insert a value. If the value already exists, it is splayed to the root.
+   * Insert a value. Duplicates are not stored: if the value already exists,
+   * its node is splayed to the root and the tree is unchanged.
    * @param value - Value to insert.
    * @returns `this` for chaining.
    */
@@ -108,8 +165,7 @@ export class SplayTree<T = unknown> {
 
   /**
    * Split the tree: values ≤ `value` stay, values > `value` go to the returned tree.
-   * O(n): subtree sizes are recomputed by a recursive walk — which is also O(n)
-   * stack on degenerate (chain-shaped) trees.
+   * Amortized O(log n).
    * @param value - Split point.
    * @returns A new SplayTree containing values greater than `value`.
    */
@@ -129,14 +185,30 @@ export class SplayTree<T = unknown> {
    */
   join(tree: SplayTree<T>): this;
 
-  /** Iterate over values in ascending order. */
+  /** Iterate over values in ascending order. Read-only: does not splay. */
   [Symbol.iterator](): IterableIterator<T>;
 
   /**
-   * Iterate over values in descending order.
-   * @returns An iterable iterator.
+   * Iterate over values in ascending order within an inclusive value range.
+   * Read-only: does not splay.
+   * @param range - Optional `{from, to}` value bounds.
+   * @returns An iterable of values.
    */
-  getReverseIterator(): IterableIterator<T>;
+  getIterator(range?: SplayTreeRange<T>): Iterable<T>;
+
+  /**
+   * Iterate over nodes in ascending order within an inclusive value range.
+   * Read-only: does not splay.
+   * @param range - Optional `{from, to}` value bounds.
+   * @returns An iterable of nodes.
+   */
+  getNodeIterator(range?: SplayTreeRange<T>): Iterable<SplayTreeNode<T>>;
+
+  /**
+   * Iterate over values in descending order. Read-only: does not splay.
+   * @returns An iterable of values.
+   */
+  getReverseIterator(): Iterable<T>;
 
   /**
    * Build a SplayTree from an iterable.

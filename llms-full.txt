@@ -783,7 +783,7 @@ Popped slots are cleared, so the ring never pins dead references. Choose the lis
 
 ## Module: SplayTree (`list-toolkit/tree/splay-tree.js`)
 
-Self-adjusting binary search tree. Frequently accessed elements move to the root.
+Self-adjusting binary search tree with subtree-size augmentation (order statistics). Set semantics: duplicates are not stored. Splaying operations (`promote`, `insert`, `remove`, `splitMaxTree`, `join`) restructure the tree and carry the amortized O(log n) bound; read-only lookups (`find`, `has`, `floor`, `ceil`, `at`, `indexOf`, iteration) do not splay — they cost O(depth) (O(n) on a degenerate shape) and contribute nothing to the amortization. Use `promote` when the access pattern should adapt the tree.
 
 ```js
 import SplayTree from 'list-toolkit/tree/splay-tree.js';
@@ -805,17 +805,24 @@ If `compare` is provided, `less` is derived. Default `less`: `(a, b) => a < b`.
 
 ### Methods
 
-- `insert(value)` — insert value (no duplicates). Returns `this`.
-- `find(value)` — find node by value. Returns `SplayTreeNode` or null.
+- `insert(value)` — insert value; a duplicate is not stored, its node is splayed. Returns `this`.
+- `find(value)` — find node by value (read-only). Returns `SplayTreeNode` or null.
+- `has(value)` — membership test (read-only). Returns boolean.
+- `floor(value)` — node with the greatest value ≤ `value` (read-only). Returns node or null.
+- `ceil(value)` — node with the smallest value ≥ `value` (read-only). Returns node or null.
+- `at(index)` — node at a sorted-order position; negative counts from the end (read-only). Returns node or null.
+- `indexOf(value)` — sorted-order position of a value (read-only). Returns number or -1.
 - `promote(value)` — find and splay to root. Returns node or null.
 - `splay(node)` — splay a node to root. Returns `this`.
 - `remove(value)` — remove by value. Returns `this`.
-- `getMin()` — return node with minimum value.
-- `getMax()` — return node with maximum value.
-- `splitMaxTree(value)` — split: values > value go to new tree. Returns new `SplayTree`. O(n); the size-recomputing walk is recursive (O(n) stack on degenerate trees).
+- `getMin()` — return node with minimum value (read-only).
+- `getMax()` — return node with maximum value (read-only).
+- `splitMaxTree(value)` — split: values > value go to new tree. Returns new `SplayTree`. Amortized O(log n).
 - `join(tree)` — merge another tree into this one (destructive to argument).
 - `clear()` — remove all nodes.
 - `[Symbol.iterator]()` — in-order iteration over values.
+- `getIterator(range?)` — in-order iteration bounded by inclusive `{from, to}`.
+- `getNodeIterator(range?)` — in-order node iteration bounded by inclusive `{from, to}`.
 - `getReverseIterator()` — reverse in-order iteration.
 - `SplayTree.from(values, options?)` — create from iterable.
 
@@ -823,6 +830,7 @@ If `compare` is provided, `less` is derived. Default `less`: `(a, b) => a < b`.
 
 - `value` — the stored value.
 - `left`, `right`, `parent` — child and parent pointers.
+- `size` — subtree size (this node plus descendants), maintained by the tree.
 - `getMin()` — find minimum in subtree.
 - `getMax()` — find maximum in subtree.
 
@@ -830,7 +838,7 @@ If `compare` is provided, `less` is derived. Default `less`: `(a, b) => a < b`.
 
 ## Module: SkipList (`list-toolkit/skip-list.js`)
 
-Probabilistic ordered container: layered singly linked lanes over a doubly linked bottom lane. Expected O(log n) search/insert/remove; reads do not mutate the structure (contrast with SplayTree).
+Probabilistic ordered container: layered singly linked lanes over a doubly linked bottom lane. Expected O(log n) search/insert/remove; reads do not mutate the structure and keep their expected bound (contrast with SplayTree, whose amortized bound requires splaying accesses).
 
 ```js
 import SkipList from 'list-toolkit/skip-list.js';

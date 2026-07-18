@@ -57,7 +57,19 @@ test('SplayTree<T>: splay/clear types', t => {
 test('SplayTree<T>: iterator types', t => {
   const tree = SplayTree.from<number>([3, 1, 2]);
   const iter: IterableIterator<number> = tree[Symbol.iterator]();
-  const revIter: IterableIterator<number> = tree.getReverseIterator();
+  const revIter: Iterable<number> = tree.getReverseIterator();
+  const range: Iterable<number> = tree.getIterator({from: 1, to: 2});
+  const nodes: Iterable<SplayTreeNode<number>> = tree.getNodeIterator();
+  t.pass('compiles');
+});
+
+test('SplayTree<T>: staples and order statistics types', t => {
+  const tree = SplayTree.from<number>([3, 1, 2]);
+  const _has: boolean = tree.has(2);
+  const _floor: SplayTreeNode<number> | null = tree.floor(2);
+  const _ceil: SplayTreeNode<number> | null = tree.ceil(2);
+  const _at: SplayTreeNode<number> | null = tree.at(-1);
+  const _indexOf: number = tree.indexOf(2);
   t.pass('compiles');
 });
 
@@ -87,5 +99,6 @@ test('SplayTree<T>: static from type', t => {
 test('SplayTreeNode<T>: value type', t => {
   const node = new SplayTreeNode<number>(42);
   const _val: number = node.value;
+  const _size: number = node.size;
   t.pass('compiles');
 });

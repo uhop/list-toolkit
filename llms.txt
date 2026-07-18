@@ -86,7 +86,7 @@ All heaps support `less` or `compare` for ordering. Common API: `push(value)`, `
 
 ### Trees
 
-- **SplayTree** (`list-toolkit/tree/splay-tree.js`) — self-adjusting BST. Methods: `insert`, `find`, `remove`, `promote`, `split` (via `splitMaxTree`), `join`.
+- **SplayTree** (`list-toolkit/tree/splay-tree.js`) — self-adjusting BST with order statistics (subtree sizes), set semantics. Methods: `insert`, `find`, `has`, `remove`, `floor`, `ceil`, `at`, `indexOf`, `promote` (splaying access), `split` (via `splitMaxTree`, amortized O(log n)), `join`, ordered/reverse/range iteration.
 
 ### Skip list
 
