@@ -6,13 +6,17 @@ import {pushValuesBack} from './list-utils.js';
 
 export class Queue {
   constructor(underlyingList = new ValueList()) {
-    this.list = underlyingList;
+    // accepts a list instance or a list class
+    this.list = typeof underlyingList == 'function' ? new underlyingList() : underlyingList;
     this.size = this.list.getLength();
   }
   get isEmpty() {
     return this.list.isEmpty;
   }
   get top() {
+    return this.list.isEmpty ? undefined : this.list.front.value;
+  }
+  get front() {
     return this.list.isEmpty ? undefined : this.list.front.value;
   }
   peek() {
@@ -45,8 +49,11 @@ export class Queue {
   getReverseIterator() {
     return this.list.getReverseIterator?.();
   }
+  static from(values, underlyingList) {
+    return new Queue(underlyingList).addValues(values);
+  }
 }
 
-addAliases(Queue.prototype, {add: 'push, pushBack, enqueue', remove: 'pop, popFront, dequeue'});
+addAliases(Queue.prototype, {add: 'push, pushBack, enqueue', remove: 'pop, popFront, dequeue', addValues: 'pushValues'});
 
 export default Queue;

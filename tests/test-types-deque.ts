@@ -32,3 +32,10 @@ test('Deque<V>: iteration and construction types', t => {
   const _rev: IterableIterator<string> | undefined = deque.getReverseIterator();
   t.pass('compiles');
 });
+
+test('Deque<V>: from() types', t => {
+  const deque: Deque<number> = Deque.from([1, 2, 3]);
+  const _onList: Deque<string> = Deque.from(['a'], new ValueList<string>());
+  const _onClass: Deque<boolean> = Deque.from([true], ValueList);
+  t.pass('compiles');
+});

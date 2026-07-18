@@ -1,13 +1,14 @@
 // @ts-self-types="./stack.d.ts"
 
 import ValueList from './value-list.js';
-import {addAlias} from './meta-utils.js';
+import {addAliases} from './meta-utils.js';
 import {pushValuesFront} from './list-utils.js';
 
 export class Stack {
-  constructor(UnderlyingList = ValueList) {
-    this.size = 0;
-    this.list = new UnderlyingList();
+  constructor(underlyingList = ValueList) {
+    // accepts a list instance or a list class
+    this.list = typeof underlyingList == 'function' ? new underlyingList() : underlyingList;
+    this.size = this.list.getLength();
   }
   get isEmpty() {
     return this.list.isEmpty;
@@ -45,8 +46,11 @@ export class Stack {
   getReverseIterator() {
     return this.list.getReverseIterator?.();
   }
+  static from(values, underlyingList) {
+    return new Stack(underlyingList).pushValues(values);
+  }
 }
 
-addAlias(Stack.prototype, 'push', 'pushFront');
+addAliases(Stack.prototype, {push: 'pushFront, add', pop: 'remove', pushValues: 'addValues'});
 
 export default Stack;

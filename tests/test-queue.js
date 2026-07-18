@@ -1,6 +1,7 @@
 import test from 'tape-six';
 
 import Queue from 'list-toolkit/queue.js';
+import ValueList from 'list-toolkit/value-list.js';
 
 test('Queue', t => {
   t.equal(typeof Queue, 'function');
@@ -31,4 +32,35 @@ test('Queue', t => {
   t.equal(queue.size, 0);
   t.equal(queue.top, undefined);
   t.equal(queue.peek(), undefined);
+});
+
+test('Queue: constructor accepts instance or class', t => {
+  const fromInstance = new Queue(ValueList.from([1, 2, 3]));
+  t.equal(fromInstance.size, 3);
+  t.equal(fromInstance.top, 1);
+
+  const fromClass = new Queue(ValueList);
+  t.ok(fromClass.isEmpty);
+  fromClass.add(42);
+  t.equal(fromClass.top, 42);
+});
+
+test('Queue: from()', t => {
+  const queue = Queue.from([1, 2, 3]);
+  t.equal(queue.size, 3);
+  t.deepEqual([...queue], [1, 2, 3]);
+  t.equal(queue.remove(), 1);
+
+  const onClass = Queue.from([4, 5], ValueList);
+  t.deepEqual([...onClass], [4, 5]);
+});
+
+test('Queue: front and pushValues aliases', t => {
+  const queue = Queue.from([1, 2]);
+  t.equal(queue.front, 1);
+  t.equal(queue.front, queue.top);
+  queue.pushValues([3, 4]);
+  t.deepEqual([...queue], [1, 2, 3, 4]);
+  queue.clear();
+  t.equal(queue.front, undefined);
 });

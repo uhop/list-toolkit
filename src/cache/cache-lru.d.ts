@@ -1,12 +1,18 @@
+/** Options for configuring a cache. */
+export interface CacheOptions {
+  /** Maximum number of entries (default 10). */
+  capacity?: number;
+}
+
 /** LRU (Least Recently Used) cache backed by a doubly linked value list and a Map. */
 export class CacheLRU<K = unknown, V = unknown> {
   /** Maximum number of entries. */
   capacity: number;
 
   /**
-   * @param capacity - Maximum number of entries (default 10).
+   * @param capacity - Maximum number of entries (default 10), or an options object.
    */
-  constructor(capacity?: number);
+  constructor(capacity?: number | CacheOptions);
 
   /** Whether the cache has no entries. */
   get isEmpty(): boolean;

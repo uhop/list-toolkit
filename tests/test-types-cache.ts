@@ -96,3 +96,12 @@ test('CacheClock<K,V>: types', t => {
   const _val: number | undefined = cache.peek('a');
   t.pass('compiles');
 });
+
+test('Cache: options-object constructor types', t => {
+  const _lru = new CacheLRU<string, number>({capacity: 100});
+  const _lfu = new CacheLFU<string, number>({capacity: 100});
+  const _slru = new CacheSLRU<string, number>({capacity: 100, protectedCapacity: 60});
+  const _clock = new CacheClock<string, number>({capacity: 100});
+  const _positional = new CacheSLRU<string, number>(50, 30);
+  t.pass('compiles');
+});

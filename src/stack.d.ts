@@ -4,9 +4,9 @@ export class Stack<V = unknown> {
   size: number;
 
   /**
-   * @param UnderlyingList - Optional value list constructor to use (default: ValueList).
+   * @param underlyingList - A pre-existing value list to adopt, or a list class to instantiate (default: ValueList).
    */
-  constructor(UnderlyingList?: new () => object);
+  constructor(underlyingList?: object | (new () => object));
 
   /** Whether the stack has no elements. */
   get isEmpty(): boolean;
@@ -27,11 +27,17 @@ export class Stack<V = unknown> {
   /** Alias for {@link push}. */
   pushFront(value: V): this;
 
+  /** Alias for {@link push}. */
+  add(value: V): this;
+
   /**
    * Remove and return the top value.
    * @returns The top value, or `undefined` if empty.
    */
   pop(): V | undefined;
+
+  /** Alias for {@link pop}. */
+  remove(): V | undefined;
 
   /**
    * Push multiple values onto the stack.
@@ -39,6 +45,9 @@ export class Stack<V = unknown> {
    * @returns `this` for chaining.
    */
   pushValues(values: Iterable<V>): this;
+
+  /** Alias for {@link pushValues}. */
+  addValues(values: Iterable<V>): this;
 
   /**
    * Remove all elements.
@@ -56,6 +65,14 @@ export class Stack<V = unknown> {
    * @returns An iterable iterator, or `undefined` when the underlying list does not support reverse iteration.
    */
   getReverseIterator(): IterableIterator<V> | undefined;
+
+  /**
+   * Build a Stack from an iterable (the last value ends up on top).
+   * @param values - Iterable of values to push.
+   * @param underlyingList - A pre-existing value list to adopt, or a list class to instantiate.
+   * @returns A new Stack.
+   */
+  static from<V = unknown>(values: Iterable<V>, underlyingList?: object | (new () => object)): Stack<V>;
 }
 
 export default Stack;

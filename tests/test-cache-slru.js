@@ -76,3 +76,17 @@ test('CacheSLRU - re-register updates value', t => {
   t.equal(cache.size, 1);
   t.equal(cache.peek('k'), 9);
 });
+
+test('CacheSLRU - options-object constructor', t => {
+  const cache = new CacheSLRU({capacity: 100, protectedCapacity: 60});
+  t.equal(cache.capacity, 100);
+  t.equal(cache.protectedCapacity, 60);
+
+  const derived = new CacheSLRU({capacity: 100});
+  t.equal(derived.capacity, 100);
+  t.equal(derived.protectedCapacity, 80);
+
+  const positional = new CacheSLRU(50, 30);
+  t.equal(positional.capacity, 50);
+  t.equal(positional.protectedCapacity, 30);
+});

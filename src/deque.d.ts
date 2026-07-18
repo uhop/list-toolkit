@@ -1,5 +1,13 @@
 /** Double-ended queue backed by a value list (DLL-based: both ends must be O(1)). */
 export class Deque<V = unknown> {
+  /**
+   * Build a Deque from an iterable.
+   * @param values - Iterable of values to add back-to-back.
+   * @param underlyingList - A pre-existing value list to adopt, or a list class to instantiate.
+   * @returns A new Deque.
+   */
+  static from<V = unknown>(values: Iterable<V>, underlyingList?: object | (new () => object)): Deque<V>;
+
   /** Number of elements in the deque. */
   size: number;
 

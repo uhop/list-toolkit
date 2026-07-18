@@ -53,6 +53,10 @@ export class MinHeap extends HeapBase {
     return this.array.length;
   }
 
+  get size() {
+    return this.array.length;
+  }
+
   get isEmpty() {
     return !this.array.length;
   }

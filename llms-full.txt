@@ -53,6 +53,13 @@ const team = List.from([a, b], {nextName: 'teamNext', prevName: 'teamPrev'});
 - **Pointers** (`Ptr`) provide safe iteration with insert/remove during traversal.
 - Method aliases (e.g., `popFront` → `pop`) are created via `addAlias`/`addAliases`.
 
+### API conventions
+
+- **Property getters are O(1), idempotent, and side-effect-free**; anything algorithmic or side-effecting is a method — `getLength()` (O(n) count on lists), `getBack()` (O(n) on external SLLs), `setCapacity()` (evicts), cache `find`/`get` (promotes the entry — hence a method; the side-effect-free read is `peek`).
+- **`size` is the canonical O(1) element count.** Heaps also expose `length` (their historical primary); `SkipList`/`SplayTree` alias both. Linked lists have neither — counting is O(n), so it's `getLength()`.
+- **`push`/`pop` differ by family (deliberate exception).** Raw lists (`List`/`SList`/`ValueList`/`ValueSList`): `push` = `pushFront`, `pop` = `popFront` — the O(1)-universal end, valid for SLLs too. Deque family (`Deque`/`RingBuffer`/`UnrolledList`): Array parity — `push`/`pop` at the back, `shift`/`unshift` at the front. `Queue`: `push` adds at the back, `pop` removes at the front (FIFO). Heaps: priority insert/extract-min. When in doubt use the explicit names (`pushFront`, `popBack`, …).
+- **`find` returns the container's handle type**: nodes for `SplayTree`/`SkipList`/lists, values for caches (Map parity, aliased `get`).
+
 ---
 
 ## Module: List (`list-toolkit/list.js`)
@@ -328,7 +335,10 @@ import CacheLRU from 'list-toolkit/cache.js';
 
 ```js
 new CacheLRU(capacity = 10)
+new CacheLRU({capacity: 10})
 ```
+
+All caches accept a capacity number or an options object; `CacheSLRU` also takes `protectedCapacity` (second positional or in the object).
 
 ### Properties
 
@@ -440,7 +450,7 @@ Options: `{less, equal, compare}`. If `compare` is provided, `less` is derived f
 ### Properties
 
 - `isEmpty` — true if heap is empty.
-- `length` — number of elements.
+- `length` (alias: `size`) — number of elements.
 - `top` — minimum element (without removing).
 - `array` — the underlying array.
 
@@ -509,7 +519,7 @@ If `compare` is provided, `less` is derived. `indexName` is the property (string
 ### Properties
 
 - `isEmpty` — true if the heap is empty.
-- `length` — number of elements.
+- `length` (alias: `size`) — number of elements.
 - `top` — minimum element (without removing).
 - `array` — the underlying array (a valid binary heap).
 - `indexName` — the index property name.
@@ -645,21 +655,24 @@ import Queue from 'list-toolkit/queue.js';
 new Queue(underlyingList = new ValueList())
 ```
 
+Accepts a list instance (adopted) or a list class (instantiated).
+
 ### Properties
 
 - `isEmpty` — true if empty.
 - `size` — number of elements.
-- `top` — front element value.
+- `top` (alias: `front`) — front element value.
 
 ### Methods
 
 - `peek()` — return front value.
 - `add(value)` — add to back. Aliases: `push`, `pushBack`, `enqueue`.
 - `remove()` — remove from front. Aliases: `pop`, `popFront`, `dequeue`.
-- `addValues(values)` — add multiple values.
+- `addValues(values)` — add multiple values. Alias: `pushValues`.
 - `clear()` — remove all.
 - `[Symbol.iterator]()` — iterate over values.
 - `getReverseIterator()` — reverse iterator.
+- `Queue.from(values, underlyingList?)` — create from an iterable.
 
 ---
 
@@ -674,8 +687,10 @@ import Stack from 'list-toolkit/stack.js';
 ### Constructor
 
 ```js
-new Stack(UnderlyingList = ValueList)
+new Stack(underlyingList = ValueList)
 ```
+
+Accepts a list instance (adopted) or a list class (instantiated).
 
 ### Properties
 
@@ -686,12 +701,13 @@ new Stack(UnderlyingList = ValueList)
 ### Methods
 
 - `peek()` — return top value.
-- `push(value)` — push to top. Alias: `pushFront`.
-- `pop()` — remove and return top value.
-- `pushValues(values)` — push multiple values.
+- `push(value)` — push to top. Aliases: `pushFront`, `add`.
+- `pop()` — remove and return top value. Alias: `remove`.
+- `pushValues(values)` — push multiple values. Alias: `addValues`.
 - `clear()` — remove all.
 - `[Symbol.iterator]()` — iterate over values.
 - `getReverseIterator()` — reverse iterator.
+- `Stack.from(values, underlyingList?)` — create from an iterable (last value on top).
 
 ---
 
@@ -730,6 +746,7 @@ Accepts a list instance (adopted) or a list class (instantiated). The list must 
 - `clear()` — remove all.
 - `[Symbol.iterator]()` — iterate front to back.
 - `getReverseIterator()` — iterate back to front.
+- `Deque.from(values, underlyingList?)` — create from an iterable.
 
 ---
 

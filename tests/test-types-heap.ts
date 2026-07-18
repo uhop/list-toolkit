@@ -121,3 +121,10 @@ test('SkewHeap<T>: merge/clone/from types', t => {
   const fromStatic: SkewHeap<number> = SkewHeap.from<number>([5]);
   t.pass('compiles');
 });
+
+test('MinHeap<T>: size alias type', t => {
+  const heap = new MinHeap<number>();
+  const _size: number = heap.size;
+  const _length: number = heap.length;
+  t.pass('compiles');
+});

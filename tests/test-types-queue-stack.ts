@@ -92,3 +92,14 @@ test('Stack<V>: iterator types', t => {
   const revIter: IterableIterator<number> | undefined = s.getReverseIterator();
   t.pass('compiles');
 });
+
+test('Queue<V>/Stack<V>: unification surface types', t => {
+  const q: Queue<number> = Queue.from([1, 2, 3]);
+  const _front: number | undefined = q.front;
+  const _qv: Queue<number> = q.pushValues([4, 5]);
+  const s: Stack<string> = Stack.from(['a', 'b']);
+  const _add: Stack<string> = s.add('c');
+  const _removed: string | undefined = s.remove();
+  const _sv: Stack<string> = s.addValues(['d']);
+  t.pass('compiles');
+});

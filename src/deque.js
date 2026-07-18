@@ -81,6 +81,9 @@ export class Deque {
   getReverseIterator() {
     return this.list.getReverseIterator?.();
   }
+  static from(values, underlyingList) {
+    return new Deque(underlyingList).pushValuesBack(values);
+  }
 }
 
 addAliases(Deque.prototype, {

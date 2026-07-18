@@ -116,3 +116,17 @@ test('CacheRandom.resetIds()', t => {
   t.equal(ids.size, 3);
   t.ok([...ids].every(id => typeof id === 'number' && id >= 0 && id < 3));
 });
+
+test('Cache: options-object constructor', t => {
+  const cache = new Cache({capacity: 2});
+  t.equal(cache.capacity, 2);
+  cache.register(1, 'a').register(2, 'b').register(3, 'c');
+  t.equal(cache.size, 2);
+  t.notOk(cache.has(1));
+
+  const defaulted = new Cache({});
+  t.equal(defaulted.capacity, 10);
+
+  const lfu = new CacheLFU({capacity: 5});
+  t.equal(lfu.capacity, 5);
+});

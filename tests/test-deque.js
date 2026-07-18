@@ -124,3 +124,14 @@ test('Deque - sliding window', t => {
   }
   t.deepEqual(seen, [[1], [1, 2], [1, 2, 3], [2, 3, 4], [3, 4, 5], [4, 5, 6]]);
 });
+
+test('Deque - from()', t => {
+  const deque = Deque.from([1, 2, 3]);
+  t.equal(deque.size, 3);
+  t.deepEqual([...deque], [1, 2, 3]);
+  t.equal(deque.front, 1);
+  t.equal(deque.back, 3);
+
+  const onInstance = Deque.from([4, 5], ValueList.from([1]));
+  t.deepEqual([...onInstance], [1, 4, 5]);
+});

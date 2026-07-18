@@ -1,4 +1,4 @@
-import {CacheLRU} from './cache-lru.js';
+import {CacheLRU, CacheOptions} from './cache-lru.js';
 
 /**
  * CLOCK (second chance) cache. Reads only set a reference bit — the cheapest
@@ -10,7 +10,7 @@ export class CacheClock<K = unknown, V = unknown> extends CacheLRU<K, V> {
   /**
    * @param capacity - Maximum number of entries (default 10).
    */
-  constructor(capacity?: number);
+  constructor(capacity?: number | CacheOptions);
 }
 
 export default CacheClock;

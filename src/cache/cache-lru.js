@@ -5,6 +5,8 @@ import {addAliases} from '../meta-utils.js';
 
 export class CacheLRU {
   constructor(capacity = 10) {
+    // accepts a number or an options object
+    if (typeof capacity == 'object' && capacity) capacity = capacity.capacity ?? 10;
     this.capacity = capacity;
     this.list = new ValueList();
     this.dict = new Map();

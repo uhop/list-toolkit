@@ -1,4 +1,10 @@
-import {CacheLRU} from './cache-lru.js';
+import {CacheLRU, CacheOptions} from './cache-lru.js';
+
+/** Options for configuring an SLRU cache. */
+export interface CacheSLRUOptions extends CacheOptions {
+  /** Maximum protected-segment size (default 80% of capacity; clamped to `[1, capacity]`). */
+  protectedCapacity?: number;
+}
 
 /**
  * SLRU (Segmented LRU) cache. New entries land in a probationary segment; a hit
@@ -13,10 +19,10 @@ export class CacheSLRU<K = unknown, V = unknown> extends CacheLRU<K, V> {
   protectedSize: number;
 
   /**
-   * @param capacity - Maximum number of entries (default 10).
-   * @param protectedCapacity - Maximum protected-segment size (default 80% of capacity; clamped to `[1, capacity]`).
+   * @param capacity - Maximum number of entries (default 10), or an options object.
+   * @param protectedCapacity - Maximum protected-segment size (default 80% of capacity; clamped to `[1, capacity]`). Ignored when `capacity` is an options object.
    */
-  constructor(capacity?: number, protectedCapacity?: number);
+  constructor(capacity?: number | CacheSLRUOptions, protectedCapacity?: number);
 }
 
 export default CacheSLRU;

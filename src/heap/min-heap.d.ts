@@ -14,6 +14,9 @@ export class MinHeap<T = unknown> extends HeapBase<T> {
   /** Number of elements in the heap. */
   get length(): number;
 
+  /** Number of elements in the heap. An alias of `length`. */
+  get size(): number;
+
   /** Whether the heap has no elements. */
   get isEmpty(): boolean;
 

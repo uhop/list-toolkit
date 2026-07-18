@@ -264,3 +264,11 @@ test('IndexedHeap - deterministic stress', t => {
   while (!heap.isEmpty) drained.push(heap.pop().p);
   t.deepEqual(drained, expected);
 });
+
+test('IndexedHeap: size alias', t => {
+  const heap = new IndexedHeap(byPriority);
+  t.equal(heap.size, 0);
+  heap.push({p: 3}).push({p: 1});
+  t.equal(heap.size, 2);
+  t.equal(heap.size, heap.length);
+});

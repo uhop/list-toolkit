@@ -42,6 +42,9 @@ export class IndexedHeap<T extends object = object> {
   /** Number of elements. */
   get length(): number;
 
+  /** Number of elements. An alias of `length`. */
+  get size(): number;
+
   /** Whether the heap has no elements. */
   get isEmpty(): boolean;
 

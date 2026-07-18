@@ -7,8 +7,10 @@ import CacheLRU from './cache-lru.js';
 // segmented LRU: new entries prove themselves in the probationary segment;
 // a hit promotes into the protected segment — one-shot scans never displace it
 export class CacheSLRU extends CacheLRU {
-  constructor(capacity = 10, protectedCapacity = Math.max(1, Math.floor(capacity * 0.8))) {
+  constructor(capacity = 10, protectedCapacity) {
     super(capacity);
+    if (typeof capacity == 'object' && capacity) protectedCapacity = capacity.protectedCapacity;
+    if (protectedCapacity === undefined) protectedCapacity = Math.max(1, Math.floor(this.capacity * 0.8));
     this.protectedCapacity = Math.min(Math.max(1, Math.floor(protectedCapacity)), this.capacity);
     this.protectedList = new ValueList();
     this.protectedSize = 0;

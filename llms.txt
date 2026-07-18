@@ -57,6 +57,8 @@ for (const node of people) console.log(node.name); // Alice, Bob
 
 ### Caches
 
+All caches share one API and accept a capacity number or an options object (`new CacheLRU(100)` ≡ `new CacheLRU({capacity: 100})`).
+
 - **CacheLRU** (`list-toolkit/cache.js`) — least recently used eviction. Default export.
 - **CacheFIFO** (`list-toolkit/cache/cache-fifo.js`) — first in first out eviction.
 - **CacheLFU** (`list-toolkit/cache/cache-lfu.js`) — least frequently used eviction.
@@ -75,12 +77,14 @@ All caches share the same API: `has(key)`, `find(key)`/`get(key)`, `peek(key)` (
 - **SkewHeap** (`list-toolkit/heap/skew-heap.js`) — merge-based skew heap.
 - **PairingHeap** (`list-toolkit/heap/pairing-heap.js`) — merge-based pairing heap: O(1) `push`/`merge`; `push` returns a node handle; `update(node, isDecreased?)` (decrease-key) and `remove(node)` by handle.
 
-All heaps support `less` or `compare` for ordering. Common API: `push(value)`, `pop()`, `top`/`peek()`, `merge()`, `has(value)`, `remove(value)`.
+All heaps support `less` or `compare` for ordering. Common API: `push(value)`, `pop()`, `top`/`peek()`, `size`/`length`, `merge()`, `has(value)`, `remove(value)`.
 
 ### Adapters
 
-- **Queue** (`list-toolkit/queue.js`) — FIFO queue adapter. Methods: `add`/`push`/`enqueue`, `remove`/`pop`/`dequeue`, `peek`, `top`, `clear`.
-- **Stack** (`list-toolkit/stack.js`) — LIFO stack adapter. Methods: `push`, `pop`, `peek`, `top`, `clear`.
+All three accept an underlying list instance (adopted) or a list class (instantiated), and provide `from(values, underlyingList?)`.
+
+- **Queue** (`list-toolkit/queue.js`) — FIFO queue adapter. Methods: `add`/`push`/`enqueue`, `remove`/`pop`/`dequeue`, `peek`, `top`/`front`, `addValues`/`pushValues`, `clear`.
+- **Stack** (`list-toolkit/stack.js`) — LIFO stack adapter. Methods: `push`/`add`, `pop`/`remove`, `peek`, `top`, `pushValues`/`addValues`, `clear`.
 - **Deque** (`list-toolkit/deque.js`) — double-ended queue adapter. Methods: `pushFront`/`unshift`, `pushBack`/`push`, `popFront`/`shift`, `popBack`/`pop`, `peekFront`/`peekBack`, `rotate(n)`, `clear`. O(1) at both ends.
 - **RingBuffer** (`list-toolkit/ring-buffer.js`) — array-backed deque on a circular buffer, same API as Deque plus `at(index)` (O(1) random access) and optional `{capacity}` bounded keep-last-N mode. Fastest queue/deque for raw throughput.
 

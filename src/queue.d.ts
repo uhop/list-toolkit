@@ -4,15 +4,18 @@ export class Queue<V = unknown> {
   size: number;
 
   /**
-   * @param underlyingList - Optional pre-existing value list to use.
+   * @param underlyingList - A pre-existing value list to adopt, or a list class to instantiate.
    */
-  constructor(underlyingList?: object);
+  constructor(underlyingList?: object | (new () => object));
 
   /** Whether the queue has no elements. */
   get isEmpty(): boolean;
 
   /** The front element without removing it, or `undefined` if empty. */
   get top(): V | undefined;
+
+  /** The front element without removing it, or `undefined` if empty. An alias of `top`. */
+  get front(): V | undefined;
 
   /** Alias for {@link top}. */
   peek(): V | undefined;
@@ -55,6 +58,9 @@ export class Queue<V = unknown> {
    */
   addValues(values: Iterable<V>): this;
 
+  /** Alias for {@link addValues}. */
+  pushValues(values: Iterable<V>): this;
+
   /**
    * Remove all elements.
    * @returns `this` for chaining.
@@ -71,6 +77,14 @@ export class Queue<V = unknown> {
    * @returns An iterable iterator, or `undefined` when the underlying list does not support reverse iteration.
    */
   getReverseIterator(): IterableIterator<V> | undefined;
+
+  /**
+   * Build a Queue from an iterable.
+   * @param values - Iterable of values to enqueue.
+   * @param underlyingList - A pre-existing value list to adopt, or a list class to instantiate.
+   * @returns A new Queue.
+   */
+  static from<V = unknown>(values: Iterable<V>, underlyingList?: object | (new () => object)): Queue<V>;
 }
 
 export default Queue;

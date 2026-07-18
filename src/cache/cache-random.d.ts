@@ -1,4 +1,4 @@
-import {CacheLRU} from './cache-lru.js';
+import {CacheLRU, CacheOptions} from './cache-lru.js';
 
 /** Random eviction cache. Evicts a randomly selected entry. */
 export class CacheRandom<K = unknown, V = unknown> extends CacheLRU<K, V> {
@@ -8,7 +8,7 @@ export class CacheRandom<K = unknown, V = unknown> extends CacheLRU<K, V> {
   /**
    * @param capacity - Maximum number of entries (default 10).
    */
-  constructor(capacity?: number);
+  constructor(capacity?: number | CacheOptions);
 
   /**
    * Reset all IDs and rebuild the internal heap.

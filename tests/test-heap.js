@@ -158,3 +158,14 @@ test('MinHeap', t => {
     t.deepEqual(heap.releaseSorted(), [5, 4, 3, 2, 1]);
   }
 });
+
+test('MinHeap: size alias', t => {
+  const heap = new MinHeap();
+  t.equal(heap.size, 0);
+  t.equal(heap.size, heap.length);
+  heap.push(3).push(1).push(2);
+  t.equal(heap.size, 3);
+  t.equal(heap.size, heap.length);
+  heap.pop();
+  t.equal(heap.size, 2);
+});
