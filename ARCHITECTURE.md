@@ -31,6 +31,7 @@ src/                      # All source code (ESM)
 ├── heap/                 # Heap (priority queue) implementations
 │   ├── basics.js         # HeapBase — shared defaults (less, equal, compare)
 │   ├── min-heap.js       # MinHeap — array-based binary min-heap
+│   ├── indexed-heap.js   # IndexedHeap — min-heap with intrusive element indices
 │   ├── leftist-heap.js   # LeftistHeap — merge-based leftist heap
 │   └── skew-heap.js      # SkewHeap — merge-based skew heap
 ├── tree/                 # Tree implementations
@@ -105,6 +106,7 @@ Common methods: `has(key)`, `find(key)`/`get(key)`, `register(key, value)`/`set(
 All heaps support `less` function or `compare` function for ordering:
 
 - `MinHeap` — array-based binary min-heap (most common choice)
+- `IndexedHeap` — array-based min-heap storing each element's position on the element under a configurable property name (intrusive index): O(1) `has`/`findIndex`, O(log n) `update`/`remove`/`replace` by handle (decrease-key). Elements must be objects.
 - `LeftistHeap` — node-based merge heap (efficient merge)
 - `SkewHeap` — node-based merge heap (simpler than leftist)
 
@@ -141,6 +143,7 @@ cache/cache-lfu.js ← frequency buckets (ValueList of ValueLists) + Map
 cache/cache-random.js ← MinHeap + Map
 
 heap/basics.js ← heap/min-heap.js
+               ← heap/indexed-heap.js
                ← heap/leftist-heap.js
                ← heap/skew-heap.js
 

@@ -10,7 +10,7 @@ Data structures included:
 
 - **Linked lists** — doubly and singly linked, circular. Node-based (link properties on your objects) or value-based (wraps values in nodes). Hosted (sentinel head) or headless (external pointer).
 - **NT list converters** — convert null-terminated lists to/from circular lists in place.
-- **Heaps** — min heap, leftist heap, skew heap.
+- **Heaps** — min heap, leftist heap, skew heap, indexed heap (O(1) membership, update/remove by handle — decrease-key).
 - **Caches** — LRU, LFU, FIFO, random eviction. Includes a decorator for functions, methods, and getters.
 - **Queue and Stack** — list-backed adapters.
 - **Splay tree** — self-adjusting binary search tree.

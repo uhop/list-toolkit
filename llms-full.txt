@@ -413,6 +413,61 @@ Options: `{less, equal, compare}`. If `compare` is provided, `less` is derived f
 
 ---
 
+## Module: IndexedHeap (`list-toolkit/heap/indexed-heap.js`)
+
+Array-based binary min-heap that stores each element's position on the element itself under a configurable property name (intrusive index). O(1) `has`/`findIndex`; O(log n) `update`/`remove`/`replace` by handle — decrease-key with no scans. Elements must be objects.
+
+```js
+import IndexedHeap from 'list-toolkit/heap/indexed-heap.js';
+
+const heap = new IndexedHeap({less: (a, b) => a.deadline < b.deadline});
+const task = {deadline: 150};
+heap.push(task);
+task.deadline = 42;
+heap.update(task); // reschedule by handle, O(log n)
+heap.remove(task); // cancel by handle, O(log n)
+```
+
+### Constructor
+
+```js
+new IndexedHeap({less?, compare?, indexName = 'heapIndex'}?, ...heapsOrIterables)
+```
+
+If `compare` is provided, `less` is derived. `indexName` is the property (string or symbol) written on elements; use distinct names to keep one object in several heaps. Heap arguments are drained (merged in).
+
+### Properties
+
+- `isEmpty` — true if the heap is empty.
+- `length` — number of elements.
+- `top` — minimum element (without removing).
+- `array` — the underlying array (a valid binary heap).
+- `indexName` — the index property name.
+
+### Methods
+
+- `peek()` — alias for `top`.
+- `push(value)` — add an element. Returns `this`.
+- `pop()` — remove and return the minimum.
+- `pushPop(value)` — push then pop (optimized).
+- `replaceTop(value)` — replace the minimum, re-heapify.
+- `findIndex(value)` — element's position, or -1. O(1).
+- `has(value)` — membership check. O(1).
+- `update(value, isDecreased?)` — re-heapify after mutating the element's priority (decrease-key); direction auto-detected when omitted.
+- `updateTop()` — re-heapify after mutating the top element.
+- `remove(value)` — remove by handle. O(log n).
+- `removeByIndex(index)` — remove by position.
+- `replace(value, newValue)` / `replaceByIndex(index, newValue)` — replace, re-heapify.
+- `merge(...args)` — merge heaps/arrays/iterables, rebuild in O(n). Heap arguments are drained.
+- `build()` — heapify `array` in place, restamp indices. O(n).
+- `clear()` — remove all elements.
+- `releaseSorted()` — heap-sort in place (reverse `less` order), detach and return the array; indices reset.
+- `IndexedHeap.from(values, options?)` — create from an iterable in O(n); an array is adopted.
+
+No `clone()`: two heaps cannot track the same elements under one index name.
+
+---
+
 ## Module: LeftistHeap (`list-toolkit/heap/leftist-heap.js`)
 
 Node-based merge heap using the leftist property. Efficient O(log n) merge.

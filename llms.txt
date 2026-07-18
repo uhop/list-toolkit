@@ -64,6 +64,7 @@ All caches share the same API: `has(key)`, `find(key)`/`get(key)`, `register(key
 ### Heaps (priority queues)
 
 - **MinHeap** (`list-toolkit/heap.js`) — array-based binary min-heap. Default export.
+- **IndexedHeap** (`list-toolkit/heap/indexed-heap.js`) — min-heap with intrusive element indices (configurable property name): O(1) `has`/`findIndex`, O(log n) `update`/`remove` by handle (decrease-key). Elements must be objects.
 - **LeftistHeap** (`list-toolkit/heap/leftist-heap.js`) — merge-based leftist heap.
 - **SkewHeap** (`list-toolkit/heap/skew-heap.js`) — merge-based skew heap.
 
