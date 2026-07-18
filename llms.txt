@@ -92,6 +92,10 @@ All heaps support `less` or `compare` for ordering. Common API: `push(value)`, `
 
 - **TimerWheel** (`list-toolkit/timer-wheel.js`) — hashed timing wheel, logical time (caller drives the clock). Methods: `schedule(value, delay)` → handle, `cancel(handle)`, `reschedule(handle, delay)`, `isScheduled`, `remainingTicks`, `tick()` → due values, `advance(n)`, `clear`. All scheduling ops O(1).
 
+### Free list
+
+- **FreeList** (`list-toolkit/free-list.js`) — intrusive object pool: `acquire()`/`release(node)` recycle nodes through their own link property; `reset` hook scrubs payloads; optional `capacity`. A GC-pressure tool, not a throughput optimization.
+
 ### Utilities
 
 - **list-utils** (`list-toolkit/list-utils.js`) — push/append values, find/remove nodes by condition, validation.

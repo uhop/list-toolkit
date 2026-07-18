@@ -882,6 +882,47 @@ Delays quantize to whole ticks — pick slot count and tick duration for the nee
 
 ---
 
+## Module: FreeList (`list-toolkit/free-list.js`)
+
+Intrusive object pool: recycles objects by threading dead ones into a singly linked free list through their own link property — the pool allocates nothing. Built for recycling list nodes (ValueNodes in hot queues); works for any objects.
+
+```js
+import FreeList from 'list-toolkit/free-list.js';
+import {ValueNode} from 'list-toolkit/list/nodes.js';
+
+const pool = new FreeList({
+  create: () => new ValueNode(null),
+  reset: node => (node.value = null), // scrub payloads so pooled nodes don't pin them
+  prevName: 'prev' // set for DLL nodes so recycled nodes stay list-adoptable
+});
+const node = pool.acquire(); // recycled or fresh; link properties nulled
+pool.release(node); // reset + pool (or drop when at capacity)
+```
+
+### Constructor
+
+```js
+new FreeList({create?, reset?, capacity = Infinity, nextName = 'next', prevName?} = {})
+```
+
+### Properties
+
+- `isEmpty` / `isFull` — pool state.
+- `size` — number of pooled objects.
+- `capacity` — pool bound (`0` disables pooling).
+
+### Methods
+
+- `acquire()` — take a pooled object or `create()` one; `undefined` when empty with no factory. O(1).
+- `release(node)` — run `reset`, pool the object (drop when full). The object must not be inside a list. O(1).
+- `preallocate(count)` — warm the pool via `create`. O(k).
+- `clear()` — drop all pooled objects. O(n).
+- `[Symbol.iterator]()` — iterate pooled objects.
+
+Honest guidance: pooling measured ~15% slower than fresh allocation on raw churn microbenches (modern engines allocate very fast) — use it to reduce GC pauses and heap churn in long-running latency-sensitive code, not for raw throughput.
+
+---
+
 ## Module: list-utils (`list-toolkit/list-utils.js`)
 
 Utility functions for working with lists.

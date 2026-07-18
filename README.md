@@ -17,7 +17,7 @@ Data structures included:
 - **Splay tree** — self-adjusting binary search tree.
 - **Skip list** — probabilistic ordered container: expected O(log n) search/insert/remove, floor/ceil, ordered and range iteration.
 - **Timer wheel** — hashed timing wheel: O(1) schedule/cancel/reschedule, logical-time ticks driven by your clock.
-- **Utilities** — push/append values, find, remove, validate, and more.
+- **Utilities** — push/append values, find, remove, validate, node pooling (free list), and more.
 
 Works with your existing linked lists — no wrapper objects required.
 
