@@ -56,6 +56,7 @@ src/                      # All source code (ESM)
 ├── skip-list.js          # SkipList — probabilistic ordered container
 ├── timer-wheel.js        # TimerWheel — hashed timing wheel (logical time)
 ├── free-list.js          # FreeList — intrusive object pool (node recycling)
+├── unrolled-list.js      # UnrolledList — chunked value list for bulk pipelines
 ├── list-utils.js         # Utility functions: push/append values, find, remove
 ├── list-helpers.js       # Node/range normalization helpers
 ├── nt-utils.js           # Null-terminated list utilities (convert NT ↔ circular)
@@ -169,6 +170,8 @@ skip-list.js ← meta-utils.js only (self-contained)
 timer-wheel.js ← List (per-slot storage) + list/basics.js (raw splice/pop)
 
 free-list.js ← (self-contained; threads through pooled objects' own links)
+
+unrolled-list.js ← meta-utils.js only (self-contained chunk chain)
 
 meta-utils.js ← (used by most modules for aliases and iterators)
 ```

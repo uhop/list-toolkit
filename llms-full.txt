@@ -272,6 +272,49 @@ for (const ptr of list.getPtrIterator()) { /* ... */ }
 
 ---
 
+## Module: UnrolledList (`list-toolkit/unrolled-list.js`)
+
+Unrolled value list: chunked arrays on a doubly linked chain — one allocation per `chunkSize` values, chunk-contiguous iteration, and no growth copies (values never move once placed). The bulk-pipeline container: front/back operations and iteration only (no mid-sequence surgery, no node identity).
+
+```js
+import UnrolledList from 'list-toolkit/unrolled-list.js';
+
+const pipeline = new UnrolledList({chunkSize: 64});
+for (const item of source) pipeline.push(item);
+for (const item of pipeline) process(item);
+while (!pipeline.isEmpty) sink(pipeline.shift());
+```
+
+### Constructor
+
+```js
+new UnrolledList({chunkSize = 64} = {})
+```
+
+### Properties
+
+- `isEmpty` — true if empty.
+- `size` — number of values (tracked, O(1) — unlike the linked lists' O(n) `getLength`).
+- `front` / `back` — first/last value.
+- `chunkSize` — value slots per chunk.
+
+### Methods
+
+- `peekFront()` / `peekBack()` — first/last value.
+- `at(index)` — random access from the nearer end, O(n/chunkSize); negative counts from the back.
+- `pushFront(value)` — add to front. Aliases: `unshift`, `addFront`. Amortized O(1).
+- `pushBack(value)` — add to back. Aliases: `push`, `add`, `addBack`. Amortized O(1).
+- `popFront()` — remove from front. Aliases: `shift`, `removeFront`. O(1).
+- `popBack()` — remove from back. Aliases: `pop`, `removeBack`. O(1).
+- `pushValuesFront(values)` / `pushValuesBack(values)` — bulk adds.
+- `clear()` — remove all values.
+- `[Symbol.iterator]()` / `getReverseIterator()` — iterate front-to-back / back-to-front.
+- `UnrolledList.from(values, options?)` — create from an iterable.
+
+Popped slots are cleared (no pinned references). Measured ~2.6× faster than ValueList on fill+iterate+drain pipelines; RingBuffer is faster still when growth-copy spikes are acceptable — the unrolled list's growth is incremental (one chunk at a time), giving flatter latency for unbounded spiky pipelines.
+
+---
+
 ## Module: CacheLRU (`list-toolkit/cache.js`)
 
 Least recently used cache. Default export of `cache.js`.

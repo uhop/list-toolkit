@@ -51,6 +51,10 @@ for (const node of people) console.log(node.name); // Alice, Bob
 - **ExtSList** (`list-toolkit/ext-slist.js`) — external (headless) node-based SLL.
 - **ExtValueSList** (`list-toolkit/ext-value-slist.js`) — external (headless) value-based SLL.
 
+### Unrolled list
+
+- **UnrolledList** (`list-toolkit/unrolled-list.js`) — chunked value list for bulk pipelines: one allocation per `chunkSize` (default 64) values, contiguous iteration, no growth copies. Deque-style API (`pushFront`/`pushBack`/`popFront`/`popBack` + `push`/`pop`/`shift`/`unshift` aliases), O(1) tracked `size`, `at(index)`. Front/back ops and iteration only.
+
 ### Caches
 
 - **CacheLRU** (`list-toolkit/cache.js`) — least recently used eviction. Default export.

@@ -14,6 +14,7 @@ Data structures included:
 - **Caches** — LRU, LFU, FIFO, random, segmented LRU (scan-resistant), CLOCK (second chance). Includes a decorator for functions, methods, and getters.
 - **Queue, Stack, and Deque** — list-backed adapters; the deque adds O(1) both-end operations and `rotate()`.
 - **Ring buffer** — array-backed deque on a circular buffer: fastest raw throughput, O(1) random access, optional keep-last-N bounded mode.
+- **Unrolled list** — chunked value list for bulk pipelines: one allocation per chunk, contiguous iteration, no growth copies.
 - **Splay tree** — self-adjusting binary search tree.
 - **Skip list** — probabilistic ordered container: expected O(log n) search/insert/remove, floor/ceil, ordered and range iteration.
 - **Timer wheel** — hashed timing wheel: O(1) schedule/cancel/reschedule, logical-time ticks driven by your clock.
