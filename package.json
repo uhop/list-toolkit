@@ -1,7 +1,7 @@
 {
   "name": "list-toolkit",
   "version": "2.3.2",
-  "description": "Zero-dependency list-based data structures: linked lists (doubly/singly linked, circular), caches (LRU, LFU, FIFO), heaps, queues, stacks, splay trees.",
+  "description": "Zero-dependency list-based data structures: linked lists (doubly/singly linked, circular), caches (LRU, LFU, FIFO), heaps, queues, stacks, splay trees, skip lists.",
   "type": "module",
   "exports": {
     "./*": "./src/*"
@@ -45,6 +45,7 @@
     "queue",
     "stack",
     "splay-tree",
+    "skip-list",
     "data-structures",
     "esm",
     "zero-dependency"

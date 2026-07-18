@@ -47,6 +47,7 @@ src/                      # All source code (ESM)
 ├── heap.js               # Re-export: MinHeap from heap/min-heap.js
 ├── queue.js              # Queue — adapter class wrapping a ValueList
 ├── stack.js              # Stack — adapter class wrapping a ValueList
+├── skip-list.js          # SkipList — probabilistic ordered container
 ├── list-utils.js         # Utility functions: push/append values, find, remove
 ├── list-helpers.js       # Node/range normalization helpers
 ├── nt-utils.js           # Null-terminated list utilities (convert NT ↔ circular)
@@ -111,6 +112,10 @@ All heaps support `less` function or `compare` function for ordering:
 
 Self-adjusting binary search tree — frequently accessed elements move to the root. Supports `insert`, `find`, `remove`, `split` (via `splitMaxTree`), and `join`.
 
+### SkipList
+
+Probabilistic ordered container — layered singly linked lanes over a doubly linked bottom lane. Expected O(log n) `insert`, `find`, `remove`, `floor`, `ceil`; ordered, reverse, and bounded-range iteration; O(1) `getMin`/`getMax`/`popFront`. Reads do not mutate the structure (contrast with `SplayTree`).
+
 ## Module dependency graph (simplified)
 
 ```
@@ -138,6 +143,8 @@ cache/cache-random.js ← MinHeap + Map
 heap/basics.js ← heap/min-heap.js
                ← heap/leftist-heap.js
                ← heap/skew-heap.js
+
+skip-list.js ← meta-utils.js only (self-contained)
 
 meta-utils.js ← (used by most modules for aliases and iterators)
 ```
@@ -167,6 +174,7 @@ import CacheLRU from 'list-toolkit/cache.js';
 import MinHeap from 'list-toolkit/heap.js';
 import Queue from 'list-toolkit/queue.js';
 import SplayTree from 'list-toolkit/tree/splay-tree.js';
+import SkipList from 'list-toolkit/skip-list.js';
 ```
 
 The wildcard export `./*` maps to `./src/*`.

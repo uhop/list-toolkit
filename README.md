@@ -14,6 +14,7 @@ Data structures included:
 - **Caches** — LRU, LFU, FIFO, random eviction. Includes a decorator for functions, methods, and getters.
 - **Queue and Stack** — list-backed adapters.
 - **Splay tree** — self-adjusting binary search tree.
+- **Skip list** — probabilistic ordered container: expected O(log n) search/insert/remove, floor/ceil, ordered and range iteration.
 - **Utilities** — push/append values, find, remove, validate, and more.
 
 Works with your existing linked lists — no wrapper objects required.

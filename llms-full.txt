@@ -1,6 +1,6 @@
 # list-toolkit
 
-> A zero-dependency JavaScript library providing efficient list-based data structures: doubly and singly linked circular lists, caches, heaps, queues, stacks, splay trees, and null-terminated list utilities.
+> A zero-dependency JavaScript library providing efficient list-based data structures: doubly and singly linked circular lists, caches, heaps, queues, stacks, splay trees, skip lists, and null-terminated list utilities.
 
 - NPM: https://npmjs.org/package/list-toolkit
 - GitHub: https://github.com/uhop/list-toolkit
@@ -562,6 +562,56 @@ If `compare` is provided, `less` is derived. Default `less`: `(a, b) => a < b`.
 - `left`, `right`, `parent` — child and parent pointers.
 - `getMin()` — find minimum in subtree.
 - `getMax()` — find maximum in subtree.
+
+---
+
+## Module: SkipList (`list-toolkit/skip-list.js`)
+
+Probabilistic ordered container: layered singly linked lanes over a doubly linked bottom lane. Expected O(log n) search/insert/remove; reads do not mutate the structure (contrast with SplayTree).
+
+```js
+import SkipList from 'list-toolkit/skip-list.js';
+```
+
+### Constructor
+
+```js
+new SkipList({less?, compare?, p = 0.5, maxLevel = 32, random = Math.random} = {})
+```
+
+If `compare` is provided, `less` is derived. Default `less`: `(a, b) => a < b`. `random` can be injected for deterministic behavior.
+
+### Properties
+
+- `isEmpty` — true if the list is empty.
+- `size` (alias: `length`) — number of elements.
+- `head` — head sentinel `SkipListNode` (its `next` array is the lane tower).
+- `last` — last node, or null if empty.
+
+### Methods
+
+- `insert(value)` — insert a value (duplicates ignored). Returns `this`.
+- `find(value)` — find node by value. Returns `SkipListNode` or null.
+- `has(value)` — check presence. Returns boolean.
+- `remove(value)` — remove a value (missing ignored). Returns `this`.
+- `floor(value)` — node with the greatest value ≤ `value`, or null.
+- `ceil(value)` — node with the smallest value ≥ `value`, or null.
+- `getMin()` — first node, or null. O(1).
+- `getMax()` — last node, or null. O(1).
+- `popFront()` — remove and return the minimum value, or undefined. O(1) expected.
+- `clear()` — remove all elements.
+- `[Symbol.iterator]()` — values in ascending order.
+- `getIterator({from?, to?})` — values within the inclusive range.
+- `getNodeIterator({from?, to?})` — nodes within the inclusive range.
+- `getReverseIterator()` — values in descending order.
+- `SkipList.from(values, options?)` — create from an iterable.
+
+### SkipListNode
+
+- `value` — the stored value.
+- `next` — array of forward pointers (index 0 is the bottom lane).
+- `prev` — previous node on the bottom lane, or null.
+- `level` — tower height.
 
 ---
 

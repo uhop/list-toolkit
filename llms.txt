@@ -1,6 +1,6 @@
 # list-toolkit
 
-> Zero-dependency JavaScript library providing efficient list-based data structures: linked lists, caches, heaps, queues, stacks, and splay trees.
+> Zero-dependency JavaScript library providing efficient list-based data structures: linked lists, caches, heaps, queues, stacks, splay trees, and skip lists.
 
 - NPM: https://npmjs.org/package/list-toolkit
 - GitHub: https://github.com/uhop/list-toolkit
@@ -77,6 +77,10 @@ All heaps support `less` or `compare` for ordering. Common API: `push(value)`, `
 ### Trees
 
 - **SplayTree** (`list-toolkit/tree/splay-tree.js`) — self-adjusting BST. Methods: `insert`, `find`, `remove`, `promote`, `split` (via `splitMaxTree`), `join`.
+
+### Skip list
+
+- **SkipList** (`list-toolkit/skip-list.js`) — probabilistic ordered container, expected O(log n) operations, reads don't mutate. Methods: `insert`, `find`, `has`, `remove`, `floor`, `ceil`, `getMin`/`getMax`, `popFront`, ordered/reverse/range iteration.
 
 ### Utilities
 
