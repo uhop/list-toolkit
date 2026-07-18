@@ -7,3 +7,4 @@ import decorator from './cache/decorator.js';
 export const cacheDecorator = (object, key, cache = new Cache()) => decorator(object, key, cache);
 
 export default Cache;
+export {Cache};

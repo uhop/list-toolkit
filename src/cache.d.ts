@@ -13,3 +13,4 @@ import {WrappedFn} from './cache/decorator.js';
 export function cacheDecorator(object: object, key: PropertyKey, cache?: Cache): WrappedFn<any>;
 
 export default Cache;
+export {Cache};

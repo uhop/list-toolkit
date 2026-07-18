@@ -52,16 +52,11 @@
   "author": "Eugene Lazutkin <eugene.lazutkin@gmail.com> (http://www.lazutkin.com/)",
   "funding": "https://github.com/sponsors/uhop",
   "license": "BSD-3-Clause",
-  "engines": {
-    "node": ">=22"
-  },
   "bugs": {
     "url": "https://github.com/uhop/list-toolkit/issues"
   },
   "github": "http://github.com/uhop/list-toolkit",
   "homepage": "https://github.com/uhop/list-toolkit#readme",
-  "llms": "https://raw.githubusercontent.com/uhop/list-toolkit/master/llms.txt",
-  "llmsFull": "https://raw.githubusercontent.com/uhop/list-toolkit/master/llms-full.txt",
   "devDependencies": {
     "nano-benchmark": "^1.0.13",
     "prettier": "^3.8.1",

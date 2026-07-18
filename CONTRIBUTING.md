@@ -2,13 +2,13 @@
 
 ## Prerequisites
 
-- Node.js 16 or later
+- Node.js 22 or later
 - npm
 
 ## Setup
 
 ```bash
-git clone --recursive git@github.com:uhop/list-toolkit.git
+git clone --recursive https://github.com/uhop/list-toolkit.git
 cd list-toolkit
 npm install
 ```

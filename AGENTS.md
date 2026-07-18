@@ -33,13 +33,13 @@ Tests use [tape-six](https://github.com/uhop/tape-six). JS tests (`tests/test-*.
 - **ESM-only.** `'use strict'` is not used; the project is `"type": "module"`.
 - **No runtime dependencies.** Never add packages to `dependencies`. Only `devDependencies` are allowed.
 - **Do not modify or delete test expectations** without understanding why they changed.
-- **Do not add comments or remove comments** unless explicitly asked.
 
 ## Code style
 
 - Prettier: 160 char width, single quotes, no bracket spacing, no trailing commas, arrow parens "avoid" (see `.prettierrc`).
 - 2-space indentation (`.editorconfig`).
 - Imports at top of file. No dynamic imports unless necessary.
+- **No comments that narrate the code.** Don't write a comment that restates _what_ the code does. Allowed, each as the shortest possible marker: JSDoc when requested or required; a reference for a non-trivial algorithm; a non-trivial _decision_ or constraint — _why_ it's this way, including footgun/ordering caveats that have a real reason. The bar is _why_, never _what_. Strip narrating comments opportunistically in files you're already editing.
 
 ## When reading the codebase
 
