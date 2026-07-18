@@ -166,22 +166,27 @@ export class List extends HeadNode {
   sort(lessFn) {
     if (this.isOneOrEmpty) return this;
 
-    // natural bottom-up merge sort: stable, no recursion, exploits existing runs
-    let runs = [];
+    // natural merge sort over a log-slot cascade (binary counter of pending runs):
+    // stable, no recursion, exploits existing runs, O(log n) auxiliary space
+    const slots = [];
     while (!this.isEmpty) {
-      const run = this.make();
+      let run = this.make();
       do {
         splice(run, run[this.prevName], this.popFrontNode());
       } while (!this.isEmpty && !lessFn(this[this.nextName], run[this.prevName]));
-      runs.push(run);
+      let i = 0;
+      for (; i < slots.length && slots[i]; ++i) {
+        run = slots[i].mergeSorted(run, lessFn);
+        slots[i] = null;
+      }
+      if (i < slots.length) slots[i] = run;
+      else slots.push(run);
     }
-    while (runs.length > 1) {
-      const merged = [];
-      for (let i = 1; i < runs.length; i += 2) merged.push(runs[i - 1].mergeSorted(runs[i], lessFn));
-      if (runs.length & 1) merged.push(runs[runs.length - 1]);
-      runs = merged;
+    let result = null;
+    for (const pending of slots) {
+      if (pending) result = result ? pending.mergeSorted(result, lessFn) : pending;
     }
-    this.appendBack(runs[0]);
+    this.appendBack(result);
     return this;
   }
 

@@ -158,7 +158,7 @@ export class List<T extends object = object> extends HeadNode {
   reverse(): this;
 
   /**
-   * Sort nodes in place using a stable natural merge sort (O(n) on already-sorted input).
+   * Sort nodes in place using a stable natural merge sort (O(n) on already-sorted input; O(log n) auxiliary space).
    * @param lessFn - Comparison function returning `true` if `a` should precede `b`.
    * @returns `this` for chaining.
    */
