@@ -2,6 +2,7 @@
 
 import {ExtListBase, PtrBase} from './nodes.js';
 import {pop, extract, splice, append} from './basics.js';
+import List from './core.js';
 import {addAliases, mapIterator, normalizeIterator} from '../meta-utils.js';
 
 export class Ptr extends PtrBase {
@@ -221,46 +222,12 @@ export class ExtList extends ExtListBase {
   sort(lessFn) {
     if (this.isOneOrEmpty) return this;
 
-    const left = this.make(),
-      right = this.make();
+    // delegate to the hosted stable natural merge sort; head lands on the sorted first node
+    const list = List.fromExtList(this);
+    list.sort(lessFn);
+    this.attach(list.releaseRawList());
 
-    // split into two sublists
-    let isLeft = true;
-    for (const current of this.getNodeIterator()) {
-      current[this.nextName] = current[this.prevName] = current; // make stand-alone
-      if (isLeft) {
-        left.addNodeAfter(current);
-        left.next();
-      } else {
-        right.addNodeAfter(current);
-        right.next();
-      }
-      isLeft = !isLeft;
-    }
-    this.clear();
-    // the list is empty now
-
-    // sort sublists
-    left.next().sort(lessFn);
-    right.next().sort(lessFn);
-
-    // merge sublists
-    while (!left.isEmpty && !right.isEmpty) {
-      this.addNodeAfter((lessFn(left.head, right.head) ? left : right).removeCurrent());
-      this.next();
-    }
-    if (!left.isEmpty) {
-      const last = left.head[left.prevName];
-      this.insertAfter(left);
-      this.head = last;
-    }
-    if (!right.isEmpty) {
-      const last = right.head[right.prevName];
-      this.insertAfter(right);
-      this.head = last;
-    }
-
-    return this.next();
+    return this;
   }
 
   [Symbol.iterator]() {

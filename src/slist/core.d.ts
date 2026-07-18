@@ -263,7 +263,10 @@ export class SList<T extends object = object> extends HeadNode {
   static fromRange<T extends object = object>(range: SllRange<T> | null, options?: SllOptions): SList<T>;
 
   /**
-   * Build an SList from an external list, consuming it.
+   * Build an SList from an external list, consuming it. By contract the result is
+   * **rotated by one**: it starts at `extList.head`'s next node and the old head lands
+   * last — the O(1) conversion (an order-faithful copy would cost an O(n) walk to find
+   * the ring's back; do it via `getBack()` when order matters).
    * @param extList - External list to consume.
    * @returns A new SList.
    */

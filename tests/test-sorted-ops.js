@@ -3,6 +3,8 @@ import List from 'list-toolkit/list.js';
 import SList from 'list-toolkit/slist.js';
 import ValueList from 'list-toolkit/value-list.js';
 import ValueSList from 'list-toolkit/value-slist.js';
+import ExtList from 'list-toolkit/ext-list.js';
+import ExtSList from 'list-toolkit/ext-slist.js';
 
 const makeLcg =
   (seed = 42) =>
@@ -120,6 +122,46 @@ test('sort - correctness across shapes', t => {
     const sorted = Ctor.from(data).sort(lessValue);
     sorted.pushBack(1000);
     t.equal(sorted.back.value, 1000, `${Ctor.name}: back is maintained after sort`);
+  }
+});
+
+test('sort - ext lists parity and stability', t => {
+  const random = makeLcg(11);
+  {
+    const items = Array.from({length: 100}, (_, i) => ({k: Math.floor(random() * 10), i})),
+      ext = new ExtList(List.from(items).releaseRawList());
+    ext.sort(lessNode);
+    const result = Array.from(ext.getNodeIterator());
+    t.equal(result.length, 100, 'ExtList: all nodes present');
+    t.equal(ext.head, result[0], 'ExtList: head is the sorted first node');
+    let stable = true;
+    for (let i = 1; i < result.length; ++i) {
+      const prev = result[i - 1],
+        curr = result[i];
+      if (prev.k > curr.k || (prev.k === curr.k && prev.i > curr.i)) {
+        stable = false;
+        break;
+      }
+    }
+    t.ok(stable, 'ExtList: sorted and stable');
+  }
+  {
+    const items = Array.from({length: 100}, (_, i) => ({k: Math.floor(random() * 10), i})),
+      ext = new ExtSList(SList.from(items).releaseRawList());
+    ext.sort(lessNode);
+    const result = Array.from(ext.getNodeIterator());
+    t.equal(result.length, 100, 'ExtSList: all nodes present');
+    t.equal(ext.head, result[0], 'ExtSList: head is the sorted first node');
+    let stable = true;
+    for (let i = 1; i < result.length; ++i) {
+      const prev = result[i - 1],
+        curr = result[i];
+      if (prev.k > curr.k || (prev.k === curr.k && prev.i > curr.i)) {
+        stable = false;
+        break;
+      }
+    }
+    t.ok(stable, 'ExtSList: sorted and stable');
   }
 });
 

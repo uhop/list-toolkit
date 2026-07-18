@@ -164,7 +164,7 @@ export class ExtList<T extends object = object> extends ExtListBase<T> {
   reverse(): this;
 
   /**
-   * Sort nodes in place using merge sort.
+   * Sort nodes in place using a stable natural merge sort (O(n) on already-sorted input).
    * @param lessFn - Comparison function returning `true` if `a` should precede `b`.
    * @returns `this` for chaining.
    */

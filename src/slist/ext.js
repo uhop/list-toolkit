@@ -1,7 +1,8 @@
 // @ts-self-types="./ext.d.ts"
 
 import {ExtListBase, PtrBase} from './nodes.js';
-import {pop, extract, splice} from './basics.js';
+import {pop, extract, splice, append} from './basics.js';
+import SList from './core.js';
 import {addAliases, normalizeIterator} from '../meta-utils.js';
 
 export class Ptr extends PtrBase {
@@ -171,66 +172,18 @@ export class ExtSList extends ExtListBase {
   sort(lessFn) {
     if (this.isOneOrEmpty) return this;
 
-    const leftHead = {},
-      rightHead = {};
-    leftHead[this.nextName] = leftHead;
-    rightHead[this.nextName] = rightHead;
-
-    const left = this.make(leftHead),
-      right = this.make(rightHead);
-
-    // split into two sublists
-    let isLeft = true;
-    for (const current of this.getNodeIterator()) {
-      current[this.nextName] = current; // make stand-alone
-      if (isLeft) {
-        left.addNodeAfter(current);
-        left.next();
-      } else {
-        right.addNodeAfter(current);
-        right.next();
-      }
-      isLeft = !isLeft;
-    }
-    left.removeNodeAfter(); // remove the head node
-    right.removeNodeAfter(); // remove the head node
+    // delegate to the hosted stable natural merge sort; head lands on the sorted first node
+    // (SList.fromExtList is unsuitable: the SLL ext range starts at head.next — a rotation
+    // that would break stability relative to the original order)
+    const list = new SList(this),
+      back = this.getBack();
+    append(list, list, {prevFrom: back, to: back});
+    list.last = back;
     this.clear();
-    // the list is empty now
+    list.sort(lessFn);
+    this.attach(list.releaseRawList());
 
-    // sort sublists
-    left.next().sort(lessFn);
-    right.next().sort(lessFn);
-
-    // merge sublists
-    const leftIterator = left.getNodeIterator()[Symbol.iterator](),
-      rightIterator = right.getNodeIterator()[Symbol.iterator]();
-    let leftItem = leftIterator.next(),
-      rightItem = rightIterator.next();
-    while (!leftItem.done && !rightItem.done) {
-      let node;
-      if (lessFn(leftItem.value, rightItem.value)) {
-        node = leftItem.value;
-        leftItem = leftIterator.next();
-      } else {
-        node = rightItem.value;
-        rightItem = rightIterator.next();
-      }
-      node[this.nextName] = node; // make stand-alone
-      this.addNodeAfter(node);
-      this.next();
-    }
-    for (; !leftItem.done; this.next(), leftItem = leftIterator.next()) {
-      const node = leftItem.value;
-      node[this.nextName] = node; // make stand-alone
-      this.addNodeAfter(node);
-    }
-    for (; !rightItem.done; this.next(), rightItem = rightIterator.next()) {
-      const node = rightItem.value;
-      node[this.nextName] = node; // make stand-alone
-      this.addNodeAfter(node);
-    }
-
-    return this.next();
+    return this;
   }
 
   [Symbol.iterator]() {
