@@ -141,29 +141,47 @@ export class List extends HeadNode {
     return this;
   }
 
+  insertSorted(value, lessFn) {
+    const node = this.adoptValue(value);
+    let current = this[this.nextName];
+    while (current !== this && !lessFn(node, current)) current = current[this.nextName];
+    splice(this, current[this.prevName], node);
+    return this.makePtr(node);
+  }
+
+  mergeSorted(list, lessFn) {
+    if (!this.isCompatible(list)) throw new Error('Incompatible lists');
+    let current = this[this.nextName];
+    while (current !== this && !list.isEmpty) {
+      if (lessFn(list.front, current)) {
+        splice(this, current[this.prevName], list.popFrontNode());
+      } else {
+        current = current[this.nextName];
+      }
+    }
+    if (!list.isEmpty) this.appendBack(list);
+    return this;
+  }
+
   sort(lessFn) {
     if (this.isOneOrEmpty) return this;
 
-    const left = this.make(),
-      right = this.make();
-
-    // split into two sublists
-    for (let isLeft = true; !this.isEmpty; isLeft = !isLeft) {
-      (isLeft ? left : right).pushBackNode(this.popFrontNode());
+    // natural bottom-up merge sort: stable, no recursion, exploits existing runs
+    let runs = [];
+    while (!this.isEmpty) {
+      const run = this.make();
+      do {
+        splice(run, run[this.prevName], this.popFrontNode());
+      } while (!this.isEmpty && !lessFn(this[this.nextName], run[this.prevName]));
+      runs.push(run);
     }
-    // the list is empty now
-
-    // sort sublists
-    left.sort(lessFn);
-    right.sort(lessFn);
-
-    // merge sublists
-    while (!left.isEmpty && !right.isEmpty) {
-      this.pushBackNode((lessFn(left.front, right.front) ? left : right).popFrontNode());
+    while (runs.length > 1) {
+      const merged = [];
+      for (let i = 1; i < runs.length; i += 2) merged.push(runs[i - 1].mergeSorted(runs[i], lessFn));
+      if (runs.length & 1) merged.push(runs[runs.length - 1]);
+      runs = merged;
     }
-    if (!left.isEmpty) this.appendBack(left);
-    if (!right.isEmpty) this.appendBack(right);
-
+    this.appendBack(runs[0]);
     return this;
   }
 

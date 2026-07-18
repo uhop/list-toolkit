@@ -158,11 +158,28 @@ export class List<T extends object = object> extends HeadNode {
   reverse(): this;
 
   /**
-   * Sort nodes in place using merge sort.
+   * Sort nodes in place using a stable natural merge sort (O(n) on already-sorted input).
    * @param lessFn - Comparison function returning `true` if `a` should precede `b`.
    * @returns `this` for chaining.
    */
   sort(lessFn: (a: T, b: T) => boolean): this;
+
+  /**
+   * Insert a value into a sorted list at its position (after existing equal nodes).
+   * @param value - Value or node to insert.
+   * @param lessFn - Comparison function returning `true` if `a` should precede `b`.
+   * @returns A Ptr to the inserted node.
+   */
+  insertSorted(value: T | PtrBase<T>, lessFn: (a: T, b: T) => boolean): Ptr<T>;
+
+  /**
+   * Merge another sorted list into this sorted list in O(n + m). Stable: on ties this
+   * list's nodes precede the argument's. The argument list is drained.
+   * @param list - Compatible sorted list to consume.
+   * @param lessFn - Comparison function returning `true` if `a` should precede `b`.
+   * @returns `this` for chaining.
+   */
+  mergeSorted(list: HeadNode, lessFn: (a: T, b: T) => boolean): this;
 
   /**
    * Detach all nodes as a raw circular list (no sentinel).

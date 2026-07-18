@@ -26,7 +26,7 @@ Works with your existing linked lists — no wrapper objects required.
 
 **Read all about the implemented ideas in the [Backgrounder](https://github.com/uhop/list-toolkit/wiki/Backgrounder).**
 
-All lists share a consistent API: create from iterables, push/pop, insert/extract/remove, forward and reverse iterators, sort, reverse, and customizable link names.
+All lists share a consistent API: create from iterables, push/pop, insert/extract/remove, forward and reverse iterators, stable sort, sorted insert/merge, reverse, and customizable link names.
 
 Full documentation is in the **[wiki](https://github.com/uhop/list-toolkit/wiki)** &mdash; browse the [index](https://github.com/uhop/list-toolkit/wiki/Home), or [search it](https://uhop.github.io/wiki-search/app/?wiki=uhop/list-toolkit) by name.
 

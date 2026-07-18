@@ -185,29 +185,62 @@ export class SList extends HeadNode {
     return this;
   }
 
+  insertSorted(value, lessFn) {
+    const node = this.adoptValue(value);
+    let prev = this,
+      current = this[this.nextName];
+    while (current !== this && !lessFn(node, current)) {
+      prev = current;
+      current = current[this.nextName];
+    }
+    node[this.nextName] = current;
+    prev[this.nextName] = node;
+    if (current === this) this.last = node;
+    return this.makePtrFromPrev(prev);
+  }
+
+  mergeSorted(list, lessFn) {
+    if (!this.isCompatible(list)) throw new Error('Incompatible lists');
+    let prev = this,
+      current = this[this.nextName];
+    while (current !== this && !list.isEmpty) {
+      if (lessFn(list[this.nextName], current)) {
+        const node = list.popFrontNode();
+        node[this.nextName] = current;
+        prev[this.nextName] = node;
+        prev = node;
+      } else {
+        prev = current;
+        current = current[this.nextName];
+      }
+    }
+    if (!list.isEmpty) this.appendBack(list);
+    return this;
+  }
+
   sort(lessFn) {
     if (this.isOneOrEmpty) return this;
 
-    const left = this.make(),
-      right = this.make();
-
-    // split into two sublists
-    for (let isLeft = true; !this.isEmpty; isLeft = !isLeft) {
-      (isLeft ? left : right).pushBackNode(this.popFrontNode());
+    // natural bottom-up merge sort: stable, no recursion, exploits existing runs
+    let runs = [];
+    while (!this.isEmpty) {
+      const run = this.make();
+      do {
+        const node = this.popFrontNode(),
+          last = run.last;
+        node[this.nextName] = run;
+        last[this.nextName] = node;
+        run.last = node;
+      } while (!this.isEmpty && !lessFn(this[this.nextName], run.last));
+      runs.push(run);
     }
-    // the list is empty now
-
-    // sort sublists
-    left.sort(lessFn);
-    right.sort(lessFn);
-
-    // merge sublists
-    while (!left.isEmpty && !right.isEmpty) {
-      this.pushBackNode((lessFn(left.front, right.front) ? left : right).popFrontNode());
+    while (runs.length > 1) {
+      const merged = [];
+      for (let i = 1; i < runs.length; i += 2) merged.push(runs[i - 1].mergeSorted(runs[i], lessFn));
+      if (runs.length & 1) merged.push(runs[runs.length - 1]);
+      runs = merged;
     }
-    if (!left.isEmpty) this.appendBack(left);
-    if (!right.isEmpty) this.appendBack(right);
-
+    this.appendBack(runs[0]);
     return this;
   }
 

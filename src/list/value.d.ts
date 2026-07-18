@@ -171,11 +171,28 @@ export class ValueList<V = unknown> extends HeadNode {
   reverse(): this;
 
   /**
-   * Sort nodes in place using merge sort.
+   * Sort nodes in place using a stable natural merge sort (O(n) on already-sorted input).
    * @param lessFn - Comparison receiving ValueNodes, returns `true` if `a` should precede `b`.
    * @returns `this` for chaining.
    */
   sort(lessFn: (a: ValueNode<V>, b: ValueNode<V>) => boolean): this;
+
+  /**
+   * Insert a value into a sorted list at its position (after existing equal nodes).
+   * @param value - Value or node to insert.
+   * @param lessFn - Comparison receiving ValueNodes, returns `true` if `a` should precede `b`.
+   * @returns A Ptr to the inserted node.
+   */
+  insertSorted(value: V | ValueNode<V> | PtrBase<ValueNode<V>>, lessFn: (a: ValueNode<V>, b: ValueNode<V>) => boolean): Ptr<ValueNode<V>>;
+
+  /**
+   * Merge another sorted list into this sorted list in O(n + m). Stable: on ties this
+   * list's nodes precede the argument's. The argument list is drained.
+   * @param list - Compatible sorted list to consume.
+   * @param lessFn - Comparison receiving ValueNodes, returns `true` if `a` should precede `b`.
+   * @returns `this` for chaining.
+   */
+  mergeSorted(list: HeadNode, lessFn: (a: ValueNode<V>, b: ValueNode<V>) => boolean): this;
 
   /**
    * Detach all nodes as a raw circular list (no sentinel).

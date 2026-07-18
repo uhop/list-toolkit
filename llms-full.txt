@@ -104,7 +104,9 @@ new List({nextName = 'next', prevName = 'prev'} = {})
 - `extractRange(range)` — extract a range into a new list.
 - `extractBy(condition)` — extract nodes matching condition into a new list.
 - `reverse()` — reverse the list in place.
-- `sort(lessFn)` — merge sort in place. `lessFn(a, b)` returns true if a < b.
+- `sort(lessFn)` — stable natural merge sort in place (O(n) on already-sorted input). `lessFn(a, b)` returns true if a < b.
+- `insertSorted(value, lessFn)` — insert into a sorted list at its position (after equal nodes). O(n).
+- `mergeSorted(list, lessFn)` — merge a sorted list into this sorted list; stable (this first on ties); drains the argument. O(n + m).
 - `clear(drop)` — remove all nodes.
 - `getLength()` — count nodes (O(n)).
 - `makePtr(node)` — create a `Ptr` to a node.
