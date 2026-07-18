@@ -24,7 +24,7 @@ Works with your existing linked lists — no wrapper objects required.
 - Pay only for what you use.
 - Usable as a foundation for other data structures.
 
-**Read all about the implemented ideas in the [Backgrounder](https://github.com/uhop/list-toolkit/wiki/Backgrounder).**
+**Read all about the implemented ideas in the [Backgrounder](https://github.com/uhop/list-toolkit/wiki/Backgrounder), and pick the right tool with [Choosing a data structure](https://github.com/uhop/list-toolkit/wiki/Choosing-a-data-structure).**
 
 All lists share a consistent API: create from iterables, push/pop, insert/extract/remove, forward and reverse iterators, stable sort, sorted insert/merge, reverse, and customizable link names.
 

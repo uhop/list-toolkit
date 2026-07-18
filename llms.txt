@@ -103,5 +103,6 @@ All heaps support `less` or `compare` for ordering. Common API: `push(value)`, `
 ## Links
 
 - Docs: https://github.com/uhop/list-toolkit/wiki
+- Choosing a structure (selection guide): https://github.com/uhop/list-toolkit/wiki/Choosing-a-data-structure
 - npm: https://www.npmjs.com/package/list-toolkit
 - Full LLM reference: https://github.com/uhop/list-toolkit/blob/master/llms-full.txt
