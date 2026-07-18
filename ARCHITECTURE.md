@@ -33,7 +33,8 @@ src/                      # All source code (ESM)
 │   ├── min-heap.js       # MinHeap — array-based binary min-heap
 │   ├── indexed-heap.js   # IndexedHeap — min-heap with intrusive element indices
 │   ├── leftist-heap.js   # LeftistHeap — merge-based leftist heap
-│   └── skew-heap.js      # SkewHeap — merge-based skew heap
+│   ├── skew-heap.js      # SkewHeap — merge-based skew heap
+│   └── pairing-heap.js   # PairingHeap — merge-based pairing heap with node handles
 ├── tree/                 # Tree implementations
 │   └── splay-tree.js     # SplayTree — self-adjusting binary search tree
 ├── list.js               # Re-export: List from list/core.js
@@ -110,6 +111,7 @@ All heaps support `less` function or `compare` function for ordering:
 - `IndexedHeap` — array-based min-heap storing each element's position on the element under a configurable property name (intrusive index): O(1) `has`/`findIndex`, O(log n) `update`/`remove`/`replace` by handle (decrease-key). Elements must be objects.
 - `LeftistHeap` — node-based merge heap (efficient merge)
 - `SkewHeap` — node-based merge heap (simpler than leftist)
+- `PairingHeap` — node-based merge heap: O(1) push/merge, O(log n) amortized pop; `push` returns a node handle enabling decrease-key (`update`) and `remove` by handle. Fastest of the merge-heap trio.
 
 ### SplayTree
 
@@ -147,6 +149,7 @@ heap/basics.js ← heap/min-heap.js
                ← heap/indexed-heap.js
                ← heap/leftist-heap.js
                ← heap/skew-heap.js
+               ← heap/pairing-heap.js
 
 skip-list.js ← meta-utils.js only (self-contained)
 

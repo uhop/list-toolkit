@@ -511,6 +511,58 @@ Same API as `LeftistHeap`.
 
 ---
 
+## Module: PairingHeap (`list-toolkit/heap/pairing-heap.js`)
+
+Node-based merge heap — the practical winner of the merge-heap family: O(1) `push`/`merge`, O(log n) amortized `pop`, and decrease-key by node handle.
+
+```js
+import PairingHeap from 'list-toolkit/heap/pairing-heap.js';
+
+const heap = new PairingHeap({less: (a, b) => a.deadline < b.deadline});
+const node = heap.push({deadline: 150}); // push returns the node handle
+node.value.deadline = 42;
+heap.update(node, true); // decrease-key, O(1) amortized
+heap.remove(node); // remove by handle, O(log n) amortized
+```
+
+### Constructor
+
+```js
+new PairingHeap({less?, compare?}?, ...heapsOrIterables)
+```
+
+If `compare` is provided, `less` is derived. Heap arguments are melded in O(1) each and drained; iterables are pushed.
+
+### Properties
+
+- `isEmpty` — true if the heap is empty.
+- `size` (alias: `length`) — number of elements.
+- `top` — minimum value (without removing).
+- `root` — root `PairingHeapNode` or null.
+
+### Methods
+
+- `peek()` — alias for `top`.
+- `push(value)` — add a value. **Returns the `PairingHeapNode` handle** (keep it for `update`/`remove`). O(1).
+- `pop()` — remove and return the minimum value. O(log n) amortized.
+- `pushPop(value)` — push then pop (optimized).
+- `replaceTop(value)` — pop then push.
+- `update(node, isDecreased?)` — restore the heap after mutating `node.value`; `isDecreased = true` is the O(1)-amortized decrease-key fast path, omitted/false handles both directions in O(log n) amortized.
+- `remove(node)` — remove by handle. O(log n) amortized.
+- `merge(...args)` — meld heaps (O(1) each, drained) and/or push iterables.
+- `clone()` — deep copy (new nodes; old handles stay with the original).
+- `clear()` — remove all elements (outstanding handles become invalid).
+- `PairingHeap.from(values, options?)` — create from an iterable. O(k).
+
+Handles are owned by the heap that returned them (no membership validation — like list `Ptr`s). Use `IndexedHeap` when honest O(1) `has()` is needed.
+
+### PairingHeapNode
+
+- `value` — the stored value (public; mutate then call `update`).
+- `child`, `sibling`, `prev` — tree links (`prev` is the previous sibling, or the parent for a leftmost child).
+
+---
+
 ## Module: Queue (`list-toolkit/queue.js`)
 
 FIFO queue adapter wrapping a `ValueList`.

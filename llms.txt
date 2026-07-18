@@ -67,6 +67,7 @@ All caches share the same API: `has(key)`, `find(key)`/`get(key)`, `register(key
 - **IndexedHeap** (`list-toolkit/heap/indexed-heap.js`) — min-heap with intrusive element indices (configurable property name): O(1) `has`/`findIndex`, O(log n) `update`/`remove` by handle (decrease-key). Elements must be objects.
 - **LeftistHeap** (`list-toolkit/heap/leftist-heap.js`) — merge-based leftist heap.
 - **SkewHeap** (`list-toolkit/heap/skew-heap.js`) — merge-based skew heap.
+- **PairingHeap** (`list-toolkit/heap/pairing-heap.js`) — merge-based pairing heap: O(1) `push`/`merge`; `push` returns a node handle; `update(node, isDecreased?)` (decrease-key) and `remove(node)` by handle.
 
 All heaps support `less` or `compare` for ordering. Common API: `push(value)`, `pop()`, `top`/`peek()`, `merge()`, `has(value)`, `remove(value)`.
 
