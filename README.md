@@ -12,7 +12,7 @@ Data structures included:
 - **NT list converters** — convert null-terminated lists to/from circular lists in place.
 - **Heaps** — min heap, leftist heap, skew heap, indexed heap (O(1) membership, update/remove by handle — decrease-key).
 - **Caches** — LRU, LFU, FIFO, random eviction. Includes a decorator for functions, methods, and getters.
-- **Queue and Stack** — list-backed adapters.
+- **Queue, Stack, and Deque** — list-backed adapters; the deque adds O(1) both-end operations and `rotate()`.
 - **Splay tree** — self-adjusting binary search tree.
 - **Skip list** — probabilistic ordered container: expected O(log n) search/insert/remove, floor/ceil, ordered and range iteration.
 - **Utilities** — push/append values, find, remove, validate, and more.

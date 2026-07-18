@@ -48,6 +48,7 @@ src/                      # All source code (ESM)
 ├── heap.js               # Re-export: MinHeap from heap/min-heap.js
 ├── queue.js              # Queue — adapter class wrapping a ValueList
 ├── stack.js              # Stack — adapter class wrapping a ValueList
+├── deque.js              # Deque — double-ended adapter wrapping a ValueList
 ├── skip-list.js          # SkipList — probabilistic ordered container
 ├── list-utils.js         # Utility functions: push/append values, find, remove
 ├── list-helpers.js       # Node/range normalization helpers

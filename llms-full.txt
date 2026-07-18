@@ -573,6 +573,44 @@ new Stack(UnderlyingList = ValueList)
 
 ---
 
+## Module: Deque (`list-toolkit/deque.js`)
+
+Double-ended queue adapter wrapping a `ValueList` (DLL-based — O(1) at both ends), with Python-style rotation.
+
+```js
+import Deque from 'list-toolkit/deque.js';
+```
+
+### Constructor
+
+```js
+new Deque(underlyingList = new ValueList())
+```
+
+Accepts a list instance (adopted) or a list class (instantiated). The list must be DLL-based; `ValueSList` does not qualify (`popBack` is O(n) on an SLL).
+
+### Properties
+
+- `isEmpty` — true if empty.
+- `size` — number of elements.
+- `front` — first element value.
+- `back` — last element value.
+
+### Methods
+
+- `peekFront()` / `peekBack()` — return the first/last value.
+- `pushFront(value)` — add to front. Aliases: `unshift`, `addFront`.
+- `pushBack(value)` — add to back. Aliases: `push`, `add`, `addBack`.
+- `popFront()` — remove from front. Aliases: `shift`, `removeFront`.
+- `popBack()` — remove from back. Aliases: `pop`, `removeBack`.
+- `pushValuesFront(values)` / `pushValuesBack(values)` — bulk adds.
+- `rotate(n = 1)` — rotate: back → front for positive `n` (Python `deque.rotate` semantics), front → back for negative. Rotates in the cheaper direction.
+- `clear()` — remove all.
+- `[Symbol.iterator]()` — iterate front to back.
+- `getReverseIterator()` — iterate back to front.
+
+---
+
 ## Module: SplayTree (`list-toolkit/tree/splay-tree.js`)
 
 Self-adjusting binary search tree. Frequently accessed elements move to the root.

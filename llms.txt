@@ -74,6 +74,7 @@ All heaps support `less` or `compare` for ordering. Common API: `push(value)`, `
 
 - **Queue** (`list-toolkit/queue.js`) — FIFO queue adapter. Methods: `add`/`push`/`enqueue`, `remove`/`pop`/`dequeue`, `peek`, `top`, `clear`.
 - **Stack** (`list-toolkit/stack.js`) — LIFO stack adapter. Methods: `push`, `pop`, `peek`, `top`, `clear`.
+- **Deque** (`list-toolkit/deque.js`) — double-ended queue adapter. Methods: `pushFront`/`unshift`, `pushBack`/`push`, `popFront`/`shift`, `popBack`/`pop`, `peekFront`/`peekBack`, `rotate(n)`, `clear`. O(1) at both ends.
 
 ### Trees
 
