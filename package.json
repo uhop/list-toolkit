@@ -1,6 +1,6 @@
 {
   "name": "list-toolkit",
-  "version": "2.4.0",
+  "version": "2.4.1",
   "description": "Zero-dependency data structures: linked lists (doubly/singly linked, circular), deques, ring buffers, unrolled lists, caches (LRU, LFU, SLRU, Clock, FIFO), heaps (binary, indexed, pairing), timer wheels, object pools, queues, stacks, splay trees, skip lists.",
   "type": "module",
   "exports": {

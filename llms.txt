@@ -108,7 +108,7 @@ All three accept an underlying list instance (adopted) or a list class (instanti
 
 - **list-utils** (`list-toolkit/list-utils.js`) — push/append values, find/remove nodes by condition, validation.
 - **nt-utils** (`list-toolkit/nt-utils.js`) — convert between null-terminated and circular lists.
-- **meta-utils** (`list-toolkit/meta-utils.js`) — `addAlias`, `addAliases`, iterator helpers, `copyOptions`.
+- **meta-utils** (`list-toolkit/meta-utils.js`) — internal helpers, not public API; for these utilities use the `meta-toolkit` package.
 
 ## Key concepts
 

@@ -68,7 +68,11 @@ test('utils: descriptor factories', t => {
   t.deepEqual(fromAccessors(null, setter), {...defaultDescriptor, set: setter});
   t.deepEqual(fromAccessors(null, null), {...defaultDescriptor});
 
-  const obj = Object.defineProperty({}, 'answer', fromGetter(() => 42));
+  const obj = Object.defineProperty(
+    {},
+    'answer',
+    fromGetter(() => 42)
+  );
   t.equal(obj.answer, 42);
 });
 

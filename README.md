@@ -131,6 +131,7 @@ BSD 3-Clause "New" or "Revised" License. See the LICENSE file for details.
 
 ## Release History
 
+- 2.4.1 _Fixed a crash in `meta-utils` descriptor factories. Modernized iterator helpers._
 - 2.4.0 _Added skip lists, deques, ring buffers, timer wheels, indexed and pairing heaps, unrolled lists, object pools, SLRU and Clock caches. Splay tree order statistics, stable list sorting, exact LFU, faster heaps._
 - 2.3.2 _Updated dev dependencies._
 - 2.3.1 _Bugfixes. Improved TS typing tests. Updated docs. Updated dev dependencies._

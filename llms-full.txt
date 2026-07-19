@@ -1039,19 +1039,7 @@ import {makeListFromNTList, makeNTListFromList} from 'list-toolkit/nt-utils.js';
 
 ## Module: meta-utils (`list-toolkit/meta-utils.js`)
 
-Internal utilities used throughout the library. Also useful for extending it.
-
-```js
-import {addAlias, addAliases, copyOptions} from 'list-toolkit/meta-utils.js';
-```
-
-- `addAlias(object, name, aliases, force?)` — create method aliases.
-- `addAliases(object, dict, force?)` — create multiple aliases. Dict: `{methodName: 'alias1, alias2'}`.
-- `copyOptions(target, pattern, ...sources)` — copy known keys from sources to target.
-- `copyDescriptors(target, source, names, force?)` — copy property descriptors.
-- `mapIterator(iterator, callbackFn)` — map over an iterator.
-- `normalizeIterator(iterator)` — ensure `[Symbol.iterator]` is present.
-- Name-casing utilities: `capitalize`, `toCamelCase`, `fromCamelCase`, `toPascalCase`, `toSnakeCase`, `toKebabCase`, etc.
+Internal helpers used throughout the library — not public API and not covered by semver. For these utilities as a supported package, use [meta-toolkit](https://www.npmjs.com/package/meta-toolkit), the canonical home of this module.
 
 ---
 

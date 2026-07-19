@@ -94,11 +94,7 @@ export function fromSetter(setter: ((v: any) => void) | undefined, initDescripto
  * @param initDescriptor - Base descriptor to extend.
  * @returns A property descriptor with `get` and/or `set`.
  */
-export function fromAccessors(
-  getter: (() => any) | undefined,
-  setter: ((v: any) => void) | undefined,
-  initDescriptor?: PropertyDescriptor
-): PropertyDescriptor;
+export function fromAccessors(getter: (() => any) | undefined, setter: ((v: any) => void) | undefined, initDescriptor?: PropertyDescriptor): PropertyDescriptor;
 
 /**
  * Define a property descriptor on a target for one or more names.
@@ -192,20 +188,20 @@ export function augmentIterator<T>(iterator: Iterator<T>): IterableIterator<T>;
 export function normalizeIterator<T>(iterator: Iterator<T>): IterableIterator<T>;
 
 /**
- * Map over an iterator, producing a new iterable.
- * @param iterator - Source iterable iterator.
+ * Map over an iterable or iterator lazily.
+ * @param iterable - Source iterable or iterator.
  * @param callbackFn - Mapping function receiving value and index.
- * @returns An iterable of mapped values.
+ * @returns A lazy, single-use iterable iterator of mapped values; `return()` is forwarded to the source.
  */
-export function mapIterator<T, U>(iterator: Iterable<T>, callbackFn: (value: T, index: number) => U): Iterable<U>;
+export function mapIterator<T, U>(iterable: Iterable<T> | Iterator<T>, callbackFn: (value: T, index: number) => U): IterableIterator<U>;
 
 /**
- * Filter values from an iterable, producing a new iterable.
- * @param iterator - Source iterable.
+ * Filter values from an iterable or iterator lazily.
+ * @param iterable - Source iterable or iterator.
  * @param callbackFn - Predicate receiving value and index.
- * @returns An iterable of values for which `callbackFn` returns true.
+ * @returns A lazy, single-use iterable iterator of passing values; `return()` is forwarded to the source.
  */
-export function filterIterator<T>(iterator: Iterable<T>, callbackFn: (value: T, index: number) => boolean): Iterable<T>;
+export function filterIterator<T>(iterable: Iterable<T> | Iterator<T>, callbackFn: (value: T, index: number) => boolean): IterableIterator<T>;
 
 /**
  * Adapt a less function to a compare function.
