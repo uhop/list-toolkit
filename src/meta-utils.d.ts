@@ -68,36 +68,36 @@ export function toKebabCase(names: string[]): string;
  */
 export function fromKebabCase(name: string): string[];
 
-/** Default property descriptor: configurable and enumerable. */
+/** Default property descriptor: configurable and non-enumerable. */
 export const defaultDescriptor: PropertyDescriptor;
 
 /**
  * Create a property descriptor from a getter function.
  * @param getter - Getter function.
- * @param defaultDescriptor - Base descriptor to extend.
+ * @param initDescriptor - Base descriptor to extend.
  * @returns A property descriptor with `get`.
  */
-export function fromGetter(getter: (() => any) | undefined, defaultDescriptor?: PropertyDescriptor): PropertyDescriptor;
+export function fromGetter(getter: (() => any) | undefined, initDescriptor?: PropertyDescriptor): PropertyDescriptor;
 
 /**
  * Create a property descriptor from a setter function.
  * @param setter - Setter function.
- * @param defaultDescriptor - Base descriptor to extend.
+ * @param initDescriptor - Base descriptor to extend.
  * @returns A property descriptor with `set`.
  */
-export function fromSetter(setter: ((v: any) => void) | undefined, defaultDescriptor?: PropertyDescriptor): PropertyDescriptor;
+export function fromSetter(setter: ((v: any) => void) | undefined, initDescriptor?: PropertyDescriptor): PropertyDescriptor;
 
 /**
  * Create a property descriptor from getter and setter functions.
  * @param getter - Getter function.
  * @param setter - Setter function.
- * @param defaultDescriptor - Base descriptor to extend.
+ * @param initDescriptor - Base descriptor to extend.
  * @returns A property descriptor with `get` and/or `set`.
  */
 export function fromAccessors(
   getter: (() => any) | undefined,
   setter: ((v: any) => void) | undefined,
-  defaultDescriptor?: PropertyDescriptor
+  initDescriptor?: PropertyDescriptor
 ): PropertyDescriptor;
 
 /**

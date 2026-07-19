@@ -10,6 +10,10 @@ import {
   fromSnakeCase,
   toKebabCase,
   fromKebabCase,
+  defaultDescriptor,
+  fromGetter,
+  fromSetter,
+  fromAccessors,
   addAlias,
   addAliases,
   mapIterator,
@@ -41,6 +45,31 @@ test('utils: case conversions', t => {
 
   t.equal(toKebabCase(['Foo', 'Bar']), 'foo-bar');
   t.deepEqual(fromKebabCase('foo-bar'), ['foo', 'bar']);
+});
+
+test('utils: descriptor factories', t => {
+  const getter = () => 42,
+    setter = v => v;
+
+  t.deepEqual(defaultDescriptor, {configurable: true, enumerable: false});
+
+  // omitted descriptor arg: the TDZ regression path (2026-07-18)
+  t.deepEqual(fromGetter(getter), {...defaultDescriptor, get: getter});
+  t.deepEqual(fromSetter(setter), {...defaultDescriptor, set: setter});
+  t.deepEqual(fromAccessors(getter, setter), {...defaultDescriptor, get: getter, set: setter});
+
+  t.deepEqual(fromGetter(getter, {enumerable: true}), {enumerable: true, get: getter});
+  t.deepEqual(fromSetter(setter, {configurable: false}), {configurable: false, set: setter});
+  t.deepEqual(fromAccessors(getter, setter, {}), {get: getter, set: setter});
+
+  t.deepEqual(fromGetter(null), {...defaultDescriptor});
+  t.deepEqual(fromSetter(null), {...defaultDescriptor});
+  t.deepEqual(fromAccessors(getter, null), {...defaultDescriptor, get: getter});
+  t.deepEqual(fromAccessors(null, setter), {...defaultDescriptor, set: setter});
+  t.deepEqual(fromAccessors(null, null), {...defaultDescriptor});
+
+  const obj = Object.defineProperty({}, 'answer', fromGetter(() => 42));
+  t.equal(obj.answer, 42);
 });
 
 test('utils: addAlias()', t => {

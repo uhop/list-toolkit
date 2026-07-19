@@ -22,20 +22,20 @@ export const fromKebabCase = name => name.split('-');
 
 export const defaultDescriptor = {configurable: true, enumerable: false};
 
-export const fromGetter = (getter, defaultDescriptor = defaultDescriptor) => {
-  const descriptor = {...defaultDescriptor};
+export const fromGetter = (getter, initDescriptor = defaultDescriptor) => {
+  const descriptor = {...initDescriptor};
   if (typeof getter == 'function') descriptor.get = getter;
   return descriptor;
 };
 
-export const fromSetter = (setter, defaultDescriptor = defaultDescriptor) => {
-  const descriptor = {...defaultDescriptor};
+export const fromSetter = (setter, initDescriptor = defaultDescriptor) => {
+  const descriptor = {...initDescriptor};
   if (typeof setter == 'function') descriptor.set = setter;
   return descriptor;
 };
 
-export const fromAccessors = (getter, setter, defaultDescriptor = defaultDescriptor) => {
-  const descriptor = {...defaultDescriptor};
+export const fromAccessors = (getter, setter, initDescriptor = defaultDescriptor) => {
+  const descriptor = {...initDescriptor};
   if (typeof getter == 'function') descriptor.get = getter;
   if (typeof setter == 'function') descriptor.set = setter;
   return descriptor;
